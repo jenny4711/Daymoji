@@ -6,9 +6,9 @@ export * from 'expo-router';
 declare module 'expo-router' {
   export namespace ExpoRouter {
     export interface __routes<T extends string = string> extends Record<string, unknown> {
-      StaticRoutes: `/` | `/_sitemap` | `/details`;
-      DynamicRoutes: never;
-      DynamicRouteTemplate: never;
+      StaticRoutes: `/` | `/_sitemap` | `/main` | `/setting`;
+      DynamicRoutes: `/details/${Router.SingleRoutePart<T>}`;
+      DynamicRouteTemplate: `/details/[date]`;
     }
   }
 }
