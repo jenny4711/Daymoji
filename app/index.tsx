@@ -34,11 +34,23 @@ const {colors}=useTheme()
   ? process.env.EXPO_PUBLIC_IOS_CLIENT_ID
   : process.env.EXPO_PUBLIC_WEB_CLIENT_ID;
 
+ let googlePopUp;
+ if(Platform.OS === 'web'){
+  googlePopUp=Google.useIdTokenAuthRequest({
+    clientId: clientID,
  
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-   clientId: clientID,
+   });
 
-  });
+ }else{
+  googlePopUp=Google.useIdTokenAuthRequest({
+    clientId: clientID,
+ 
+   });
+
+
+ }
+
+  const [request, response, promptAsync] =googlePopUp;
 const navigation = useNavigation<any>();
 console.log(width,height)
 
