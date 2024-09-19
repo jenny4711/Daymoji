@@ -3,8 +3,13 @@ import { Text,TouchableOpacity ,Platform,View} from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar'
+import { DateProvider } from '~/context/DataContext';
+import { ThemeProvider } from '~/Theme/ThemeProvider';
+import { QueryClientProvider ,QueryClient} from '@tanstack/react-query';
+import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-
+const queryClient = new QueryClient()
+//npm run export       
 export const unstable_settings={
   initialRouteName:'index',
 }
@@ -28,7 +33,37 @@ function Layout() {
 }
 
 export default function App(){
+  SplashScreen.preventAutoHideAsync();
+  setTimeout(SplashScreen.hideAsync, 1000);
+
+  useEffect(()=>{
+    async function loadFonts() {
+      try{
+        await SplashScreen.preventAutoHideAsync();
+        await Font.loadAsync({
+          "SFCompactRounded":require('../assets/fonts/SFCompactRounded.ttf'),
+          "SFCompactRoundedRG":require('../assets/fonts/SF-Compact-Rounded-Regular.otf'),
+          "SFCompactRoundedBD":require('../assets/fonts/SF-Compact-Rounded-Bold.ttf'),
+          "SFCompactRoundedSB":require('../assets/fonts/SF-Compact-Rounded-Semibold.otf'),
+          "SFCompactRoundedMD":require('../assets/fonts/SF-Compact-Rounded-Medium.otf'),
+          "SFCompactRoundedHV":require('../assets/fonts/SF-Compact-Rounded-Heavy.otf'),
+        });
+        
+      }catch(error){
+        console.log(error,'error-font')
+      }
+    }
+    loadFonts()
+    },[])
+  
   return(
-    <Layout/>
+    <ThemeProvider>
+    <DateProvider>
+<QueryClientProvider client={queryClient}>
+      <Layout/>
+  
+      </QueryClientProvider>
+      </DateProvider>
+  </ThemeProvider>
   )
 }
