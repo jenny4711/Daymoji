@@ -27,6 +27,8 @@ if (Platform.OS !== 'web') {
 
 const Page = () => {
 const [open,setOpen] = useState<boolean>(false)
+console.log(process.env.EXPO_PUBLIC_IOS_CLIENT_ID)
+console.log(process.env.EXPO_PUBLIC_WEB_CLIENT_ID)
   const [userInfo, setUserInfo] = useState<any>(null);
   const {email,setEmail,token,setToken}=useDateContext()
 const {colors}=useTheme() 
@@ -34,23 +36,15 @@ const {colors}=useTheme()
   ? process.env.EXPO_PUBLIC_IOS_CLIENT_ID
   : process.env.EXPO_PUBLIC_WEB_CLIENT_ID;
 
- let googlePopUp;
- if(Platform.OS === 'web'){
-  googlePopUp=Google.useIdTokenAuthRequest({
+ 
+
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: clientID,
+    redirectUri: Platform.OS === 'web' ? window.location.origin : undefined,
+    
+   
  
    });
-
- }else{
-  googlePopUp=Google.useIdTokenAuthRequest({
-    clientId: clientID,
- 
-   });
-
-
- }
-
-  const [request, response, promptAsync] =googlePopUp;
 const navigation = useNavigation<any>();
 console.log(width,height)
 
@@ -59,7 +53,9 @@ console.log(width,height)
       const { id_token } = response.params;
       const credential = GoogleAuthProvider.credential(id_token);
      
-      signInWithCredential(FIREBASE_AUTH, credential);
+      signInWithCredential(FIREBASE_AUTH, credential).then(()=>{
+        console.log('success')
+      }).catch((error)=>{console.log('login fail',error)})
      
     }
   }, [response]);

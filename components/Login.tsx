@@ -4,6 +4,7 @@ import { useTheme } from '~/Theme/ThemeProvider';
 import * as WebBrowser from 'expo-web-browser';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { GoogleIcon } from '~/utils/Icons';
+import Head from 'expo-router/head';
 interface LoginProps{
   promptAsync:()=>void
 
@@ -17,6 +18,10 @@ const Login:React.FC<LoginProps> = ({promptAsync}) => {
 
   return (
     <>
+     <Head>
+      <title>Daymoji Login</title>
+      <meta name="description" content="Index" />
+    </Head>
    
     <View>
       <TouchableOpacity style={[styles.googleBtn,{backgroundColor:colors.text}]} onPress={()=>promptAsync()}>
