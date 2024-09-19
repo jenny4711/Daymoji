@@ -14,6 +14,7 @@ import * as WebBrowser from 'expo-web-browser';
 import Logo from '../components/Logo';
 import { Dimensions } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
+import Head from 'expo-router/head';
 const {width,height}=Dimensions.get('window')
 
 
@@ -110,7 +111,10 @@ const openService =async () => {
  
   return (
     <>
-   
+   <Head>
+      <title>Daymoji Login</title>
+      <meta name="description" content="Index" />
+    </Head>
    <GestureHandlerRootView style={{ flex: 1 }}>
        
        <View style={[styles.container,{backgroundColor:colors.background}]}>
@@ -154,7 +158,7 @@ const styles = StyleSheet.create({
 
     flexDirection: 'column',
    
-    height:'100%'
+    height:height
   },
   loginContainer: {
     justifyContent: 'center',
