@@ -1,7 +1,16 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+
 import Head from 'expo-router/head'
-import { useLocalSearchParams } from 'expo-router'
+import { View, Text ,Alert,SafeAreaView} from 'react-native'
+import React ,{useState,useEffect,useCallback}from 'react'
+import FirstView from '~/components/details/FirstView'
+import { useData ,useSaveData,useDeletedData} from '~/hooks/useData'
+import { useDateContext } from '~/context/DataContext'
+import NewForm from '~/components/details/NewForm'
+import { useLocalSearchParams ,useNavigation,useFocusEffect} from 'expo-router'
+import { useTheme } from '~/Theme/ThemeProvider'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import ShowDetail from '~/components/details/ShowDetail'
+import { useQueryClient } from '@tanstack/react-query';
 
 export async function generateStaticParams():Promise<Record<string,string>[]>{
 return [
@@ -12,18 +21,157 @@ return [
 ]
 }
 const Detail = () => {
-  const { date }:any = useLocalSearchParams()
-  return (
-    <>
- <Head>
-      <title>My details for {date}</title>
-      <meta name="description" content="Index" />
-    </Head>
+  const { date, month }: any = useLocalSearchParams();
+  const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle} = useDateContext();
+  const queryClient = useQueryClient();
+const navigation=useNavigation()
 
-    <View>
-      <Text> Detail</Text>
-    </View>
-    </>
+const [showDone,setShowDone]=useState<any>(false)
+const {colors,dark}=useTheme()
+const [showDate,setShowDate]=useState<any>('')
+const [email,setEmail]=useState<any>('')
+const [showData,setShowData]=useState<any>(false)
+const [photo,setPhoto]=useState<any>('')
+const [story,setStory]=useState<any>('')
+const [emotion,setEmotion]=useState<any>('')
+const addMutation=useSaveData({date,month})
+const deletedMuation=useDeletedData({date,month})
+const [save,setSave]=useState<any>(false)
+const {data}=useData(month)
+
+
+
+
+
+
+
+
+useEffect(()=>{
+       const isData = Array.isArray(data) ? data.some((item: any) => item.date === date) : false;
+        setShowData(isData)
+},[date,data])
+
+useEffect(() => {
+  const [year, month, day] = date.split('-');
+
+  const header = new Date(year, month - 1, day).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  setShowDate(header);
+
+}, [date]);
+
+
+
+
+
+
+
+function editHanlder(){
+  setShowDone(true)
+
+
+}
+
+async function doneHandler(){
+  const email=await AsyncStorage.getItem('email')
+  console.log(email,'email')
+  console.log(emotion,'emotion')
+  if(emotion===''){
+    Alert.alert('Alert', 'Please select emotion');
+    return;
+  }
+ setSave(true)
+  addMutation.mutate({date,emotion,story,photo,email,month})
+  setShowDone(false)
+   queryClient.invalidateQueries({ queryKey: ['data'] });
+   setVisible(true)
+
+ return  (navigation as any).navigate('main')
+
+
+
+
+
+}
+
+const handleDeleted = async () => {
+  deletedMuation.mutate(
+    { date, month },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['data', month] });
+      
+
+        setShowData(false);
+        (navigation as any).navigate('main');
+
+      
+      },
+    }
+  );
+};
+
+
+
+
+ 
+  return (
+    
+    <SafeAreaView style={{backgroundColor:colors.background}}>
+         <View style={[{alignItems:'flex-end'},{backgroundColor:colors.background}]}>
+         {
+         
+<FirstView date={showDate} showDone={showDone} setShowDone={setShowDone} fnBtn={doneHandler} />
+
+
+ }
+         </View>
+
+      <>
+      {showData ? (
+        <ShowDetail 
+        showDone={showDone}
+       setShowDone={setShowDone} 
+       date={date} 
+       month={month} 
+       story={story}
+       setStory={setStory}
+       photo={photo}
+        setPhoto={setPhoto}
+        emotion={emotion}
+        setEmotion={setEmotion}
+        handleDeleted={handleDeleted}
+        />)
+      :
+      <NewForm 
+      showDone={showDone}
+       setShowDone={setShowDone} 
+       date={date} 
+       month={month} 
+       story={story}
+       setStory={setStory}
+       photo={photo}
+        setPhoto={setPhoto}
+        emotion={emotion}
+        setEmotion={setEmotion}
+       
+       
+       
+       /> }
+      </>
+       
+
+      
+
+    
+
+
+     
+    
+    </SafeAreaView>
   )
 }
 

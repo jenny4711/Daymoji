@@ -9,12 +9,27 @@ interface LoginProps{
   promptAsync:()=>void
 
 }
-
 if(Platform.OS !== 'web'){
   WebBrowser.maybeCompleteAuthSession();
+
+
+
+
 }
+
+
 const Login:React.FC<LoginProps> = ({promptAsync}) => {
  const {colors}=useTheme()
+ 
+ const handleGoogleLogin = async () => {
+  try {
+    const result = await promptAsync();
+    console.log(result,'result')
+   
+  } catch (error) {
+    console.error('Error during login:', error);
+  }
+};
 
   return (
     <>
@@ -24,7 +39,7 @@ const Login:React.FC<LoginProps> = ({promptAsync}) => {
     </Head>
    
     <View>
-      <TouchableOpacity style={[styles.googleBtn,{backgroundColor:colors.text}]} onPress={()=>promptAsync()}>
+      <TouchableOpacity style={[styles.googleBtn,{backgroundColor:colors.text}]} onPress={()=>handleGoogleLogin ()}>
         <GoogleIcon size={24}/>
       <Text style={{ color: colors.background ,marginLeft:8,fontSize:16,fontFamily:"SFCompactRoundedBD"}}>Sign up with Google</Text>
       </TouchableOpacity>

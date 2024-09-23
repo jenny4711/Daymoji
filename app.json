@@ -43,7 +43,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.jjenny4711.Daymoji",
       "associatedDomains": [
-        "applinks:daymojiios.netlify.app/"
+        "applinks:daymojiios.netlify.app"
       ]
     },
     "android": {

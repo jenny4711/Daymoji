@@ -1,6 +1,6 @@
 import React, { useState,  useEffect } from 'react';
 import { StyleSheet, Text,  View, Linking } from 'react-native';
-import Login from '~/components/Login';
+import Login from '~/components/auth/Login';
 import { Platform } from 'react-native';
 import { FIREBASE_AUTH } from '../config/firebase';
 import * as Google from 'expo-auth-session/providers/google';
@@ -9,9 +9,9 @@ import { Link, useNavigation } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithCredential } from 'firebase/auth';
-import AppleLogin from '../components/AppleLogin';
+import AppleLogin from '../components/auth/AppleLogin';
 import * as WebBrowser from 'expo-web-browser';
-import Logo from '../components/Logo';
+import Logo from '../components/auth/Logo';
 import { Dimensions } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
 import Head from 'expo-router/head';
@@ -27,8 +27,7 @@ if (Platform.OS !== 'web') {
 
 const Page = () => {
 const [open,setOpen] = useState<boolean>(false)
-console.log(process.env.EXPO_PUBLIC_IOS_CLIENT_ID)
-console.log(process.env.EXPO_PUBLIC_WEB_CLIENT_ID)
+
   const [userInfo, setUserInfo] = useState<any>(null);
   const {email,setEmail,token,setToken}=useDateContext()
 const {colors}=useTheme() 
@@ -55,6 +54,9 @@ console.log(width,height)
      
       signInWithCredential(FIREBASE_AUTH, credential).then(()=>{
         console.log('success')
+        if (Platform.OS === 'web') {
+          WebBrowser.dismissBrowser();  // 팝업 닫기 (웹 환경에서 팝업 닫는 로직 추가)
+        }
       }).catch((error)=>{console.log('login fail',error)})
      
     }

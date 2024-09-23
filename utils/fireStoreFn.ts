@@ -13,9 +13,9 @@ type Data = {
 };
 
 export const getData = async (mon:any) => {
-console.log(mon,'mon')
-const {email,setEmail,token,setToken}=useDateContext()
-  // const email:any=await AsyncStorage.getItem('email')
+
+
+   const email:any=await AsyncStorage.getItem('email')
   const encodedEmail = encodeURIComponent(email.toLowerCase());
   if (!email || !mon) return;
   const daysCollection = collection(FIRESTORE_DB, `users/${email}/${mon}`);
@@ -76,7 +76,7 @@ export const getAdayData = async ({ date }: any) => {
 
 export   const saveDiaryEntry = async ({date,emotion,story,photo,email,month}:any) => {
   try {
-    const {email,setEmail,token,setToken}=useDateContext()
+    const email = await AsyncStorage.getItem('email');
     console.log(email,'email')
     // const email=await AsyncStorage.getItem('email')
     const data = {
@@ -100,8 +100,8 @@ export   const saveDiaryEntry = async ({date,emotion,story,photo,email,month}:an
 
 export const deletedItem = async (date: any, month: any) => {
   try {
-    const {email,setEmail,token,setToken}=useDateContext()
-    // const email = await AsyncStorage.getItem('email');
+  
+     const email = await AsyncStorage.getItem('email');
     if (!email) {
       console.log("Email not found");
       return;
@@ -149,8 +149,8 @@ export const saveSettingEntry = async ({text,background,inputBk,theme,email}:any
 
 export const getSettingData = async () => {
   try {
-    const {email,setEmail,token,setToken}=useDateContext()
-    // const email = await AsyncStorage.getItem('email');
+ 
+     const email = await AsyncStorage.getItem('email');
     if (!email) return null;
 
     const docRef = doc(FIRESTORE_DB, `users/${email}/settings/configuration`);
@@ -202,10 +202,11 @@ export const deletedAllItem= async (month:any) => {
 //image uploading
 export const uploadImageStorage = async (uri: any, fileType: any) => {
   try {
+    console.log(uri,'uri!!!!!')
     const res = await fetch(uri);
     const blob = await res.blob();
-    // const email = await AsyncStorage.getItem('email');
-    const {email,setEmail,token,setToken}=useDateContext()
+     const email = await AsyncStorage.getItem('email');
+    
     const storageRef = ref(FIREBASE_STORAGE, `users/${email}/img/${Date.now()}`);
     const uploadTask = uploadBytesResumable(storageRef, blob);
     

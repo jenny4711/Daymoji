@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState,useEffect } from 'react';
 
+
 // Context 생성
 
 interface DateContextType {
@@ -19,6 +20,10 @@ interface DateContextType {
   setEmail:(email:any)=>void
   token:any
   setToken:(token:any)=>void
+  headerTitle:any
+  setHeaderTitle:(title:any)=>void
+  visible:any
+  setVisible:(visible:any)=>void
 }
 
 const DateContext = createContext<DateContextType>('' as any);
@@ -32,6 +37,8 @@ export const DateProvider = ({ children }: any) => {
 const [prevDate,setPrevDate]=useState('' as any)
 const [email,setEmail]=useState('' as any)
 const [token,setToken]=useState('' as any)
+const [headerTitle,setHeaderTitle]=useState('' as any)
+const [visible,setVisible]=useState(false)
  useEffect(()=>{
   if(dateF !== '' ){
   
@@ -43,7 +50,7 @@ const [token,setToken]=useState('' as any)
 },[dateF])
 
   return (
-    <DateContext.Provider value={{email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
+    <DateContext.Provider value={{visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
       {children}
     </DateContext.Provider>
   );

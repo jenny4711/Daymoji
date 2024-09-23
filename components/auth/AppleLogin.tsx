@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { OAuthProvider } from 'firebase/auth';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import  {jwtDecode} from 'jwt-decode'
-import {FIREBASE_AUTH} from '../config/firebase'
+import {FIREBASE_AUTH} from '../../config/firebase'
 import { signInWithCredential } from 'firebase/auth';
 import { useNavigation } from 'expo-router';
 import { AppleIcon } from '~/utils/Icons';

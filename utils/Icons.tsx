@@ -52,3 +52,34 @@ export const Logo=({color}:any)=>(
 )
 
 
+
+
+
+export const HeaderL = (props:any) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={16}
+    height={16}
+    fill="none"
+    {...props}
+  >
+    <G clipPath="url(#a)">
+      <Path
+        fill={props.color}
+        d="M16 2.75v2.5A1.75 1.75 0 0 1 14.25 7H1.75A1.75 1.75 0 0 1 0 5.25v-2.5A1.75 1.75 0 0 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75Zm0 8v2.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25v-2.5A1.75 1.75 0 0 1 1.75 9h12.5c.966 0 1.75.784 1.75 1.75ZM14.25 2.5H1.75a.25.25 0 0 0-.25.25v2.5a.25.25 0 0 0 .25.25h12.5a.25.25 0 0 0 .25-.25v-2.5a.25.25 0 0 0-.25-.25Zm0 8H1.75a.25.25 0 0 0-.25.25v2.5a.25.25 0 0 0 .25.25h12.5a.25.25 0 0 0 .25-.25v-2.5a.25.25 0 0 0-.25-.25Z"
+      />
+    </G>
+    <Defs>
+      <ClipPath id="a">
+        <Path fill={props.color} d="M16 0v16H0V0z" />
+      </ClipPath>
+    </Defs>
+  </Svg>
+)
+
+
+
+
+
+
+
