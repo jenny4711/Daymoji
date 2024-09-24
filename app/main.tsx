@@ -9,6 +9,7 @@ import { Dimensions } from 'react-native';
 import { useTheme } from '~/Theme/ThemeProvider';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import DetailMode from '~/components/main/DetailMode';
+import ListMode from '~/components/main/ListMode';
 import { ScaledSheet,scale, verticalScale, moderateScale } from 'react-native-size-matters';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, withSequence,Easing } from 'react-native-reanimated';
 const {width,height}=Dimensions.get('window')
@@ -17,7 +18,7 @@ const Main = () => {
   const {colors}=useTheme()
   const [lines,setLines]=useState(0)
   const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle} = useDateContext();
-
+const [showListMode,setShowListMode]=useState(false)
   const translateY = useSharedValue(0); // 애니메이션 상태
 const navigation = useNavigation<any>();
   const animatedStyle = useAnimatedStyle(() => {
@@ -41,9 +42,9 @@ const navigation = useNavigation<any>();
     const letBoxDown=(shouldShow:boolean)=>{
       // setVisible(shouldShow)
       translateY.value = withTiming(shouldShow?0:430, { duration: 300 ,easing: Easing.out(Easing.exp),})
-      setTimeout(()=>{
-        setVisible(shouldShow)
-      },300)
+      // setTimeout(()=>{
+      //   setVisible(shouldShow)
+      // },300)
       // setVisible(shouldShow)
     }
 
@@ -58,8 +59,19 @@ const navigation = useNavigation<any>();
     };
     useEffect(()=>{console.log(visible,'visible')},[visible])
 
+
+
+
+
+
+
+const plusBtnSize=width *0.1527
+const plusBtnMgTop=height *0.1620
+const topSize =height *-0.07
+const topSize5=height * 0.021
 const fixedTopSize=height>=932?moderateScale(-70):moderateScale(-47)
 const fixedButtonMg=height>=932?moderateScale(190):moderateScale(135)
+
   return (
     <View style={{backgroundColor:colors.background,alignItems:'center'}}>
      <Head>
@@ -67,13 +79,17 @@ const fixedButtonMg=height>=932?moderateScale(190):moderateScale(135)
       <meta name="description" content="Index" />
     </Head>
    
-    <Header headerTitle={headerTitle} day={dateF} />
-      <ScrollView style={{ backgroundColor:colors.background,height:height}}>
+    <Header headerTitle={headerTitle} day={dateF} showListMode={showListMode} setShowListMode={setShowListMode}/>
+      <ScrollView showsVerticalScrollIndicator={false}  style={{ backgroundColor:colors.background,height:height}}>
       
 
-        <Animated.ScrollView style={{marginTop:0}}>
+        <Animated.ScrollView style={{marginTop:0,backgroundColor:colors.background}}>
+          {
+            showListMode?<ListMode />
+            :          <Calendars lines={lines} setLines={setLines} setVisible={setVisible} visible={visible} triggerAnimation={triggerAnimation} letBoxDown={letBoxDown} />
+          }
 
-          <Calendars lines={lines} setLines={setLines} setVisible={setVisible} visible={visible} triggerAnimation={triggerAnimation} letBoxDown={letBoxDown} />
+
          
         </Animated.ScrollView>
 
@@ -81,11 +97,11 @@ const fixedButtonMg=height>=932?moderateScale(190):moderateScale(135)
 
       { 
       //  <Animated.View style={[{borderRadius:21,alignItems:'center',marginTop:lines>5?0:-78},animatedStyle]}></Animated.View>
-        visible?  <Animated.View style={[{borderRadius:21,alignItems:'center',marginTop:lines>5?24: fixedTopSize},animatedStyle]}>
+        visible?  <Animated.View style={[{borderRadius:21,alignItems:'center',marginTop:lines>5?topSize5: topSize},animatedStyle]}>
             <DetailMode visible={visible} date={dateF} item={newAData} newDate={dateWithLang} />
           </Animated.View>:
-          <View style={{justifyContent:'center',alignItems:'center',marginTop:fixedButtonMg}}>
-          <TouchableOpacity onPress={currentDateForm} style={{justifyContent: 'center', alignItems: 'center', backgroundColor: colors.text, width: 50, height: 50, borderRadius: 100 }}>
+          <View style={{justifyContent:'center',alignItems:'center',marginTop:plusBtnMgTop}}>
+          <TouchableOpacity onPress={currentDateForm} style={{justifyContent: 'center', alignItems: 'center', backgroundColor: colors.text, width: plusBtnSize, height: plusBtnSize, borderRadius: 100 }}>
             <Fontisto name="plus-a" size={16} color={colors.background} />
           </TouchableOpacity>
           </View>

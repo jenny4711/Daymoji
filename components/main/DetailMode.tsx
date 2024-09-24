@@ -9,8 +9,6 @@ import { useDateContext } from '~/context/DataContext'
 import Octicons from '@expo/vector-icons/Octicons';
 import EmotionSticker from '../EmotionSticker'
 import { Image ,ImageLoadEventData} from 'expo-image';
-import Fontisto from '@expo/vector-icons/Fontisto';
-import { set } from 'lodash'
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler'
 const {width,height}=Dimensions.get('window')
@@ -25,19 +23,34 @@ const deletedMuation=useDeletedData({date,monthF})
   // ----------flexible image size----------
 const [imgSize,setImgSize]=useState({width:0,height:0})
 
-useEffect(()=>{
-  console.log(item,'item.photo')
-  if(item?.photo !== undefined){
-  RNimage.getSize(item.photo, (width, height) => {
-    const ratio = width / height;
-    const newHeight = screenSize.width / ratio;
-    setImgSize({width:screenSize.width-96,height:newHeight})
-    console.log(width,height,'width,height')
-  });
-}else{
-  setImgSize({width:0,height:0})
-}
-},[item?.photo])
+useEffect(() => {
+
+  
+  if (item?.photo !== undefined && item?.photo !== null) {
+    try {
+      RNimage.getSize(
+        item.photo,
+        (width, height) => {
+          const ratio = width / height;
+          const newHeight = screenSize.width / ratio;
+          setImgSize({ width: screenSize.width - 96, height: newHeight });
+          console.log(width, height, 'width, height');
+        },
+        (error) => {
+          console.log('Failed to get size for image', error);
+          setImgSize({ width: 0, height: 0 }); // 이미지가 유효하지 않으면 크기를 0으로 설정
+        }
+      );
+    } catch (error) {
+      console.log('Error getting image size', error);
+      setImgSize({ width: 0, height: 0 }); // 예외 발생 시 크기를 0으로 설정
+    }
+  } else {
+    setImgSize({ width: 0, height: 0 });
+  }
+}, [item?.photo]);
+
+
 
 const handleDeleted = async () => {
   deletedMuation.mutate(
@@ -66,7 +79,7 @@ const handleEditBtn = async () => {
 
 
   return (
-    <ScrollView style={{borderRadius:21}}>
+    <ScrollView style={{borderRadius:21,paddingBottom:50}}>
     <View style={{marginBottom:50,backgroundColor:colors.inputBk,width:screenSize.width-48,borderRadius:24,alignItems:'center'}}>
      
     <View style={{flexDirection:'row',marginTop:0,marginBottom:0,height:67,width:screenSize.width-140,justifyContent:'space-around',alignItems:'center',marginLeft:'35%'}}>

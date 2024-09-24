@@ -7,10 +7,13 @@ import { useDateContext } from '~/context/DataContext';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Octicons from '@expo/vector-icons/Octicons';
 import { HeaderL } from '~/utils/Icons';
-const Header = ({day,headerTitle}:any) => {
+const Header = ({day,headerTitle,setShowListMode,showListMode}:any) => {
   const {colors}=useTheme()
   const navigation = useNavigation<any>();
   // const {headerTitle}=useDateContext()
+  const handleListModeBtn=()=>{
+    setShowListMode(!showListMode)
+  }
   console.log(day,'header')
   return (
     <View style={{flexDirection:'column',paddingTop:64,backgroundColor:colors.background,width:width-48}}>
@@ -19,8 +22,13 @@ const Header = ({day,headerTitle}:any) => {
     <View style={{flexDirection:'row'}}>
 
   
-    <TouchableOpacity onPress={() => (navigation as any).navigate('setting')}>
-    <HeaderL color={colors.text}/>
+    <TouchableOpacity onPress={handleListModeBtn}>
+      {
+        !showListMode?    <HeaderL color={colors.text}/>
+        :
+        <Octicons name="calendar" size={16} color="black" />
+      }
+
 
     </TouchableOpacity>
     <TouchableOpacity style={{marginLeft:16}} onPress={() => (navigation as any).navigate('setting')}>

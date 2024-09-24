@@ -85,7 +85,7 @@ const handleMonthChange = useCallback(
     const newYear = months[0].year;
     const newMonth = months[0].month;
   
-
+console.log(months,'months')
     // 상태를 업데이트하여 현재 월을 관리
     setCurrentMonth({ year: newYear, month: newMonth });
 
@@ -106,25 +106,10 @@ setLines(checkLines)
   setMonthF(newMonth)
      setHeaderTitle(header);
    
-  }, 300), // 500ms의 간격으로 throttle 적용
+  }, 1800), // 500ms의 간격으로 throttle 적용
   []
 );
 
-
-// const onMomentumScrollEnd = () => {
-
-//   if (calendarRef.current) {
-//     const { year, month }: any = currentMonth;
-
-//     if (year && month) {
-//       const currentDay = new Date(year, month - 1, 1);
-
-     
-  
-//       calendarRef.current.scrollToMonth(currentDay, 1, false);
-//     }
-//   }
-// };
 
 
 
@@ -132,57 +117,59 @@ function changedColor(){
 return colors.background as any
 }
 
-// const renderHeader = (day: any) => {
-//   const month = new Date(day)
-//   const header = month.toLocaleDateString('en-US', { month: 'long'});
-//   const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
-//   return (
-   
-//     <View style={{flexDirection: 'row', justifyContent: 'center', backgroundColor: 'red', width: width - 48 ,marginTop:-9,marginBottom:-15}}>
-//     {weekDays.map((day, index) => (
-//       <Text key={index} style={[styles.weekNameText,{color:colors.text}]}>
-//         {day}
-//       </Text>
-//     ))}
-//   </View>
-//   );
-// };
 
 
+const onMomentumScrollEnd = () => {
+
+  if (calendarRef.current) {
+    const { year, month }: any = currentMonth;
+console.log(year,month,'year,month')
+    if (year && month) {
+      const currentDay = new Date(year, month - 1, 1);
+
+     
+  
+      calendarRef.current.scrollToMonth(currentDay, 1, false);
+    }
+  }
+};
 
 
 
-const fixedHeight=height>=932?height/2.26:height/2.15
+const fixedHgSize=height *0.576
+const fixedHeight=height>=932?height *0.589:height *0.61
 
   return (
     < >
   <CalendarList
-        //  ref={calendarRef}
+         ref={calendarRef}
         horizontal={true}
           enableSwipeMonths={true}
            dayComponent={({ date, state }: any) => <RenderDay day={date} month={month} triggerAnimation={triggerAnimation} letBoxDown={letBoxDown} />}
             renderHeader={(day: any) => <DaynameHeader />}
-       style={{width:width ,height:verticalScale(fixedHeight),backgroundColor:colors.background}}
+       style={{width:width ,height:fixedHeight,backgroundColor:colors.background}}
           onVisibleMonthsChange={(months: any) => {
            
             handleMonthChange(months);
           }}
-          // pastScrollRange={14}
-          // futureScrollRange={14}
+          pastScrollRange={14}
+          futureScrollRange={14}
           pagingEnabled={true}  
-          // snapToInterval={width-48}  
+          snapToInterval={width-48}  
           scrollEnabled={true}
             hideDayNames={true}
+             snapToAlignment="center" 
+          scrollEventThrottle={16}  
+          onMomentumScrollEnd={onMomentumScrollEnd} 
             
-           
-           maxDate={`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`}
+           maxDate={'2025-12-31'}
+          // maxDate={`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`}
            minDate={'2021-01-01'}
           hideExtraDays={false}
          
-          // showWeekNumbers={false}
-          // initialNumToRender={10}
-         // maxToRenderPerBatch={10}
+          showWeekNumbers={false}
+          initialNumToRender={10}
+         maxToRenderPerBatch={10}
     
           // customHeader={(day: any) => <Header headerTitle={headerTitle} day={day} />}
         firstDay={1}
