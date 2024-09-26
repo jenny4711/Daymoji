@@ -26,58 +26,14 @@ return daysData
  
 };
 
-// export const getAdayData=async({date}:any)=>{
-// try{
 
-
-//   const email = await AsyncStorage.getItem('email');
-//   const month=parseInt(date.split('-')[1], 10).toString()
-//  console.log(month,'date,month!!!!') 
-// const daysCollectionRef = collection(FIRESTORE_DB, `users/${email}/${month}`);
-// const daysQuery = query(daysCollectionRef, where('date', '==', date));
-
-// const daysSnapshot = await getDocs(daysQuery);
-// const daysData = daysSnapshot.docs.map((doc) => doc.data() as any);
-// console.log( daysData[0],'daysData[0]')
-// return daysData[0] ||null
-
-// }catch(error){console.log(error,'getAdayData')}
-
-
-
-
-
-// }
-
-
-export const getAdayData = async ({ date }: any) => {
-  try {
-    const email = await AsyncStorage.getItem('email');
-    const month = parseInt(date.split('-')[1], 10).toString();
-    console.log(month, 'date, month!!!!');
-
-    const daysCollectionRef = collection(FIRESTORE_DB, `users/${email}/${month}`);
-    const daysQuery = query(daysCollectionRef, where('date', '==', date));
-    const daysSnapshot = await getDocs(daysQuery);
-    const daysData = daysSnapshot.docs.map((doc) => doc.data() as any);
-
-    console.log(daysData[0], 'daysData[0]');
-
-    // 데이터가 없을 경우 빈 객체라도 반환
-    return daysData[0] || { emotion: null, story: null, photo: null };
-
-  } catch (error) {
-    console.log(error, 'getAdayData');
-    return { emotion: null, story: null, photo: null };  // 에러 발생 시에도 기본값 반환
-  }
-};
 
 
 
 export   const saveDiaryEntry = async ({date,emotion,story,photo,email,month}:any) => {
   try {
     const email = await AsyncStorage.getItem('email');
-    console.log(email,'email')
+ 
     // const email=await AsyncStorage.getItem('email')
     const data = {
       date,
@@ -202,7 +158,7 @@ export const deletedAllItem= async (month:any) => {
 //image uploading
 export const uploadImageStorage = async (uri: any, fileType: any) => {
   try {
-    console.log(uri,'uri!!!!!')
+ 
     const res = await fetch(uri);
     const blob = await res.blob();
      const email = await AsyncStorage.getItem('email');
@@ -234,3 +190,6 @@ export const uploadImageStorage = async (uri: any, fileType: any) => {
     throw error;
   }
 };
+
+
+

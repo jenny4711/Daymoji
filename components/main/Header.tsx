@@ -7,28 +7,20 @@ import { useDateContext } from '~/context/DataContext';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Octicons from '@expo/vector-icons/Octicons';
 import { HeaderL } from '~/utils/Icons';
-const Header = ({day,headerTitle,setShowListMode,showListMode}:any) => {
+const Header = ({day,showListMode,setShowListMode}:any) => {
   const {colors}=useTheme()
   const navigation = useNavigation<any>();
-  // const {headerTitle}=useDateContext()
-  const handleListModeBtn=()=>{
-    setShowListMode(!showListMode)
-  }
-  console.log(day,'header')
+  const {headerTitle}=useDateContext()
+  console.log(headerTitle,'header')
   return (
-    <View style={{flexDirection:'column',paddingTop:64,backgroundColor:colors.background,width:width-48}}>
-    <View style={[styles.header]}>
+    <View style={{flexDirection:'column',marginTop:64}}>
+    <View style={[styles.header,{marginBottom:40}]}>
     <Text style={[styles.headerText, { color: colors.text }]}>{headerTitle}</Text>
     <View style={{flexDirection:'row'}}>
 
   
-    <TouchableOpacity onPress={handleListModeBtn}>
-      {
-        !showListMode?    <HeaderL color={colors.text}/>
-        :
-        <Octicons name="calendar" size={16} color="black" />
-      }
-
+    <TouchableOpacity onPress={() => (navigation as any).navigate('setting')}>
+    <HeaderL color={colors.text}/>
 
     </TouchableOpacity>
     <TouchableOpacity style={{marginLeft:16}} onPress={() => (navigation as any).navigate('setting')}>
@@ -37,46 +29,6 @@ const Header = ({day,headerTitle,setShowListMode,showListMode}:any) => {
     </View>
 </View>
 
-
-{/* <View style={{flexDirection:'row',marginBottom:10,width:width-48,justifyContent:'space-around'}}>
-<View style={{width:(width-48)/7,alignItems:'center'}}>
- <Text style={{color:colors.text,marginRight:11,fontFamily:'SFCompactRoundedBD',fontSize:12}}>M</Text>
- </View>
- 
- <View style={{width:(width-48)/7}}>
- <Text style={{color:colors.text,marginLeft:15,fontFamily:'SFCompactRoundedBD',fontSize:12}} >T</Text>
- </View>
-
- <View style={{width:(width-48)/7}}>
- <Text style={{color:colors.text,marginLeft:15 ,fontFamily:'SFCompactRoundedBD',fontSize:12}} >W</Text>
- </View>
-
- 
- <View style={{width:(width-48)/7}}>
- <Text style={{color:colors.text,marginLeft:19 ,fontFamily:'SFCompactRoundedBD' ,fontSize:12}} >T</Text>
- </View>
-
- <View style={{width:(width-48)/7}}>
- <Text style={{color:colors.text,marginLeft:21 ,fontFamily:'SFCompactRoundedBD' ,fontSize:12}} >F</Text>
- </View>
-
-
- <View style={{width:(width-48)/7}}>
- <Text style={{color:colors.text,marginLeft:23 ,fontFamily:'SFCompactRoundedBD' ,fontSize:12}} >S</Text>
- </View>
-
- 
- <View style={{width:(width-48)/7}}>
- <Text style={{color:colors.text,marginLeft:24 ,fontFamily:'SFCompactRoundedBD' ,fontSize:12}} >S</Text>
- </View>
- 
-
-
-
-
-
-
-  </View> */}
   </View>
   )
 }

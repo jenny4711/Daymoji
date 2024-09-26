@@ -34,16 +34,18 @@ const [showData,setShowData]=useState<any>(false)
 const [photo,setPhoto]=useState<any>('')
 const [story,setStory]=useState<any>('')
 const [emotion,setEmotion]=useState<any>('')
+const [year,setYear]=useState<any>('')
 const addMutation=useSaveData({date,month})
 const deletedMuation=useDeletedData({date,month})
 const [save,setSave]=useState<any>(false)
 const {data}=useData(month)
 
+// dateformat -> 2022-01-01
+//monthformat->1
 
 
-
-
-
+console.log(date,'date')
+console.log(month,'month')
 
 
 useEffect(()=>{
@@ -60,7 +62,7 @@ useEffect(() => {
     year: 'numeric',
   });
   setShowDate(header);
-
+setYear(year)
 }, [date]);
 
 
@@ -84,7 +86,7 @@ async function doneHandler(){
     return;
   }
  setSave(true)
-  addMutation.mutate({date,emotion,story,photo,email,month})
+  addMutation.mutate({date,emotion,story,photo,email,month,year})
   setShowDone(false)
    queryClient.invalidateQueries({ queryKey: ['data'] });
    setVisible(true)

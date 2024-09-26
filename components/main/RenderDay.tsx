@@ -8,11 +8,11 @@ import { useData } from '~/hooks/useData';
 
 const { width, height } = Dimensions.get('window'); // 화면의 너비와 높이 가져오기
 
-const RenderDay = ({ day, month, triggerAnimation, letBoxDown }: any) => {
+const RenderDay = ({ day, month, triggerAnimation, letBoxDown ,data}: any) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const { dateF, setDateF, setNewAData, setOrgDate } = useDateContext();
-  const { data } = useData(day.month);
+  // const { data } = useData(day.month);
   const [defaultDate, setDefaultDate] = useState('');
   const isCurrentMonth = day.month === month;
   const isAfterCurrentDay = new Date(day.dateString) > new Date();
@@ -75,6 +75,9 @@ const RenderDay = ({ day, month, triggerAnimation, letBoxDown }: any) => {
   const isDisabled = useMemo(() => !isCurrentMonth || isAfterCurrentDay, []);
   const entry = useMemo(() => {
     const dateKey = day.dateString;
+    console.log(dateKey,'dateKey')
+    console.log(data,'data')
+
     return data ? data.find((item: any) => item.date === dateKey) : null;
   }, [day.dateString, data]);
 
@@ -90,7 +93,7 @@ const RenderDay = ({ day, month, triggerAnimation, letBoxDown }: any) => {
       {emotion && isCurrentMonth ? (
         <TouchableOpacity
           activeOpacity={1}
-          onPress={isCurrentMonth ? handleBtn : () => console.log('none')}
+           onPress={isCurrentMonth ? handleBtn : () => console.log('none')}
           style={{
             width: circleSize,
             height: circleSize,
@@ -106,7 +109,7 @@ const RenderDay = ({ day, month, triggerAnimation, letBoxDown }: any) => {
       ) : (
         <TouchableOpacity
           activeOpacity={1}
-          onPress={isCurrentMonth ? handleBtn : () => console.log('none')}
+           onPress={isCurrentMonth ? handleBtn : () => console.log('none')}
           style={{
             width: circleSize,
             height: circleSize,
@@ -128,3 +131,7 @@ const RenderDay = ({ day, month, triggerAnimation, letBoxDown }: any) => {
 };
 
 export default RenderDay;
+
+
+
+

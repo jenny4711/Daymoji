@@ -24,11 +24,14 @@ interface DateContextType {
   setHeaderTitle:(title:any)=>void
   visible:any
   setVisible:(visible:any)=>void
+  yearF:any
+  setYearF:(year:any)=>void
 }
 
 const DateContext = createContext<DateContextType>('' as any);
 
 export const DateProvider = ({ children }: any) => {
+  const [yearF, setYearF] = useState('' as any);
   const [monthF, setMonthF] = useState('' as any);
   const [dateF, setDateF] = useState('' as any);
   const [orgDate,setOrgDate]=useState({} as any)
@@ -39,18 +42,18 @@ const [email,setEmail]=useState('' as any)
 const [token,setToken]=useState('' as any)
 const [headerTitle,setHeaderTitle]=useState('' as any)
 const [visible,setVisible]=useState(false)
- useEffect(()=>{
-  if(dateF !== '' ){
+//  useEffect(()=>{
+//   if(dateF !== '' ){
   
-    const showDate = orgDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' ,day:'numeric'});
+//     const showDate = orgDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' ,day:'numeric'});
   
-    setDateWithLang(showDate)
+//     setDateWithLang(showDate)
     
-  }
-},[dateF])
+//   }
+// },[dateF])
 
   return (
-    <DateContext.Provider value={{visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
+    <DateContext.Provider value={{yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
       {children}
     </DateContext.Provider>
   );

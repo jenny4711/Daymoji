@@ -18,6 +18,7 @@ const Main = () => {
   const {colors}=useTheme()
   const [lines,setLines]=useState(0)
   const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle} = useDateContext();
+  console.log(newAData,'newAData')
 const [showListMode,setShowListMode]=useState(false)
   const translateY = useSharedValue(0); // 애니메이션 상태
 const navigation = useNavigation<any>();
@@ -30,7 +31,7 @@ const navigation = useNavigation<any>();
     // // RenderDay에서 애니메이션 트리거 시 실행될 함수
     const triggerAnimation = (shouldShow: boolean) => {
       setVisible(shouldShow); // RenderDay에서 클릭에 따라 상태 업데이트
-  
+  console.log(shouldShow,'shouldShow')
       // 애니메이션 실행
       translateY.value = withSequence(
         withTiming(shouldShow ? 410 : 0, { duration: 300 ,easing: Easing.out(Easing.exp),}), // 박스 내려오기/올라가기
@@ -63,12 +64,12 @@ const navigation = useNavigation<any>();
 
 
 
-
+console.log(lines,'lines')
 
 const plusBtnSize=width *0.1527
 const plusBtnMgTop=height *0.1620
-const topSize =height *-0.07
-const topSize5=height * 0.021
+const topSize =height *-0.071
+const topSize5=height * 0
 const fixedTopSize=height>=932?moderateScale(-70):moderateScale(-47)
 const fixedButtonMg=height>=932?moderateScale(190):moderateScale(135)
 
@@ -83,10 +84,10 @@ const fixedButtonMg=height>=932?moderateScale(190):moderateScale(135)
       <ScrollView showsVerticalScrollIndicator={false}  style={{ backgroundColor:colors.background,height:height}}>
       
 
-        <Animated.ScrollView style={{marginTop:0,backgroundColor:colors.background}}>
+        <Animated.ScrollView style={{marginTop:0,}}>
           {
             showListMode?<ListMode />
-            :          <Calendars lines={lines} setLines={setLines} setVisible={setVisible} visible={visible} triggerAnimation={triggerAnimation} letBoxDown={letBoxDown} />
+            :          <Calendars lines={lines} setLines={setLines} letBoxDown={letBoxDown} triggerAnimation={triggerAnimation}  />
           }
 
 
@@ -97,7 +98,7 @@ const fixedButtonMg=height>=932?moderateScale(190):moderateScale(135)
 
       { 
       //  <Animated.View style={[{borderRadius:21,alignItems:'center',marginTop:lines>5?0:-78},animatedStyle]}></Animated.View>
-        visible?  <Animated.View style={[{borderRadius:21,alignItems:'center',marginTop:lines>5?topSize5: topSize},animatedStyle]}>
+        visible?  <Animated.View style={[{borderRadius:21,alignItems:'center',marginTop:lines>5?24: topSize},animatedStyle]}>
             <DetailMode visible={visible} date={dateF} item={newAData} newDate={dateWithLang} />
           </Animated.View>:
           <View style={{justifyContent:'center',alignItems:'center',marginTop:plusBtnMgTop}}>
@@ -117,4 +118,3 @@ const fixedButtonMg=height>=932?moderateScale(190):moderateScale(135)
 }
 
 export default Main
-
