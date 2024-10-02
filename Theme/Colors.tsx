@@ -3,7 +3,8 @@ export const lightColors={
   text:'black',
   background:'white',
   inputBk:'#0000001A',
-  inputBk2:'#0000000D'
+  inputBk2:'#0000000D',
+  inputWithoutEm:'#00000033'
 
 
 }
@@ -13,7 +14,8 @@ export const darkColors={
   text:'white',
   background:'black',
    inputBk:'#FFFFFF1A',
-  inputBk2:'#FFFFFF0D'
+  inputBk2:'#FFFFFF0D',
+  inputWithoutEm:'#FFFFFF33'
 }
 //black
 //opacity0.05 == #0000000D  

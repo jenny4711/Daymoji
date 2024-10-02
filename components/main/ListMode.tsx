@@ -12,7 +12,7 @@ const ListMode = () => {
   const {colors}=useTheme()
   console.log(data,'listMode-data')
   return (
-    <View style={{backgroundColor:colors.background,justifyContent:'center'}}>
+    <View style={{backgroundColor:colors.background}}>
       {
         data?.map((item:any,idx:any)=>(
           <ListModeItem key={idx} item={item} />
@@ -22,7 +22,7 @@ const ListMode = () => {
 
 
       }
-      <Text>ListMode</Text>
+   
     </View>
   )
 }

@@ -1,7 +1,7 @@
 import {TouchableOpacity, View, Text ,Alert,SafeAreaView ,Dimensions , Image as RNimage} from 'react-native'
 import React ,{useEffect,useState}from 'react'
 import { useTheme } from '~/Theme/ThemeProvider'
-import { useAdayData, useDeletedData } from '~/hooks/useData'
+import {  useDeletedData } from '~/hooks/useData'
 import Animated,{FadeInLeft,FadeInRight,FadeInUp,Easing,useAnimatedStyle,useSharedValue,withTiming,SlideInDown, SlideOutDown,} from 'react-native-reanimated'
 // import AddPhoto from './AddPhoto'
 import { useQueryClient } from '@tanstack/react-query';
@@ -11,20 +11,22 @@ import EmotionSticker from '../EmotionSticker'
 import { Image ,ImageLoadEventData} from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler'
+import { deleteImageStorage } from '~/utils/fireStoreFn'
+import { set } from 'lodash'
 const {width,height}=Dimensions.get('window')
-const DetailMode = ({date,newDate,item,currentDateForm}:any) => {
+const DetailMode = ({date,item,currentDateForm}:any) => {
   const {colors,dark}=useTheme()
-  const { monthF,setVisible} = useDateContext();
+  const { monthF,setVisible,setNewAData} = useDateContext();
 const screenSize = Dimensions.get('window');
 const queryClient = useQueryClient();
 const navigation=useNavigation()
-
+const newDate=new Date(date ).toLocaleString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone: 'UTC', })
 const deletedMuation=useDeletedData({date,monthF})
   // ----------flexible image size----------
 const [imgSize,setImgSize]=useState({width:0,height:0})
 
 useEffect(() => {
-
+console.log(item?.photo,'item?.photo')
   
   if (item?.photo !== undefined && item?.photo !== null) {
     try {
@@ -33,8 +35,9 @@ useEffect(() => {
         (width, height) => {
           const ratio = width / height;
           const newHeight = screenSize.width / ratio;
+          const newWeight = screenSize.width/ratio
           setImgSize({ width: screenSize.width - 96, height: newHeight });
-          console.log(width, height, 'width, height');
+          console.log(screenSize.width, 'width, height');
         },
         (error) => {
           console.log('Failed to get size for image', error);
@@ -53,16 +56,20 @@ useEffect(() => {
 
 
 const handleDeleted = async () => {
+  await deleteImageStorage(item?.photo)
   deletedMuation.mutate(
     { date, month:monthF },
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['data', monthF] });
+     
       
-
+     
       
         (navigation as any).navigate('main');
         setVisible(false)
+        setNewAData(null)
+       
 
       
       },
@@ -79,7 +86,7 @@ const handleEditBtn = async () => {
 
 
   return (
-    <ScrollView style={{borderRadius:21,paddingBottom:50}}>
+    <ScrollView style={{borderRadius:21,paddingBottom:100}}>
     <View style={{marginBottom:50,backgroundColor:colors.inputBk,width:screenSize.width-48,borderRadius:24,alignItems:'center'}}>
      
     <View style={{flexDirection:'row',marginTop:0,marginBottom:0,height:67,width:screenSize.width-140,justifyContent:'space-around',alignItems:'center',marginLeft:'35%'}}>
@@ -109,15 +116,19 @@ const handleEditBtn = async () => {
       <Text style={{fontFamily:'SFCompactRoundedBD',fontSize:16,color:colors.text,paddingVertical:24,paddingLeft:24}}>{item?.story}</Text>
 
       </View>
-      {item?.photo? 
-        <View style={{marginTop:16,height:imgSize.height+16}}>
+      {item && item.photo? 
+        <View style={{height: imgSize.height*.77 ,borderRadius:25,overflow: 'hidden',alignItems:'center',justifyContent:'flex-start',marginBottom:20}}>
        <Image
-        contentFit="cover" 
+        contentFit='contain' 
          source={{uri:item?.photo}}
-          style={{height:imgSize.height,width:imgSize.width,borderRadius:24}}
+      
+          style={{height:imgSize.height*.77,width:imgSize.width,borderRadius: 25,overflow: 'hidden'}}
+       
+     
+        
         
           />
-          </View>
+           </View>
           :
           null
           }

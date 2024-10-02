@@ -1,5 +1,5 @@
 import React, { useState,  useEffect } from 'react';
-import { StyleSheet, Text,  View, Linking } from 'react-native';
+import { StyleSheet, Text,  View, Linking,Button } from 'react-native';
 import Login from '~/components/auth/Login';
 import { Platform } from 'react-native';
 import { FIREBASE_AUTH } from '../config/firebase';
@@ -15,6 +15,7 @@ import Logo from '../components/auth/Logo';
 import { Dimensions } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
 import Head from 'expo-router/head';
+import { saveIsToday,updateIsToday } from '~/utils/fireStoreFn';
 const {width,height}=Dimensions.get('window')
 
 
@@ -31,6 +32,29 @@ const [open,setOpen] = useState<boolean>(false)
   const [userInfo, setUserInfo] = useState<any>(null);
   const {email,setEmail,token,setToken}=useDateContext()
 const {colors}=useTheme() 
+const today = new Date()
+const month = today.getMonth()+1
+const year = today.getFullYear()
+const date = today.getDate()
+
+const dateS = date < 10 ? `0${date}` : date;
+const monthS = month < 10 ? `0${month}` : month;
+const currentDate = `${year}-${monthS}-${dateS}`
+// 어제 날짜 계산 (Date 객체를 사용하여 날짜를 조작)
+const yesterdayDateObj = new Date(today); // 오늘 날짜를 복사
+yesterdayDateObj.setDate(today.getDate() - 1); // 어제로 설정
+
+// 어제 날짜 형식화
+const yesterdayDate = yesterdayDateObj.getDate();
+const yesterdayMonth = yesterdayDateObj.getMonth() + 1;
+const yesterdayYear = yesterdayDateObj.getFullYear();
+const yesterdayDateS = yesterdayDate < 10 ? `0${yesterdayDate}` : yesterdayDate;
+const yesterdayMonthS = yesterdayMonth < 10 ? `0${yesterdayMonth}` : yesterdayMonth;
+const yesterday = `${yesterdayYear}-${yesterdayMonthS}-${yesterdayDateS}`;
+console.log("Today:", monthS);
+console.log("Yesterday:",yesterdayMonth);
+
+
   const clientID = Platform.OS === 'ios' 
   ? process.env.EXPO_PUBLIC_IOS_CLIENT_ID
   : process.env.EXPO_PUBLIC_WEB_CLIENT_ID;
@@ -45,7 +69,7 @@ const {colors}=useTheme()
  
    });
 const navigation = useNavigation<any>();
-console.log(width,height)
+
 
   useEffect(() => {
     if (response?.type === 'success') {
@@ -66,7 +90,7 @@ console.log(width,height)
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (user:any) => {
    
       if (user) {
-       console.log(user,'user')
+      
         setUserInfo(user);
        const token = user.stsTokenManager?.accessToken
       const email = user?.email
@@ -78,8 +102,15 @@ if(Platform.OS === 'web'){
 }else{
   await AsyncStorage.setItem('token',token)
   await AsyncStorage.setItem('email',email)
+
   setEmail(email)
   setToken(token)
+  
+    await updateIsToday({date:yesterday,month:yesterdayMonth,isToday:false})
+    await saveIsToday({date:currentDate,month,isToday:true})
+
+
+
 }
    
     
@@ -136,7 +167,7 @@ const openService =async () => {
          <Logo/>
           <Text style={[styles.title,{color:colors.text,fontFamily:"SFCompactRoundedBD",marginTop:8}]}>Daymoji</Text>
           </View>
-        
+        <Button title='testBtn' onPress={()=>(navigation as any).navigate('main')}/>
        
            </View>
       

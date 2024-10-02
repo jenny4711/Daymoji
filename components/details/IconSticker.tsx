@@ -64,7 +64,8 @@ const IconSticker = ({setEmotion,emotion}:any) => {
 
 
   return (
-    <Animated.View entering={FadeInLeft.duration(500).easing(Easing.ease)} style={[styles.container, { backgroundColor: colors.background }]}>
+    // <Animated.View entering={FadeInLeft.duration(500).easing(Easing.ease)} style={[styles.container, { backgroundColor: colors.background }]}>
+     <Animated.View style={[styles.container, { backgroundColor: colors.background }]}>
       {['Veryhappy', 'happy', 'neutral', 'sad', 'worst'].map((em, index) => (
         <View key={index} style={[
           styles.iconBtnView,
@@ -93,10 +94,11 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     flexDirection: 'row',
     height: 60,
-    width: width - 48,
+    width: width *.84,
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 16,
+   
   },
   iconBtnView: {
     width: 60,

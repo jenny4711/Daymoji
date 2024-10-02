@@ -11,17 +11,27 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import DetailMode from '~/components/main/DetailMode';
 import ListMode from '~/components/main/ListMode';
 import { ScaledSheet,scale, verticalScale, moderateScale } from 'react-native-size-matters';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming, withSequence,Easing } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, withSequence,Easing ,runOnJS} from 'react-native-reanimated';
 const {width,height}=Dimensions.get('window')
 import { useDateContext } from '~/context/DataContext';
 const Main = () => {
   const {colors}=useTheme()
   const [lines,setLines]=useState(0)
   const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle} = useDateContext();
-  console.log(newAData,'newAData')
+ 
 const [showListMode,setShowListMode]=useState(false)
   const translateY = useSharedValue(0); // 애니메이션 상태
 const navigation = useNavigation<any>();
+
+useEffect(()=>{
+  if(newAData && !visible){
+    triggerAnimation(true)
+  }
+},[newAData])
+
+
+
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateY: translateY.value }],
@@ -31,23 +41,53 @@ const navigation = useNavigation<any>();
     // // RenderDay에서 애니메이션 트리거 시 실행될 함수
     const triggerAnimation = (shouldShow: boolean) => {
       setVisible(shouldShow); // RenderDay에서 클릭에 따라 상태 업데이트
-  console.log(shouldShow,'shouldShow')
+
       // 애니메이션 실행
       translateY.value = withSequence(
-        withTiming(shouldShow ? 410 : 0, { duration: 300 ,easing: Easing.out(Easing.exp),}), // 박스 내려오기/올라가기
-        withTiming(0, { duration: 410 ,easing: Easing.bezier(0.42, 0, 0.58, 1),}) 
+        withTiming(shouldShow ? 410 : 0, { duration: 500 ,easing: Easing.out(Easing.exp),}), // 박스 내려오기/올라가기
+        withTiming(0, { duration: 500 ,easing: Easing.bezier(0.42, 0, 0.58, 1),}) 
       
       );
     };
 
-    const letBoxDown=(shouldShow:boolean)=>{
-      // setVisible(shouldShow)
-      translateY.value = withTiming(shouldShow?0:430, { duration: 300 ,easing: Easing.out(Easing.exp),})
-      // setTimeout(()=>{
-      //   setVisible(shouldShow)
-      // },300)
-      // setVisible(shouldShow)
-    }
+    // const letBoxDown=(shouldShow:boolean)=>{
+    //   console.log('letBoxDown')
+    //   setVisible(shouldShow)
+    //   translateY.value = withTiming(shouldShow?0:410, { duration: 1000 ,easing: Easing.out(Easing.exp),})
+    //   setTimeout(()=>{
+    //     setVisible(shouldShow)
+    //   },300)
+    //   // setVisible(shouldShow)
+    // }
+
+    const letBoxDown = (shouldShow: boolean) => {
+      console.log('letBoxDown called with', shouldShow); // 디버깅용 로그 추가
+    
+      // 애니메이션 시작
+      translateY.value = withTiming(
+        shouldShow ? 0 : 410, // 목표 위치
+        { duration: 800, easing: Easing.out(Easing.exp) }, // 애니메이션 설정
+        (finished) => {
+          if (finished) {
+            // console.log('Animation finished, calling setVisible');
+            // 애니메이션이 끝난 후 JS 스레드에서 상태 업데이트 (UI 스레드에서 실행하지 않음)
+            runOnJS(setVisible)(shouldShow);
+          } else {
+            // console.log('Animation interrupted');
+          }
+        }
+      );
+    };
+
+    
+
+    
+
+   
+    
+
+
+
 
     const currentDateForm = () => {
       const date = new Date();
@@ -64,7 +104,7 @@ const navigation = useNavigation<any>();
 
 
 
-console.log(lines,'lines')
+
 
 const plusBtnSize=width *0.1527
 const plusBtnMgTop=height *0.1620
@@ -81,7 +121,7 @@ const fixedButtonMg=height>=932?moderateScale(190):moderateScale(135)
     </Head>
    
     <Header headerTitle={headerTitle} day={dateF} showListMode={showListMode} setShowListMode={setShowListMode}/>
-      <ScrollView showsVerticalScrollIndicator={false}  style={{ backgroundColor:colors.background,height:height}}>
+      <ScrollView showsVerticalScrollIndicator={false}  style={{ backgroundColor:colors.background}}>
       
 
         <Animated.ScrollView style={{marginTop:0,}}>
@@ -97,11 +137,11 @@ const fixedButtonMg=height>=932?moderateScale(190):moderateScale(135)
 
 
       { 
-      //  <Animated.View style={[{borderRadius:21,alignItems:'center',marginTop:lines>5?0:-78},animatedStyle]}></Animated.View>
+
         visible?  <Animated.View style={[{borderRadius:21,alignItems:'center',marginTop:lines>5?24: topSize},animatedStyle]}>
-            <DetailMode visible={visible} date={dateF} item={newAData} newDate={dateWithLang} />
+            <DetailMode visible={visible} date={dateF} item={newAData}  />
           </Animated.View>:
-          <View style={{justifyContent:'center',alignItems:'center',marginTop:plusBtnMgTop}}>
+          <View style={{justifyContent:'center',alignItems:'center',marginTop:plusBtnMgTop,marginBottom:200}}>
           <TouchableOpacity onPress={currentDateForm} style={{justifyContent: 'center', alignItems: 'center', backgroundColor: colors.text, width: plusBtnSize, height: plusBtnSize, borderRadius: 100 }}>
             <Fontisto name="plus-a" size={16} color={colors.background} />
           </TouchableOpacity>

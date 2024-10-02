@@ -1,5 +1,5 @@
 import { Dimensions, View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import React from 'react'
+import React,{useEffect} from 'react'
 import { useTheme } from '~/Theme/ThemeProvider'
 import { useNavigation } from '@react-navigation/native';
 const {width,height}=Dimensions.get('window')
@@ -11,7 +11,7 @@ const Header = ({day,showListMode,setShowListMode}:any) => {
   const {colors}=useTheme()
   const navigation = useNavigation<any>();
   const {headerTitle}=useDateContext()
-  console.log(headerTitle,'header')
+ 
   return (
     <View style={{flexDirection:'column',marginTop:64}}>
     <View style={[styles.header,{marginBottom:40}]}>
@@ -19,8 +19,13 @@ const Header = ({day,showListMode,setShowListMode}:any) => {
     <View style={{flexDirection:'row'}}>
 
   
-    <TouchableOpacity onPress={() => (navigation as any).navigate('setting')}>
-    <HeaderL color={colors.text}/>
+    <TouchableOpacity onPress={() => setShowListMode(!showListMode)}>
+      {showListMode?
+      <Octicons name="calendar" size={16} color="black" />
+      :
+      <HeaderL color={colors.text}/>
+    }
+   
 
     </TouchableOpacity>
     <TouchableOpacity style={{marginLeft:16}} onPress={() => (navigation as any).navigate('setting')}>

@@ -11,7 +11,7 @@ import { useTheme } from '~/Theme/ThemeProvider'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import ShowDetail from '~/components/details/ShowDetail'
 import { useQueryClient } from '@tanstack/react-query';
-
+import { Image } from 'expo-image'
 export async function generateStaticParams():Promise<Record<string,string>[]>{
 return [
   {date:'2022-01-01'},
@@ -22,7 +22,7 @@ return [
 }
 const Detail = () => {
   const { date, month }: any = useLocalSearchParams();
-  const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle} = useDateContext();
+  const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData} = useDateContext();
   const queryClient = useQueryClient();
 const navigation=useNavigation()
 
@@ -32,8 +32,8 @@ const [showDate,setShowDate]=useState<any>('')
 const [email,setEmail]=useState<any>('')
 const [showData,setShowData]=useState<any>(false)
 const [photo,setPhoto]=useState<any>('')
-const [story,setStory]=useState<any>('')
-const [emotion,setEmotion]=useState<any>('')
+const [story,setStory]=useState<any>( '')
+const [emotion,setEmotion]=useState<any>( '')
 const [year,setYear]=useState<any>('')
 const addMutation=useSaveData({date,month})
 const deletedMuation=useDeletedData({date,month})
@@ -43,13 +43,12 @@ const {data}=useData(month)
 // dateformat -> 2022-01-01
 //monthformat->1
 
+console.log(story,'story')
 
-console.log(date,'date')
-console.log(month,'month')
 
 
 useEffect(()=>{
-       const isData = Array.isArray(data) ? data.some((item: any) => item.date === date) : false;
+       const isData = Array.isArray(data) ? data.some((item: any) => item.date === date && item.emotion !== undefined) : false;
         setShowData(isData)
 },[date,data])
 
@@ -67,15 +66,18 @@ setYear(year)
 
 
 
+useEffect(()=>{
+  if(newAData.date===date){
+    console.log(newAData,'newAdata')
+    setStory(newAData?.story)
+    setPhoto(newAData?.photo)
+    setEmotion(newAData?.emotion)
+  }
+},[newAData])
 
 
 
 
-function editHanlder(){
-  setShowDone(true)
-
-
-}
 
 async function doneHandler(){
   const email=await AsyncStorage.getItem('email')
@@ -86,9 +88,10 @@ async function doneHandler(){
     return;
   }
  setSave(true)
-  addMutation.mutate({date,emotion,story,photo,email,month,year})
+  addMutation.mutate({date,emotion,story,photo,email,month})
   setShowDone(false)
    queryClient.invalidateQueries({ queryKey: ['data'] });
+   setNewAData({date,emotion,story,photo,email,month})
    setVisible(true)
 
  return  (navigation as any).navigate('main')
@@ -123,7 +126,7 @@ const handleDeleted = async () => {
   return (
     
     <SafeAreaView style={{backgroundColor:colors.background}}>
-         <View style={[{alignItems:'flex-end'},{backgroundColor:colors.background}]}>
+         <View style={[{alignItems:'center'},{backgroundColor:colors.background}]}>
          {
          
 <FirstView date={showDate} showDone={showDone} setShowDone={setShowDone} fnBtn={doneHandler} />
@@ -132,7 +135,7 @@ const handleDeleted = async () => {
  }
          </View>
 
-      <>
+      <View>
       {showData ? (
         <ShowDetail 
         showDone={showDone}
@@ -163,7 +166,7 @@ const handleDeleted = async () => {
        
        
        /> }
-      </>
+      </View>
        
 
       

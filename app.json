@@ -12,8 +12,16 @@
     "plugins": [
       [
         "expo-router",
+        
         {
           "origin": "https://daymojiios.netlify.app"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(Daymoji) to access your photos",
+          "cameraPermission": "The app needs access to your camera to let you take photos." 
         }
       ],
       [

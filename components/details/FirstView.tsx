@@ -7,10 +7,12 @@ const FirstView = ({date,showDone,fnBtn}:any) => {
   const {colors,dark}=useTheme()
  
   return (
-    <View style={[styles.container,{backgroundColor:colors.background}]}>
+    <View style={[styles.container,{backgroundColor:'red'}]}>
+      
       <Text style={{fontFamily:"SFCompactRoundedBD",color:colors.text,fontSize:16}}>{date} </Text>
+     
       <TouchableOpacity onPress={fnBtn}>
-        <Text style={{fontFamily:"SFCompactRoundedSB",color:colors.text,fontSize:16}}>{'Done'}</Text>
+        <Text style={{fontFamily:"SFCompactRoundedBD",color:colors.text,fontSize:16,paddingLeft:63}}>{'Done'}</Text>
       </TouchableOpacity>
     </View>
   )
@@ -20,15 +22,16 @@ export default FirstView
 const styles=StyleSheet.create({
   container: {
    
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     flexDirection: 'row',
-    width:width/1.5,
+    width:width-48,
+    // width:width/1.35,
     height:height/19,
-    marginTop: 16,
-    alignItems: 'flex-start',
-    paddingHorizontal: 24,
+    // marginTop: 16,
+    alignItems: 'center',
+    // paddingHorizontal: 24,
    
-    paddingTop:15,
+    // paddingTop:24,
     
     
     

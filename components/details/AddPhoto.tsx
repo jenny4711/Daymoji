@@ -7,8 +7,9 @@ import { FadeInRight } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../../Theme/ThemeProvider';
 import { Image } from 'expo-image';
-import { uploadImageStorage } from '../../utils/fireStoreFn'
-import { s } from 'react-native-size-matters';
+import { uploadImageStorage ,deleteImageStorage, updatePhoto} from '../../utils/fireStoreFn'
+import { useDateContext } from '~/context/DataContext';
+import { ScaledSheet,scale, verticalScale, moderateScale } from 'react-native-size-matters';
 const { width, height } = Dimensions.get('window');
 
 const AddPhoto=({showDone,photo,setPhoto}:any)=>{
@@ -19,20 +20,20 @@ const AddPhoto=({showDone,photo,setPhoto}:any)=>{
   const scale = useSharedValue(1);
   const [img,setImg]=useState<any>('')
   const deletedIcon = require('../../assets/delete.png')
-
-
+const {dateF,monthF,newAData}=useDateContext()
+console.log(width,'newAData')
 useEffect(()=>{
   
- if(photo ){
+ if(newAData?.photo ){
   setImg(photo)
 
  }else{
   setImg('')
  }
 
-},[photo])
+},[newAData])
 
-
+console.log(img,'img')
   useEffect(() => {
     if (img || photo ) {
       opacity.value = withTiming(1, { duration: 800 });
@@ -52,14 +53,14 @@ useEffect(()=>{
       const selectedImageUri = result.assets[0].uri;
       setImg(selectedImageUri)
 
- console.log(selectedImageUri,'selectedImageUri')
+
      const res= await uploadImageStorage(selectedImageUri,'image')
       // const res = await uploadImage(selectedImageUri);
       const newImageUri = res
       // const newImageUri = `${res.secure_url}?time=${Date.now()}`; // URI에 고유한 타임스탬프 추가
       setPhoto(newImageUri);
       setImg(newImageUri);
-      console.log(newImageUri,'newImageUri')
+     
       // await AsyncStorage.setItem('photoURL', newImageUri);
    
       // await AsyncStorage.setItem('photoURL', res.secure_url);
@@ -71,7 +72,7 @@ useEffect(()=>{
   const animatedStyle = useAnimatedStyle(() => {
     return {
     
-      opacity: withTiming(img ? 1 : 0, { duration: 100 ,easing:Easing.out(Easing.exp)}), 
+      opacity: withTiming(img || photo ? 1 : 0, { duration: 100 ,easing:Easing.out(Easing.exp)}), 
       transform: [{ scale: withTiming(img ? 1 : 0.8, { duration: 100 ,easing:Easing.out(Easing.exp)}) }],
     };
   });
@@ -79,90 +80,76 @@ useEffect(()=>{
   const animatedStyleBtn = useAnimatedStyle(() => {
     return {
     
-      opacity: withTiming(img ? 1 : 0, { duration: 5000 ,easing:Easing.out(Easing.ease)}), 
+      opacity: withTiming(img || photo? 1 : 0, { duration: 3300 ,easing:Easing.out(Easing.ease)}), 
 
     };
   });
 
-const deleteImage = () => {
+const deleteImage = async() => {
+  if(photo || !img){
+    await updatePhoto({date:newAData.date,month:monthF})
+    await deleteImageStorage(photo)
+    setPhoto('')
+    setImg('')
+  }else if(img || !photo){
+    await deleteImageStorage(img)
+    
+    setPhoto('')
+    setImg('')
+  }
+ 
   setPhoto('')
   setImg('')
 
 }
 
-  return(
-    <>
-    <Animated.View  >
-    
+ return (
+    <View style={{alignItems:'center'}}>
 
- 
-     
-
-{img ?img&& (
-    <Animated.View style={{marginBottom:16,justifyContent:'center',alignItems:'center'}}>
- {photo && !showDone? (
-  <Image 
- source={{uri:photo}}
- style={{
-  width: width - 48,
-  height: height-420,
-  borderRadius: 24,
-
-}}
-
-cachePolicy={'memory-disk'}
-
- />)
- 
- :(
- <Image
-
-    source={{ uri: img }}
-    style={{
-      width: width - 48,
-      height: height-420,
-      borderRadius: 24,
-
-    }}
-    cachePolicy={'memory-disk'}
-    transition={200}
-  />)}
- {  showDone && img? (
-          <Animated.View style={animatedStyleBtn}>
-          <TouchableOpacity
-              style={[
-                
-                  { backgroundColor: colors.text,  zIndex: 1, bottom:height- 435, left:width-275,borderRadius:100},
-                   
-              ]}
-              onPress={ deleteImage}
-          >
-              <Animated.Image  source={deletedIcon} style={{ width: 40, height: 40 }} />
-          </TouchableOpacity>
-          </Animated.View>
-       
-      ) :null}
-  </Animated.View>
-      
-) : null}
-
-  </Animated.View>
-{!img?
-  <View style={[!showDone ? { display: 'none' } : styles.btnView]}>
-    <Animated.View  entering={FadeInRight.duration(100).easing(Easing.ease)}>
-    <TouchableOpacity onPress={pickImage} style={[styles.imageView,{backgroundColor:colors.inputBk}]}>
-      {dark ? (
+      {/* //imgbtn */}
+     {!img  ?  <TouchableOpacity style={{width:60,height:60,borderRadius:100,backgroundColor:colors.inputBk,justifyContent:'center',alignItems:'center'}} onPress={pickImage}>
+     {dark ? (
         <Image source={imgBtn} style={{ width: 24, height: 24 }} />
       ) : (
         <Image source={imgBtnBk} style={{ width: 19.5, height: 16.5 }} />
       )}
-    </TouchableOpacity>
-    </Animated.View>
-  </View>:null}
-</>
-  )
-}
+        </TouchableOpacity>
+        :null
+        }
 
+
+     
+      {
+        img && (
+          <Animated.View style={[animatedStyle]}>
+            <Image
+              source={{ uri: img }}
+              style={{ width: width-48, height:height *.54,   borderRadius: 24 }}
+            />
+            <TouchableOpacity style={{position:'absolute',width:40,height:40,backgroundColor:colors.text,borderRadius:100,justifyContent:'center',alignItems:'center',marginLeft:moderateScale(1),top:16,right:16}} onPress={deleteImage}>
+              <Image source={deletedIcon} style={{width:40,height:40}}/>
+
+            </TouchableOpacity>
+          </Animated.View>
+        )
+      }
+     
+     
+     {img && newAData !==null ?(
+      <TouchableOpacity style={{width:60,height:60,borderRadius:100,backgroundColor:colors.inputBk,justifyContent:'center',alignItems:'center',marginTop:16}} onPress={pickImage}>
+      {dark ? (
+         <Image source={imgBtn} style={{ width: 24, height: 24 }} />
+       ) : (
+         <Image source={imgBtnBk} style={{ width: 19.5, height: 16.5 }} />
+       )}
+         </TouchableOpacity>
+
+     ):null}
+       
+   
+    </View>
+  );
+}
 export default AddPhoto
 
 const styles = StyleSheet.create({

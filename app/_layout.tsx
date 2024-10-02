@@ -20,8 +20,8 @@ function Layout() {
     <StatusBar style="auto" />
     <GestureHandlerRootView style={{flex:1}}>
      <Stack>
-     <Stack.Screen name="index" options={{headerShown:false}} />
-       <Stack.Screen name="main" options={{headerShown:false}}/>
+     <Stack.Screen name="index" options={{headerShown:false,gestureEnabled:false}} />
+       <Stack.Screen name="main" options={{headerShown:false,gestureEnabled:false}}/>
        <Stack.Screen name="details/[date]" options={{headerShown:false,presentation:'modal'}}/>
        <Stack.Screen name="setting" options={{headerShown:false,presentation:'modal'}}/>
  

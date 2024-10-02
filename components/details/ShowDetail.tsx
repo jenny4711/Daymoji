@@ -2,7 +2,7 @@ import { View, Text,StyleSheet ,Dimensions} from 'react-native'
 import React ,{useEffect,useState}from 'react'
 import { useTheme } from '~/Theme/ThemeProvider'
 
-import { useAdayData, useDeletedData } from '~/hooks/useData'
+import {  useDeletedData } from '~/hooks/useData'
 import Animated,{FadeInLeft,FadeInRight,FadeInUp,Easing,useAnimatedStyle,useSharedValue,withTiming} from 'react-native-reanimated'
 import AddPhoto from './AddPhoto'
 import { useQueryClient } from '@tanstack/react-query';
@@ -28,7 +28,7 @@ const ShowDetail = ({
  setEmotion,
  handleDeleted
 }:any) => {
-  const {data,isLoading,isError,error}:any=useAdayData({date,month})
+  // const {data,isLoading,isError,error}:any=useAdayData({date,month})
   const {colors,dark}=useTheme()
   const opacity = useSharedValue(0);
 
@@ -38,18 +38,10 @@ const ShowDetail = ({
     
     }
   }, [photo]);
-useEffect(()=>{
-  if(data){
-    setStory(data.story)
-    setPhoto(data.photo)
-    setEmotion(data.emotion)
-  }
-},[data])
 
-
-  useEffect(()=>{
-    setShowDone(false)
-  },[])
+  // useEffect(()=>{
+  //   setShowDone(true)
+  // },[])
 
   const animatedStyleBtn = useAnimatedStyle(() => {
     return {

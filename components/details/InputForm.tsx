@@ -12,10 +12,10 @@ const InputForm = ({story,setStory,marginLeft}:any) => {
 
   return(
     <>
-     
-    <Animated.View entering={FadeInLeft.duration(500).easing(Easing.ease)} style={[styles.storyInputView, { justifyContent:'center', backgroundColor: colors.inputBk ,height:inputHeight}]}>
+         <Animated.View  style={[styles.storyInputView, { justifyContent:'center', backgroundColor: colors.inputBk ,height:inputHeight}]}>
+    {/* <Animated.View entering={FadeInLeft.duration(500).easing(Easing.ease)} style={[styles.storyInputView, { justifyContent:'center', backgroundColor: colors.inputBk ,height:inputHeight}]}> */}
     <TextInput
-      style={[styles.storyInput, {marginLeft:marginLeft, color: colors.text ,height:inputHeight ,fontFamily:"SFCompactRoundedMD"}]}
+      style={[styles.storyInput, {color: colors.text ,height:inputHeight ,fontFamily:"SFCompactRoundedMD"}]}
       placeholder="How was your day?"
       onChangeText={(text)=>setStory(text)}
       multiline={true}
