@@ -7,14 +7,31 @@ const FirstView = ({date,showDone,fnBtn}:any) => {
   const {colors,dark}=useTheme()
  
   return (
-    <View style={[styles.container,{backgroundColor:'red'}]}>
+    < >
+     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={{  flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+        <Text style={{ fontFamily: "SFCompactRoundedBD", color: colors.text, fontSize: 16, textAlign: 'center' }}>{date}</Text>
+        
+      </View>
+
+      <TouchableOpacity onPress={fnBtn} style={{position:'absolute',right:1}}>
+          <Text style={{ fontFamily: "SFCompactRoundedBD", color: colors.text, fontSize: 16 }}>{'Done'}</Text>
+        </TouchableOpacity>
+
+    </View>
+    {/* <View style={[styles.container,{backgroundColor:colors.background}]}>
+    <View style={{justifyContent:'flex-end',width:width*.88,flexDirection:'row'}}>
       
-      <Text style={{fontFamily:"SFCompactRoundedBD",color:colors.text,fontSize:16}}>{date} </Text>
+      <Text style={{fontFamily:"SFCompactRoundedBD",color:colors.text,fontSize:16,textAlign:'center'}}>{date} </Text>
      
       <TouchableOpacity onPress={fnBtn}>
-        <Text style={{fontFamily:"SFCompactRoundedBD",color:colors.text,fontSize:16,paddingLeft:63}}>{'Done'}</Text>
+        <Text style={{fontFamily:"SFCompactRoundedBD",color:colors.text,fontSize:16,paddingLeft:64}}>{'Done'}</Text>
       </TouchableOpacity>
-    </View>
+      </View> 
+     
+    </View> */}
+    
+    </>
   )
 }
 
@@ -22,9 +39,9 @@ export default FirstView
 const styles=StyleSheet.create({
   container: {
    
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     flexDirection: 'row',
-    width:width-48,
+    width:width *.88,
     // width:width/1.35,
     height:height/19,
     // marginTop: 16,

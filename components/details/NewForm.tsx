@@ -9,7 +9,8 @@ import {
   View,
   Image,
   Platform,
-  Button
+  Button,
+  ScrollView
 } from 'react-native';
 import React,{useState,useEffect} from 'react'
 import { useTheme } from '~/Theme/ThemeProvider';
@@ -73,19 +74,22 @@ const deleteImage = () => {
 };
 
 
+const hideKeyboard=()=>{
+  Keyboard.dismiss()
+}
 
 
   return (
-    <View style={{alignItems:'center',height:'100%',width:'100%',backgroundColor:colors.background}}>
+    <ScrollView style={{height:'100%',width:'100%',backgroundColor:colors.background}}>
       <KeyboardAvoidingView
-        style={{ backgroundColor: colors.background }}
+        style={{alignItems:'center', backgroundColor: colors.background }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.select({ ios: -500, android: 80 })}
       >
-        <IconSticker setEmotion={setEmotion}/>
+        <IconSticker setEmotion={setEmotion}  hideKeyboard={hideKeyboard}/>
         <InputForm story={story} setStory={setStory} marginLeft={24}/>
         <View style={{marginTop:16}}>
-        <AddPhoto setPhoto={setPhoto} showDone={showDone} photo={photo}/>
+        <AddPhoto setPhoto={setPhoto} showDone={showDone} photo={photo} hideKeyboard={hideKeyboard}/>
        
 
         </View>
@@ -96,7 +100,7 @@ const deleteImage = () => {
       </KeyboardAvoidingView>
       
 
-    </View>
+    </ScrollView>
   )
 }
 

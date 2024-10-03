@@ -1,10 +1,9 @@
-import { Dimensions, View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import React,{useEffect} from 'react'
+import { Dimensions, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React from 'react'
 import { useTheme } from '~/Theme/ThemeProvider'
 import { useNavigation } from '@react-navigation/native';
 const {width,height}=Dimensions.get('window')
 import { useDateContext } from '~/context/DataContext';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import Octicons from '@expo/vector-icons/Octicons';
 import { HeaderL } from '~/utils/Icons';
 const Header = ({day,showListMode,setShowListMode}:any) => {

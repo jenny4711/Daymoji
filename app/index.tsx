@@ -16,6 +16,7 @@ import { Dimensions } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
 import Head from 'expo-router/head';
 import { saveIsToday,updateIsToday } from '~/utils/fireStoreFn';
+import { MainLogo } from '~/utils/Icons';
 const {width,height}=Dimensions.get('window')
 
 
@@ -164,10 +165,11 @@ const openService =async () => {
           <View style={{width:'100%'}}>
       
           <View style={{alignItems:'center',justifyContent:'center',width:width,backgroundColor:colors.background}}>
-         <Logo/>
+         {/* <Logo/> */}
+         <MainLogo color={colors.text}/>
           <Text style={[styles.title,{color:colors.text,fontFamily:"SFCompactRoundedBD",marginTop:8}]}>Daymoji</Text>
           </View>
-        <Button title='testBtn' onPress={()=>(navigation as any).navigate('main')}/>
+    
        
            </View>
       
@@ -195,7 +197,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:'white',
+   
 
     flexDirection: 'column',
    

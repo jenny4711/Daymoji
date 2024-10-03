@@ -1,9 +1,9 @@
-import {TouchableOpacity, View, Text ,Alert,SafeAreaView ,Dimensions , Image as RNimage} from 'react-native'
+import {TouchableOpacity, View, Text  ,Dimensions , Image as RNimage} from 'react-native'
 import React ,{useEffect,useState}from 'react'
 import { useTheme } from '~/Theme/ThemeProvider'
 import {  useDeletedData } from '~/hooks/useData'
 import Animated,{FadeInLeft,FadeInRight,FadeInUp,Easing,useAnimatedStyle,useSharedValue,withTiming,SlideInDown, SlideOutDown,} from 'react-native-reanimated'
-// import AddPhoto from './AddPhoto'
+
 import { useQueryClient } from '@tanstack/react-query';
 import { useDateContext } from '~/context/DataContext'
 import Octicons from '@expo/vector-icons/Octicons';
@@ -12,7 +12,7 @@ import { Image ,ImageLoadEventData} from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler'
 import { deleteImageStorage } from '~/utils/fireStoreFn'
-import { set } from 'lodash'
+
 const {width,height}=Dimensions.get('window')
 const DetailMode = ({date,item,currentDateForm}:any) => {
   const {colors,dark}=useTheme()
@@ -26,7 +26,7 @@ const deletedMuation=useDeletedData({date,monthF})
 const [imgSize,setImgSize]=useState({width:0,height:0})
 
 useEffect(() => {
-console.log(item?.photo,'item?.photo')
+
   
   if (item?.photo !== undefined && item?.photo !== null) {
     try {
@@ -56,14 +56,21 @@ console.log(item?.photo,'item?.photo')
 
 
 const handleDeleted = async () => {
-  await deleteImageStorage(item?.photo)
+  
+
   deletedMuation.mutate(
     { date, month:monthF },
     {
-      onSuccess: () => {
+      onSuccess: async() => {
         queryClient.invalidateQueries({ queryKey: ['data', monthF] });
      
-      
+     if(item.photo){
+      await deleteImageStorage(item.photo)
+      setVisible(false)
+      setNewAData(null)
+     return  (navigation as any).navigate('main');
+     
+     }
      
       
         (navigation as any).navigate('main');
@@ -95,7 +102,7 @@ const handleEditBtn = async () => {
       style={{width:60,height:60,borderRadius:100,justifyContent:'center',alignItems:'center',marginTop:16,backgroundColor:colors.inputBk2}}
       >
 
-       <EmotionSticker emotion={'happy'} size={24}/>
+       <EmotionSticker emotion={item?.emotion} size={24}/>
       </Animated.View>
       <View style={{flexDirection:'row'}}>
         <TouchableOpacity onPress={handleEditBtn} style={{marginRight:16}}>

@@ -61,7 +61,7 @@ useEffect(()=>{
     // }
 
     const letBoxDown = (shouldShow: boolean) => {
-      console.log('letBoxDown called with', shouldShow); // 디버깅용 로그 추가
+      // console.log('letBoxDown called with', shouldShow); // 디버깅용 로그 추가
     
       // 애니메이션 시작
       translateY.value = withTiming(

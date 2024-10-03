@@ -82,4 +82,25 @@ export const HeaderL = (props:any) => (
 
 
 
+export const MainLogo = (props:any) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={60}
+    height={60}
+    fill="none"
+    {...props}
+  >
+    <Path
+      fill={props.color} // 전달받은 color props를 여기에서 사용하여 색을 동적으로 적용
+      fillRule="evenodd"
+      d="M60 30c0 16.569-13.431 30-30 30C13.431 60 0 46.569 0 30 0 13.431 13.431 0 30 0c16.569 0 30 13.431 30 30Zm-5.455 0c0 13.556-10.989 24.545-24.545 24.545C16.444 54.545 5.455 43.556 5.455 30h49.09Z"
+      clipRule="evenodd"
+    />
+  </Svg>
+);
+
+
+
+
+
 

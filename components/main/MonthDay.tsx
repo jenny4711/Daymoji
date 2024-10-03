@@ -237,7 +237,7 @@ useEffect(()=>{
   const date = `${yearF}-${monthS}-${dateS}`;
   if(data){
     const result = data.find((item:any) =>  item.date === date);
- console.log(result,'result')
+
     setItem(result);
   }
 },[data])

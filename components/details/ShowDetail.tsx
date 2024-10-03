@@ -1,4 +1,4 @@
-import { View, Text,StyleSheet ,Dimensions} from 'react-native'
+import { View, Text,StyleSheet ,Dimensions,KeyboardAvoidingView,Keyboard,Platform} from 'react-native'
 import React ,{useEffect,useState}from 'react'
 import { useTheme } from '~/Theme/ThemeProvider'
 
@@ -8,12 +8,13 @@ import AddPhoto from './AddPhoto'
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigation } from 'expo-router'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import IconSticker from './IconSticker'
 import InputForm from './InputForm'
 import Octicons from '@expo/vector-icons/Octicons';
 import { Image } from 'expo-image';
 import EmotionSticker from '../EmotionSticker';
+
 const {width,height}=Dimensions.get('window')
 const ShowDetail = ({
   showDone,
@@ -31,6 +32,32 @@ const ShowDetail = ({
   // const {data,isLoading,isError,error}:any=useAdayData({date,month})
   const {colors,dark}=useTheme()
   const opacity = useSharedValue(0);
+  const [keyboardVisible, setKeyboardVisible] = useState<boolean>(false);
+  useEffect(()=>{
+    setShowDone(true)
+   },[])
+   useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
+  
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, [setKeyboardVisible, keyboardVisible]);
+
+
+
 
   useEffect(() => {
     if ( photo) {
@@ -39,9 +66,12 @@ const ShowDetail = ({
     }
   }, [photo]);
 
-  // useEffect(()=>{
-  //   setShowDone(true)
-  // },[])
+  const hideKeyboard=()=>{
+    Keyboard.dismiss()
+  }
+
+
+
 
   const animatedStyleBtn = useAnimatedStyle(() => {
     return {
@@ -54,10 +84,15 @@ const ShowDetail = ({
 
 
   return (
-    <View style={[{height:height,justifyContent:'flex-start',alignItems:'center'},{backgroundColor:colors.background}]}>
+    <ScrollView style={[{height:height},{backgroundColor:colors.background}]}>
+      <KeyboardAvoidingView
+        style={{alignItems:'center', backgroundColor: colors.background }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.select({ ios: -500, android: 80 })}
+      >
       <Animated.View style={{width:60,height:60,borderRadius:100,justifyContent:'center',alignItems:'center',marginTop:16,backgroundColor:colors.inputBk}}>
         
-        <IconSticker emotion={emotion} setEmotion={setEmotion}/>
+        <IconSticker hideKeyboard={hideKeyboard} emotion={emotion} setEmotion={setEmotion}/>
         
       
      
@@ -70,16 +105,17 @@ const ShowDetail = ({
         
       </Animated.View>
 
-      <Animated.View style={{marginTop:16,width:width-24}}>
+      <Animated.View style={{marginTop:16,width:width-24,paddingBottom:40}}>
        
         
         
-        <AddPhoto showDone={showDone} photo={photo}  setPhoto={setPhoto}/>
+        <AddPhoto hideKeyboard={hideKeyboard} showDone={showDone} photo={photo}  setPhoto={setPhoto}/>
       
      
       </Animated.View>
+      </KeyboardAvoidingView>
   
-    </View>
+    </ScrollView>
   )
 }
 

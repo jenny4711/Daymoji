@@ -20,7 +20,7 @@ const TIME = 100;
 const EASING = Easing.elastic(1.5);
 const {width,height}=Dimensions.get('window')
 
-const IconSticker = ({setEmotion,emotion}:any) => {
+const IconSticker = ({setEmotion,emotion,hideKeyboard}:any) => {
 
   const [emotionValue,setEmotionValue]=useState<any>(emotion)
   const {colors}=useTheme()
@@ -43,6 +43,7 @@ const IconSticker = ({setEmotion,emotion}:any) => {
 
 
   const handlePress =(emotion: string) => {
+    hideKeyboard()
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
    setEmotion(emotion)
     setEmotionValue(emotion)
@@ -64,21 +65,21 @@ const IconSticker = ({setEmotion,emotion}:any) => {
 
 
   return (
-    // <Animated.View entering={FadeInLeft.duration(500).easing(Easing.ease)} style={[styles.container, { backgroundColor: colors.background }]}>
-     <Animated.View style={[styles.container, { backgroundColor: colors.background }]}>
+   
+     <Animated.View style={[styles.container, { backgroundColor: colors.background}]}>
       {['Veryhappy', 'happy', 'neutral', 'sad', 'worst'].map((em, index) => (
-        <View key={index} style={[
+        <TouchableOpacity onPress={() => handlePress(em)} activeOpacity={1} key={index} style={[
           styles.iconBtnView,
           { backgroundColor: colors.inputBk },
           em === emotionValue ? { borderWidth: 1, borderColor: colors.text } : null,
         ]}>
-          < TouchableOpacity  onPress={() => handlePress(em)} activeOpacity={1}>
+          {/* < TouchableOpacity  onPress={() => handlePress(em)} activeOpacity={1}> */}
          
               <EmotionSticker emotion={em} size={25} />
              
          
-          </ TouchableOpacity >
-        </View>
+          {/* </ TouchableOpacity > */}
+        </TouchableOpacity>
       ))}
 
    
@@ -91,21 +92,25 @@ export default IconSticker
 const styles = StyleSheet.create({
   container: {
    backgroundColor:'red',
-    marginBottom: 14,
+   marginTop:24,
+   marginBottom:16,
+    // marginBottom: 14,
     flexDirection: 'row',
     height: 60,
     width: width *.84,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 16,
+    // marginVertical: 16,
+   
    
   },
   iconBtnView: {
-    width: 60,
-    height: 60,
+    width: width *.1527,
+    height: width *.1527,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: ((width - 48) / 5) / 5,
+    marginHorizontal: width *.0085,
+    // marginRight: ((width - 61) / 5) / 5,
   },
 });

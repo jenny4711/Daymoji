@@ -10,9 +10,10 @@ import { Image } from 'expo-image';
 import { uploadImageStorage ,deleteImageStorage, updatePhoto} from '../../utils/fireStoreFn'
 import { useDateContext } from '~/context/DataContext';
 import { ScaledSheet,scale, verticalScale, moderateScale } from 'react-native-size-matters';
+import { set } from 'lodash';
 const { width, height } = Dimensions.get('window');
 
-const AddPhoto=({showDone,photo,setPhoto}:any)=>{
+const AddPhoto=({showDone,photo,setPhoto,hideKeyboard}:any)=>{
   const imgBtn=require('../../assets/imgBtn.png')
   const imgBtnBk=require('../../assets/imgBtnBk.png')
   const {colors,dark}=useTheme()
@@ -42,6 +43,8 @@ console.log(img,'img')
   }, [img,photo]);
 
   const pickImage = async () => {
+    hideKeyboard()
+   
     let result: any = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
@@ -104,7 +107,7 @@ const deleteImage = async() => {
 }
 
  return (
-    <View style={{alignItems:'center'}}>
+    <View style={{alignItems:'center',paddingBottom:100}}>
 
       {/* //imgbtn */}
      {!img  ?  <TouchableOpacity style={{width:60,height:60,borderRadius:100,backgroundColor:colors.inputBk,justifyContent:'center',alignItems:'center'}} onPress={pickImage}>
@@ -121,7 +124,7 @@ const deleteImage = async() => {
      
       {
         img && (
-          <Animated.View style={[animatedStyle]}>
+          <Animated.View >
             <Image
               source={{ uri: img }}
               style={{ width: width-48, height:height *.54,   borderRadius: 24 }}

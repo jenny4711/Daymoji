@@ -8,19 +8,43 @@ const InputForm = ({story,setStory,marginLeft}:any) => {
   const {colors,dark}=useTheme()
   const [inputHeight, setInputHeight] = useState(67); 
   const [showStory, setShowStory] = useState('');
+const lineHeight=19.09
+const paddingVertical = 20;
+const handleContentSizeChange = (contentSize: { height: number }) => {
+  // 입력된 높이를 바탕으로 줄 수를 계산
+  const numberOfLines = Math.ceil(contentSize.height / lineHeight);
+  let newHeight;
+
+  // 두 번째 줄부터 높이를 조정
+  if (numberOfLines > 2) {
+   console.log('numberOfLines',numberOfLines)
+     newHeight = Math.max(67, numberOfLines * lineHeight+paddingVertical+paddingVertical); // 두 번째 줄부터 높이를 조정
+  } else {
+    newHeight = 67; // 첫 번째 줄일 때는 기본 높이 유지
+  }
+
+  setInputHeight(newHeight); // 새로운 높이 설정
+};
+
+
+
+
 
 
   return(
     <>
-         <Animated.View  style={[styles.storyInputView, { justifyContent:'center', backgroundColor: colors.inputBk ,height:inputHeight}]}>
-    {/* <Animated.View entering={FadeInLeft.duration(500).easing(Easing.ease)} style={[styles.storyInputView, { justifyContent:'center', backgroundColor: colors.inputBk ,height:inputHeight}]}> */}
+         <Animated.View  style={[styles.storyInputView, { justifyContent:'center'}]}>
+
     <TextInput
-      style={[styles.storyInput, {color: colors.text ,height:inputHeight ,fontFamily:"SFCompactRoundedMD"}]}
+      style={[styles.storyInput, {color: colors.text ,height:inputHeight ,fontFamily:"SFCompactRoundedMD",backgroundColor:colors.inputBk,borderRadius:24}]}
       placeholder="How was your day?"
       onChangeText={(text)=>setStory(text)}
+    
+      scrollEnabled={false} 
       multiline={true}
       value={story ||'' }
-
+      // onContentSizeChange={(e) => handleContentHeight(e.nativeEvent.contentSize.height)}
+      onContentSizeChange={(e)=>handleContentSizeChange({height:e.nativeEvent.contentSize.height})} 
       placeholderTextColor={'gray'}
     />
     </Animated.View>
@@ -34,16 +58,18 @@ const InputForm = ({story,setStory,marginLeft}:any) => {
 export default InputForm
 const styles = StyleSheet.create({
   storyInput: {
- 
+
     fontSize: 16,
     fontWeight: 700,
-    lineHeight: 19.09,
-    marginTop: 15,
+    // lineHeight: 19.09,
+    paddingVertical:24,
+    // marginTop: 15,
     // marginLeft:24,
-    paddingVertical:20,
-    marginBottom:15,
-    paddingLeft:24
+  //  paddingBottom:15,
+    // marginBottom:15,
+    paddingHorizontal:24,
    
+
     
     
 
@@ -52,7 +78,8 @@ const styles = StyleSheet.create({
    
     width: width-48,
     borderRadius: 24,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    
 
   
    

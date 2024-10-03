@@ -43,8 +43,7 @@ export   const saveDiaryEntry = async ({date,emotion,story,photo,month}:any) => 
     }else{
       isToday=false
     }
-    console.log(photo,'photo!!!!!!!!!!!!!!')
-   console.log(isToday,'isToday')
+
     const data = {
       date,
       emotion: emotion,

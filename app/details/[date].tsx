@@ -67,7 +67,7 @@ setYear(year)
 
 
 useEffect(()=>{
-  if(newAData.date===date){
+  if(newAData?.date===date){
     console.log(newAData,'newAdata')
     setStory(newAData?.story)
     setPhoto(newAData?.photo)
