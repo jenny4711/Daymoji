@@ -6,6 +6,10 @@ export const ThemeArray=[
   {
    title:'Light',
     value:'light'
+  },
+  {
+    title:'auto',
+    value:'auto'
   }
   // {
   //   title:'Random',

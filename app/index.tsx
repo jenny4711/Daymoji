@@ -161,23 +161,22 @@ const openService =async () => {
        
        <View style={[styles.container,{backgroundColor:colors.background}]}>
         
-         <View style={[styles.loginContainer,{backgroundColor:colors.background}]}>
-          <View style={{width:'100%'}}>
+         <View style={[styles.loginContainer,{backgroundColor:colors.background,}]}>
+          {/* <View style={{width:'100%'}}> */}
       
-          <View style={{alignItems:'center',justifyContent:'center',width:width,backgroundColor:colors.background}}>
-         {/* <Logo/> */}
-         <MainLogo color={colors.text}/>
+          <View style={{alignItems:'center',justifyContent:'center',width:width}}>
+                 <MainLogo color={colors.text}/>
           <Text style={[styles.title,{color:colors.text,fontFamily:"SFCompactRoundedBD",marginTop:8}]}>Daymoji</Text>
           </View>
     
        
-           </View>
+           {/* </View> */}
       
 
 
            <View style={open?{display:'none'}:{}}>{<Login promptAsync={promptAsync} />}</View>
            <View>{<AppleLogin />}</View>
-           <View style={{width:341,height:42,backgroundColor:colors.background,justifyContent:'center',alignItems:'center',marginTop:16}}>
+           <View style={{width:341,height:42,justifyContent:'center',alignItems:'center',marginTop:16}}>
       <Text style={{fontSize:14,color:'gray',fontFamily:"SFCompactRoundedRG",lineHeight:21}} >By signing up. I agree to Daymoji's <Text style={{color:colors.text}} onPress={openService}>Terms of Service</Text> and  </Text>
       <Text style={{fontSize:14,color:colors.text,fontFamily:"SFCompactRoundedRG",lineHeight:21}} onPress={openPolicy}>PrivacyPolicy</Text>
      </View>
@@ -207,8 +206,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:'#e6e6e6',
-marginBottom:137,
+// marginBottom:137,
     flexDirection: 'column',
+   
 
   },
   

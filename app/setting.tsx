@@ -1,46 +1,64 @@
 import { View, Text ,SafeAreaView ,Dimensions,TouchableOpacity,StyleSheet} from 'react-native'
 import React ,{useEffect,useState}from 'react'
+
 import { useTheme } from '~/Theme/ThemeProvider';
 import SelectionGroup from '~/components/setting/SelectionGroup';
 import { useNavigation } from 'expo-router';
 import { useDeletedAllData } from '~/hooks/useData';
 import { useQueryClient } from '@tanstack/react-query';
 import LogOutSec from '~/components/setting/LogOutSec';
-
+import { useColorScheme } from 'react-native';
 const {width,height}=Dimensions.get('window')
 
 const Setting = () => {
   const { dark, colors, setScheme } = useTheme();
   const [colorStyle,setColorStyle]=useState<any>(colors)
-  const [themeMode,setThemeMode]=useState<string>( 'random')
+  const [themeMode,setThemeMode]=useState<string>( 'auto')
   const [text,setText]=useState<string>(colorStyle.text)
   const [inputBk,setInputBk]=useState<string>( colorStyle.inputBk)
   const [background,setBackground]=useState<string>( colorStyle.background)
+  const colorScheme:any = useColorScheme(); 
   const month:any ='7'
 const deletedAllMutation=useDeletedAllData(month)
 const queryClient = useQueryClient();
+useEffect(()=>{
+  const currentTime = new Date();
+  const hours = currentTime.getHours();
+  console.log(hours, 'hours');
+},[])
+
+const checkTimeForTheme = () => {
+  const currentTime = new Date();
+  const hours = currentTime.getHours();
+  console.log(hours, 'hours');
+
+  if (hours >= 6 && hours < 18) {
+    setScheme('light'); // 오전 6시부터 오후 6시까지는 light mode
+  } else {
+    setScheme('dark'); // 오후 6시부터 오전 6시까지는 dark mode
+  }
+};
+
+
+
 const navigation=useNavigation()
-  useEffect(()=>{
-    if(themeMode === 'light'){
-      setScheme('light')
-     
-    }else if(themeMode ==='random'){
-      setScheme('random',{
-        primary:background,
-        text:text,
-        background:background,
-        inputBk:inputBk
-      })
-      
-    }else{
-      setScheme('dark')
-      
-    }
-   
-  
-    
-  
-  },[themeMode,text,inputBk,background])
+useEffect(() => {
+  // themeMode가 'auto'일 경우 시스템 테마에 따라 자동으로 설정
+  if (themeMode === 'auto') {
+    checkTimeForTheme();  // 시스템 테마에 맞추어 자동으로 설정
+  } else if (themeMode === 'light') {
+    setScheme('light');
+  } else if (themeMode === 'random') {
+    setScheme('random', {
+      primary: background,
+      text: text,
+      background: background,
+      inputBk: inputBk
+    });
+  } else {
+    setScheme('dark');
+  }
+}, [themeMode, text, inputBk, background, colorScheme]); //
 
 const handleAlldeletedList = () => {
   deletedAllMutation.mutate(month)
