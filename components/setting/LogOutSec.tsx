@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {Dimensions, View, Text,Image,TouchableOpacity ,StyleSheet} from 'react-native'
+import {Dimensions, View, Text,Image,TouchableOpacity ,StyleSheet,Alert} from 'react-native'
 import { FIREBASE_AUTH } from '~/config/firebase';
 import { signOut } from 'firebase/auth'
 import { useNavigation } from 'expo-router';
@@ -28,37 +28,46 @@ getUserEmail()
 
 const navigation=useNavigation()
 const handleLogOut=async()=>{
-  await signOut(FIREBASE_AUTH).then(()=>{
-return (navigation as any).navigate('index')
-  }).catch((error)=>{
-    console.log(error,'-logout')
-  })
+  Alert.alert('Delete All Entries', 'Are you sure you want to log out? You will need to sign in again to access your account', [
+    {
+      text: 'Cancel',
+      onPress: () => console.log('Ask me later pressed'),
+    },
+    
+    {text: 'Log Out',style:'destructive',onPress: async() =>{
+      
+      await signOut(FIREBASE_AUTH).then(()=>{
+        return (navigation as any).navigate('index')
+          }).catch((error)=>{
+            console.log(error,'-logout')
+          })
+    }
+    },
+  ])
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
 
   return (
-    <View style={[styles.container,{backgroundColor:colors.inputBk}]}>
-   
-      
-        <View style={styles.profile}>
-          
+<TouchableOpacity activeOpacity={1} onPress={handleLogOut} style={{justifyContent:'center',alignItems:'center',paddingVertical:24,width:width-48,backgroundColor:colors.inputBk2,borderRadius:24,marginTop:16}}>
+    <Text style={[styles.TextStyle,{color:colors.text}]}>Log out </Text>
+  </TouchableOpacity>
 
-            <View style={{ backgroundColor:'white' ,width: 45, height: 45 ,borderRadius:50,marginRight:8,marginLeft:6,justifyContent:'center',alignItems:'center'}} >
-              <Feather name="user" size={32} color="black" />
-            </View>
-          
 
-        <View style={{flexDirection:'column'}}>
-          <Text style={{color:colors.text,fontWeight:400,fontSize:14,marginLeft:3,lineHeight:21}}>{userEmail}</Text>
-        </View>
-        </View>
 
-        <TouchableOpacity style={styles.btn} onPress={handleLogOut}>
-          <Text style={{ color:'white',fontSize:12,fontWeight:700}}>Log out</Text>
-
-        </TouchableOpacity>
-    </View>
+  
   );
 }
 
@@ -102,6 +111,11 @@ const styles=StyleSheet.create({
     // marginRight:18
    
    
+  },
+  TextStyle: {
+    fontSize:16,
+    fontFamily:"SFCompactRoundedBD",
+    lineHeight:19.09
   }
 
 })

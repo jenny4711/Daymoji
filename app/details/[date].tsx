@@ -22,7 +22,7 @@ return [
 }
 const Detail = () => {
   const { date, month }: any = useLocalSearchParams();
-  const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData} = useDateContext();
+  const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF} = useDateContext();
   const queryClient = useQueryClient();
 const navigation=useNavigation()
 
@@ -90,8 +90,10 @@ async function doneHandler(){
  setSave(true)
   addMutation.mutate({date,emotion,story,photo,email,month})
   setShowDone(false)
+  
    queryClient.invalidateQueries({ queryKey: ['data'] });
    setNewAData({date,emotion,story,photo,email,month})
+   setDateF(date)
    setVisible(true)
 
  return  (navigation as any).navigate('main')

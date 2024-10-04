@@ -145,8 +145,8 @@ export const getSettingData = async () => {
 
 export const deletedAllItem= async (month:any) => {
  try{
-  const {email,setEmail,token,setToken}=useDateContext()
-  // const email=await AsyncStorage.getItem('email')
+
+   const email=await AsyncStorage.getItem('email')
   if (!email) {
     console.log("Email not found");
     return;

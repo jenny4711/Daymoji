@@ -13,7 +13,7 @@ export const darkColors={
   primary:'black',
   text:'white',
   background:'black',
-   inputBk:'#FFFFFF1A',
+  inputBk:'#FFFFFF1A',
   inputBk2:'#FFFFFF0D',
   inputWithoutEm:'#FFFFFF33'
 }

@@ -11,7 +11,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithCredential } from 'firebase/auth';
 import AppleLogin from '../components/auth/AppleLogin';
 import * as WebBrowser from 'expo-web-browser';
-import Logo from '../components/auth/Logo';
+
 import { Dimensions } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
 import Head from 'expo-router/head';
@@ -32,7 +32,7 @@ const [open,setOpen] = useState<boolean>(false)
 
   const [userInfo, setUserInfo] = useState<any>(null);
   const {email,setEmail,token,setToken}=useDateContext()
-const {colors}=useTheme() 
+const {colors,setScheme}=useTheme() 
 const today = new Date()
 const month = today.getMonth()+1
 const year = today.getFullYear()
@@ -52,8 +52,23 @@ const yesterdayYear = yesterdayDateObj.getFullYear();
 const yesterdayDateS = yesterdayDate < 10 ? `0${yesterdayDate}` : yesterdayDate;
 const yesterdayMonthS = yesterdayMonth < 10 ? `0${yesterdayMonth}` : yesterdayMonth;
 const yesterday = `${yesterdayYear}-${yesterdayMonthS}-${yesterdayDateS}`;
-console.log("Today:", monthS);
-console.log("Yesterday:",yesterdayMonth);
+//auto theme mode
+const checkTimeForTheme = () => {
+  const currentTime = new Date();
+  const hours = currentTime.getHours();
+
+  if (hours >= 6 && hours < 18) {
+    setScheme('light'); // 오전 6시부터 오후 6시까지는 light mode
+  } else {
+    setScheme('dark'); // 오후 6시부터 오전 6시까지는 dark mode
+  }
+};
+
+useEffect(() => {
+  checkTimeForTheme();
+}, []);
+
+//-------------------------
 
 
   const clientID = Platform.OS === 'ios' 
@@ -126,7 +141,7 @@ if(Platform.OS === 'web'){
   }, []);
 
 const openPolicy =async () => {
-  const url = 'https://example.com'; // 열고자 하는 URL
+  const url = 'https://daymoji.com/privacy'; // 열고자 하는 URL
   const supported = await Linking.canOpenURL(url);
   if (supported) {
     await Linking.openURL(url);
@@ -137,7 +152,7 @@ const openPolicy =async () => {
 }
 
 const openService =async () => {
-  const url = 'https://youtube.com'; // 열고자 하는 URL
+  const url = 'https://daymoji.com/terms'; // 열고자 하는 URL
   const supported = await Linking.canOpenURL(url);
   if (supported) {
     await Linking.openURL(url);

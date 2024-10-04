@@ -15,7 +15,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming, withSequence,Ea
 const {width,height}=Dimensions.get('window')
 import { useDateContext } from '~/context/DataContext';
 const Main = () => {
-  const {colors}=useTheme()
+  const {dark, colors, setScheme}=useTheme()
   const [lines,setLines]=useState(0)
   const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle} = useDateContext();
  
@@ -23,13 +23,30 @@ const [showListMode,setShowListMode]=useState(false)
   const translateY = useSharedValue(0); // 애니메이션 상태
 const navigation = useNavigation<any>();
 
+//auto theme mode
+  const checkTimeForTheme = () => {
+    const currentTime = new Date();
+    const hours = currentTime.getHours();
+  
+    if (hours >= 6 && hours < 18) {
+      setScheme('light'); // 오전 6시부터 오후 6시까지는 light mode
+    } else {
+      setScheme('dark'); // 오후 6시부터 오전 6시까지는 dark mode
+    }
+  };
+
+  useEffect(() => {
+    checkTimeForTheme();
+  }, []);
+  
+//-------------------------
+
 useEffect(()=>{
-  if(newAData && !visible){
+  console.log(newAData,'newAData')
+  if(newAData && !visible && newAData.emotion !== ''){
     triggerAnimation(true)
   }
 },[newAData])
-
-
 
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -60,9 +77,7 @@ useEffect(()=>{
     //   // setVisible(shouldShow)
     // }
 
-    const letBoxDown = (shouldShow: boolean) => {
-      // console.log('letBoxDown called with', shouldShow); // 디버깅용 로그 추가
-    
+    const letBoxDown = (shouldShow: boolean) => {    
       // 애니메이션 시작
       translateY.value = withTiming(
         shouldShow ? 0 : 410, // 목표 위치
@@ -109,9 +124,7 @@ useEffect(()=>{
 const plusBtnSize=width *0.1527
 const plusBtnMgTop=height *0.1620
 const topSize =height *-0.071
-const topSize5=height * 0
-const fixedTopSize=height>=932?moderateScale(-70):moderateScale(-47)
-const fixedButtonMg=height>=932?moderateScale(190):moderateScale(135)
+
 
   return (
     <View style={{backgroundColor:colors.background,alignItems:'center'}}>

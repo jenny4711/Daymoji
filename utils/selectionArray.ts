@@ -1,15 +1,15 @@
 export const ThemeArray=[
   {
-    title:'Dark',
+    title:'Automatic',
+    value:'auto'
+  },
+  {
+   title:'Dark',
     value:'dark'
   },
   {
-   title:'Light',
+    title:'Light',
     value:'light'
-  },
-  {
-    title:'auto',
-    value:'auto'
   }
   // {
   //   title:'Random',

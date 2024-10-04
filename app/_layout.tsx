@@ -8,6 +8,8 @@ import { ThemeProvider } from '~/Theme/ThemeProvider';
 import { QueryClientProvider ,QueryClient} from '@tanstack/react-query';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { useTheme } from '~/Theme/ThemeProvider';
+import { set } from 'lodash';
 const queryClient = new QueryClient()
 //npm run export       
 export const unstable_settings={
@@ -35,6 +37,9 @@ function Layout() {
 export default function App(){
   SplashScreen.preventAutoHideAsync();
   setTimeout(SplashScreen.hideAsync, 1000);
+ 
+
+
 
   useEffect(()=>{
     async function loadFonts() {
