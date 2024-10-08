@@ -10,6 +10,7 @@ import { useLocalSearchParams ,useNavigation,useFocusEffect} from 'expo-router'
 import { useTheme } from '~/Theme/ThemeProvider'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import ShowDetail from '~/components/details/ShowDetail'
+import { saveIsToday ,updateIsToday} from '~/utils/fireStoreFn'
 import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image'
 export async function generateStaticParams():Promise<Record<string,string>[]>{
@@ -22,7 +23,7 @@ return [
 }
 const Detail = () => {
   const { date, month }: any = useLocalSearchParams();
-  const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF} = useDateContext();
+  const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
   const queryClient = useQueryClient();
 const navigation=useNavigation()
 
@@ -31,7 +32,7 @@ const {colors,dark}=useTheme()
 const [showDate,setShowDate]=useState<any>('')
 const [email,setEmail]=useState<any>('')
 const [showData,setShowData]=useState<any>(false)
-const [photo,setPhoto]=useState<any>('')
+const [photo, setPhoto] = useState<any>([]); // photo를 배열로 관리
 const [story,setStory]=useState<any>( '')
 const [emotion,setEmotion]=useState<any>( '')
 const [year,setYear]=useState<any>('')
@@ -39,11 +40,19 @@ const addMutation=useSaveData({date,month})
 const deletedMuation=useDeletedData({date,month})
 const [save,setSave]=useState<any>(false)
 const {data}=useData(month)
-
+console.log(preImages,'newAdata-detail')
+console.log(date,'date')
 // dateformat -> 2022-01-01
 //monthformat->1
 
-console.log(story,'story')
+useEffect(()=>{
+  if(newAData?.date!==date){
+    setStory('')
+    setPhoto([])
+    setEmotion('')
+    setNewAData(null)
+  }
+},[newAData,date])
 
 
 
@@ -79,29 +88,42 @@ useEffect(()=>{
 
 
 
-async function doneHandler(){
-  const email=await AsyncStorage.getItem('email')
-  console.log(email,'email')
-  console.log(emotion,'emotion')
-  if(emotion===''){
-    Alert.alert('Alert', 'Please select emotion');
-    return;
-  }
- setSave(true)
-  addMutation.mutate({date,emotion,story,photo,email,month})
-  setShowDone(false)
+async function doneHandler() {
+  const email = await AsyncStorage.getItem('email');
+
+  // if (emotion === '') {
+  //   Alert.alert('Alert', 'Please select emotion');
+  //   return;
+  // }
   
-   queryClient.invalidateQueries({ queryKey: ['data'] });
-   setNewAData({date,emotion,story,photo,email,month})
-   setDateF(date)
-   setVisible(true)
+  setSave(true);
+  
+  // `newAData.photo`와 `photo`를 배열로 관리
+  let photos: string[] = [];
+  
+  // if (newAData !== null && Array.isArray(newAData.photo)) {
+  //   photos = [...newAData.photo]; // 기존 사진 배열 복사
+  // }
+  
+  // 현재 선택된 `photo`가 배열인지 단일 값인지 확인
+  if (Array.isArray(photo)) {
+    photos = [...photos, ...photo]; // 여러 사진을 추가
+  } else if (photo) {
+    photos.push(photo); // 단일 사진을 추가
+  }
 
- return  (navigation as any).navigate('main')
+  // 상태 저장 및 Firestore 업데이트
+  addMutation.mutate({ date, emotion, story, photo: photos, email, month });
 
+  setShowDone(false);
 
+  queryClient.invalidateQueries({ queryKey: ['data'] });
+  
+  setNewAData({ date, emotion, story, photo: photos, email, month });
+  setDateF(date);
+  setVisible(true);
 
-
-
+  return (navigation as any).navigate('main');
 }
 
 const handleDeleted = async () => {

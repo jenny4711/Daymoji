@@ -13,7 +13,7 @@ const Header = ({day,showListMode,setShowListMode}:any) => {
  
   return (
     <View style={{flexDirection:'column',marginTop:64}}>
-    <View style={[styles.header,{marginBottom:40}]}>
+    <View style={[styles.header,{marginBottom:24}]}>
     <Text style={[styles.headerText, { color: colors.text }]}>{headerTitle}</Text>
     <View style={{flexDirection:'row'}}>
 

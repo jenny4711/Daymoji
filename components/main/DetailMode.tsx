@@ -3,7 +3,6 @@ import React ,{useEffect,useState}from 'react'
 import { useTheme } from '~/Theme/ThemeProvider'
 import {  useDeletedData } from '~/hooks/useData'
 import Animated,{FadeInLeft,FadeInRight,FadeInUp,Easing,useAnimatedStyle,useSharedValue,withTiming,SlideInDown, SlideOutDown,} from 'react-native-reanimated'
-
 import { useQueryClient } from '@tanstack/react-query';
 import { useDateContext } from '~/context/DataContext'
 import Octicons from '@expo/vector-icons/Octicons';
@@ -12,46 +11,44 @@ import { Image ,ImageLoadEventData} from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler'
 import { deleteImageStorage } from '~/utils/fireStoreFn'
+import { saveIsToday } from '~/utils/fireStoreFn'
 
 const {width,height}=Dimensions.get('window')
 const DetailMode = ({date,item,currentDateForm}:any) => {
   const {colors,dark}=useTheme()
-  const { monthF,setVisible,setNewAData} = useDateContext();
+  const { monthF,setVisible,setNewAData,todayDate} = useDateContext();
+  const [images,setImages]=useState<any>([])
 const screenSize = Dimensions.get('window');
 const queryClient = useQueryClient();
 const navigation=useNavigation()
 const newDate=new Date(date ).toLocaleString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone: 'UTC', })
 const deletedMuation=useDeletedData({date,monthF})
-  // ----------flexible image size----------
 const [imgSize,setImgSize]=useState({width:0,height:0})
-
-useEffect(() => {
-
-  
-  if (item?.photo !== undefined && item?.photo !== null) {
-    try {
-      RNimage.getSize(
-        item.photo,
-        (width, height) => {
-          const ratio = width / height;
-          const newHeight = screenSize.width / ratio;
-          const newWeight = screenSize.width/ratio
-          setImgSize({ width: screenSize.width - 96, height: newHeight });
-          console.log(screenSize.width, 'width, height');
-        },
-        (error) => {
-          console.log('Failed to get size for image', error);
-          setImgSize({ width: 0, height: 0 }); // 이미지가 유효하지 않으면 크기를 0으로 설정
-        }
-      );
-    } catch (error) {
-      console.log('Error getting image size', error);
-      setImgSize({ width: 0, height: 0 }); // 예외 발생 시 크기를 0으로 설정
-    }
-  } else {
-    setImgSize({ width: 0, height: 0 });
+const [deleteMargin,setDeleteMargin]=useState({top:16,right:16})
+useEffect(()=>{
+  if(item?.photo && Array.isArray(item.photo)){
+    setImages(item.photo)
   }
-}, [item?.photo]);
+},[item?.photo])
+
+useEffect(()=>{
+  if(images.length===2){
+    setImgSize({width:(screenSize.width - 96) / 2 -8,height:(screenSize.width - 96) / 2 -8})
+    setDeleteMargin({top:7,right:7})
+   
+  }else if(images.length>2){
+    setImgSize({width:(screenSize.width - 96) / 3 -8,height:(screenSize.width - 96) / 3 -8})
+    setDeleteMargin({top:5,right:5})
+ 
+  }else{
+    setImgSize({width:screenSize.width-96,height:screenSize.width-96})
+    setDeleteMargin({top:16,right:16})
+
+  }
+},[images])
+
+
+
 
 
 
@@ -63,11 +60,17 @@ const handleDeleted = async () => {
     {
       onSuccess: async() => {
         queryClient.invalidateQueries({ queryKey: ['data', monthF] });
+        if(todayDate===date){
+          await saveIsToday({date:todayDate,month:monthF,isToday:true})
+         
+        }
      
      if(item.photo){
       await deleteImageStorage(item.photo)
       setVisible(false)
       setNewAData(null)
+     
+      
      return  (navigation as any).navigate('main');
      
      }
@@ -123,24 +126,32 @@ const handleEditBtn = async () => {
       <Text style={{fontFamily:'SFCompactRoundedBD',fontSize:16,color:colors.text,paddingVertical:24,paddingLeft:24}}>{item?.story}</Text>
 
       </View>
-      {item && item.photo? 
-        <View style={{height: imgSize.height*.77 ,borderRadius:25,overflow: 'hidden',alignItems:'center',justifyContent:'flex-start',marginBottom:20}}>
-       <Image
-        contentFit='contain' 
-         source={{uri:item?.photo}}
+
+      <View  style={{flexWrap: 'wrap', borderRadius:25,alignItems:'center',justifyContent:'center',flexDirection:'row',marginBottom:25}}>
+      {item && item.photo?item.photo.map((itemImg:any,index:any)=>(
+
+
+<TouchableOpacity key={index} activeOpacity={1} onPress={()=>(navigation as any).navigate('imgDetail/[img]',{img:"",idx:index})}>
+<Image
+contentFit='cover' 
+source={{uri:itemImg}}
+
+style={{height:imgSize.height,width:imgSize.width,borderRadius: 25,margin: 4,}}
+
+/>
+</TouchableOpacity>
+
+      ))
       
-          style={{height:imgSize.height*.77,width:imgSize.width,borderRadius: 25,overflow: 'hidden'}}
-       
-     
-        
-        
-          />
-           </View>
+      
+      
+      
+      
           :
           null
           }
      
-
+     </View>
        
    
     </View>

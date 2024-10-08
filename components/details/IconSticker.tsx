@@ -42,11 +42,14 @@ const IconSticker = ({setEmotion,emotion,hideKeyboard}:any) => {
 
 
 
-  const handlePress =(emotion: string) => {
-    hideKeyboard()
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
-   setEmotion(emotion)
-    setEmotionValue(emotion)
+  const handlePress = (emotion: string) => {
+    hideKeyboard();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+
+    setEmotion((prev: any) => (prev === emotion ? '' : emotion));
+    setEmotionValue((prev: any) => (prev === emotion ? '' : emotion));
+
+    // 선택한 감정 아이콘에 대한 애니메이션 시퀀스
     rotations[emotion].value = withSequence(
       withTiming(-ANGLE, { duration: TIME / 2, easing: EASING }),
       withRepeat(
@@ -59,9 +62,10 @@ const IconSticker = ({setEmotion,emotion,hideKeyboard}:any) => {
       ),
       withTiming(0, { duration: TIME / 2, easing: EASING })
     );
-  }
+  };
 
-
+console.log(emotionValue,'emotionValue')
+console.log(emotion,'emotion')
 
 
   return (
@@ -71,7 +75,7 @@ const IconSticker = ({setEmotion,emotion,hideKeyboard}:any) => {
         <TouchableOpacity onPress={() => handlePress(em)} activeOpacity={1} key={index} style={[
           styles.iconBtnView,
           { backgroundColor: colors.inputBk },
-          em === emotionValue ? { borderWidth: 1, borderColor: colors.text } : null,
+          em === emotionValue && em !==""? { borderWidth: 2, borderColor: colors.text } : null,
         ]}>
           {/* < TouchableOpacity  onPress={() => handlePress(em)} activeOpacity={1}> */}
          
@@ -96,7 +100,7 @@ const styles = StyleSheet.create({
    marginBottom:16,
     // marginBottom: 14,
     flexDirection: 'row',
-    height: 60,
+    height: width *.1527,
     width: width *.84,
     justifyContent: 'center',
     alignItems: 'center',

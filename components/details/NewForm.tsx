@@ -89,7 +89,7 @@ const hideKeyboard=()=>{
         <IconSticker setEmotion={setEmotion}  hideKeyboard={hideKeyboard}/>
         <InputForm story={story} setStory={setStory} marginLeft={24}/>
         <View style={{marginTop:16}}>
-        <AddPhoto setPhoto={setPhoto} showDone={showDone} photo={photo} hideKeyboard={hideKeyboard}/>
+        <AddPhoto  setPhoto={setPhoto} showDone={showDone} photo={photo} hideKeyboard={hideKeyboard}/>
        
 
         </View>

@@ -26,6 +26,10 @@ interface DateContextType {
   setVisible:(visible:any)=>void
   yearF:any
   setYearF:(year:any)=>void
+  todayDate:any
+  setTodayDate:(date:any)=>void
+  preImages:any
+  setPreImages:(images:any)=>void
 }
 
 const DateContext = createContext<DateContextType>('' as any);
@@ -42,6 +46,8 @@ const [email,setEmail]=useState('' as any)
 const [token,setToken]=useState('' as any)
 const [headerTitle,setHeaderTitle]=useState('' as any)
 const [visible,setVisible]=useState(false)
+const [todayDate,setTodayDate]=useState('' as any)
+const [preImages,setPreImages]=useState([] as any)
 //  useEffect(()=>{
 //   if(dateF !== '' ){
   
@@ -53,7 +59,7 @@ const [visible,setVisible]=useState(false)
 // },[dateF])
 
   return (
-    <DateContext.Provider value={{yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
+    <DateContext.Provider value={{preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
       {children}
     </DateContext.Provider>
   );

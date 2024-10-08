@@ -9,11 +9,13 @@ import { useData } from '~/hooks/useData';
 const { width ,height} = Dimensions.get('window');
 const circleSize = width * 0.1104;
 // 요일 배열 (월요일 시작)
-const daysOfWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+// const daysOfWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S']; 
 
 // 월별 날짜 배열 생성 (월요일 시작으로 재정렬)
 const getDaysInMonth = (year: number, month: number) => {
-  const firstDayOfMonth = (new Date(year, month, 1).getDay() + 6) % 7; // 월요일 시작으로 변환
+  // const firstDayOfMonth = (new Date(year, month, 1).getDay() + 6) % 7; // 월요일 시작으로 변환
+  const firstDayOfMonth = new Date(year, month, 1).getDay(); // 월요일 시작으로 변환
   const daysInMonth = new Date(year, month + 1, 0).getDate(); // 해당 월의 총 일수
   const daysArray = Array(firstDayOfMonth).fill(null);
 
@@ -92,54 +94,6 @@ const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown}:any) => {
 useEffect(()=>{
   console.log(currentDate,'currentDate')
 },[])
-
- // 스크롤 완료 시 처리
-//  const handleScrollEnd = async (event: any) => {
-//   const offsetX = event.nativeEvent.contentOffset.x;
-//   const pageIndex = Math.round(offsetX / width); // 페이지 인덱스 계산
-//   setClickedDay(null)
-//   setIsScrolling(true);  // 스크롤 시작
-// console.log(offsetX,'offsetX')
-// console.log(pageIndex,'pageIndex')
-//   if (pageIndex === 0 && monthF - 1 !== loadedMonth) {
-//     // 이전 달로 이동
-  
-//     await preloadMonth(monthF - 1);  // 데이터를 미리 로드하고 전환
-//     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-//     console.log(newDate,'newDate-prev')
-//     setCurrentDate(newDate);
-    
-//     updateHeader(newDate);  // 헤더 타이틀 업데이트
-//     scrollRef.current?.scrollTo({ x: width, animated: false });
-//   } else if (pageIndex === 2 && monthF + 1 !== loadedMonth) {
-//     // 다음 달로 이동
-//     await preloadMonth(monthF + 1);  // 데이터를 미리 로드하고 전환
-//     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-
-//     setCurrentDate(newDate);
-//     updateHeader(newDate);  // 헤더 타이틀 업데이트
-//     scrollRef.current?.scrollTo({ x: width, animated: false });
-//   }else{
-  
-//     await preloadMonth(monthF - 1);  // 데이터를 미리 로드하고 전환
-//     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-   
-//     setCurrentDate(newDate);
-    
-//     updateHeader(newDate);  // 헤더 타이틀 업데이트
-//     scrollRef.current?.scrollTo({ x: width, animated: false });
-
-
-
-
-
-
-//   }
-
-//   setIsScrolling(false);  // 스크롤 종료
-// };
-
-
 
 
 const handleScrollEnd = async (event: any) => {
