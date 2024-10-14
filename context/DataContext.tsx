@@ -30,6 +30,10 @@ interface DateContextType {
   setTodayDate:(date:any)=>void
   preImages:any
   setPreImages:(images:any)=>void
+  progress:any
+  setProgress:(progress:any)=>void
+  isLoading:any
+  setIsLoading:(isLoading:boolean)=>void
 }
 
 const DateContext = createContext<DateContextType>('' as any);
@@ -48,18 +52,12 @@ const [headerTitle,setHeaderTitle]=useState('' as any)
 const [visible,setVisible]=useState(false)
 const [todayDate,setTodayDate]=useState('' as any)
 const [preImages,setPreImages]=useState([] as any)
-//  useEffect(()=>{
-//   if(dateF !== '' ){
-  
-//     const showDate = orgDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' ,day:'numeric'});
-  
-//     setDateWithLang(showDate)
-    
-//   }
-// },[dateF])
+const [isLoading,setIsLoading]=useState(false)  
+const [progress,setProgress]=useState(0)
+
 
   return (
-    <DateContext.Provider value={{preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
+    <DateContext.Provider value={{isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
       {children}
     </DateContext.Provider>
   );

@@ -11,9 +11,9 @@ import { useTheme } from '~/Theme/ThemeProvider';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import DetailMode from '~/components/main/DetailMode';
 import ListMode from '~/components/main/ListMode';
-import { useData } from '~/hooks/useData';
-import { findTodayData ,updateIsToday} from '~/utils/fireStoreFn';
-import { ScaledSheet,scale, verticalScale, moderateScale } from 'react-native-size-matters';
+
+import { findTodayData } from '~/utils/fireStoreFn';
+import { checkData } from '~/utils/utilsFn';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, withSequence,Easing ,runOnJS} from 'react-native-reanimated';
 const {width,height}=Dimensions.get('window')
 import { useDateContext } from '~/context/DataContext';
@@ -22,9 +22,8 @@ const Main = () => {
   const [lines,setLines]=useState(0)
   const [hasTodayData,setHasTodayData]=useState<any>(false)
   const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setTodayDate,todayDate} = useDateContext();
-
 const [showListMode,setShowListMode]=useState(false)
-  const translateY = useSharedValue(0); // 애니메이션 상태
+const translateY = useSharedValue(0); // 애니메이션 상태
 const navigation = useNavigation<any>();
 const date = new Date();
 const year = date.getFullYear();
@@ -33,13 +32,13 @@ const day = date.getDate();
 let currentDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
 
 
+//오늘 날씨에 데이터가 있는지 확인
 useEffect(()=>{
   setTodayDate(currentDate)
   const checkTodayData = async()=>{
-  
-    const result = await findTodayData(month,currentDate)
-    console.log(result,'result')
-    if(result?.emotion !==""){
+  const result = await findTodayData(month,currentDate)
+ 
+    if( checkData(result)){
       setHasTodayData(true)
     }else{
       setHasTodayData(false)
@@ -48,13 +47,10 @@ useEffect(()=>{
    
   }
   checkTodayData()
-},[])
+},[currentDate,month,newAData])
+// -----------------------------
 
-
-
-
-
-//auto theme mode
+//오전6시부터 오후 6시까지는 light mode, 그 외는 dark mode
   const checkTimeForTheme = () => {
     const currentTime = new Date();
     const hours = currentTime.getHours();
@@ -71,15 +67,17 @@ useEffect(()=>{
   }, []);
   
 //-------------------------
-
+// 이모지 혹은 스토리 혹은 사진이 있을 때만 애니메이션 실행
 useEffect(()=>{
- 
-  if(newAData && !visible && newAData.emotion !== ''){
+
+
+  if(newAData  && checkData(newAData)){
     triggerAnimation(true)
   }
 },[newAData])
 
-
+// -------------------------
+// 디테일모드 에니메이션 (보여주기 에니메이션)
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateY: translateY.value }],
@@ -98,8 +96,6 @@ useEffect(()=>{
       );
     };
 
-   
-
     const letBoxDown = (shouldShow: boolean) => {    
       // 애니메이션 시작
       translateY.value = withTiming(
@@ -116,34 +112,27 @@ useEffect(()=>{
         }
       );
     };
-
-    
-
-    
-
-   
-    
-
-
-
-
+// ----------------------------
+// 오늘 날짜 데이터 생성함수
     const currentDateForm = useCallback(async () => {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      let currentDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+      // const date = new Date();
+      // const year = date.getFullYear();
+      // const month = date.getMonth() + 1;
+      // const day = date.getDate();
+      // let currentDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
     
       // 현재 날짜를 사용하여 라우팅
      return  (navigation as any).navigate('details/[date]', { date: currentDate, month });
     }, [navigation]);
-    
-    useEffect(()=>{console.log(visible,'visible')},[visible])
+    // -----------------------------------
+  
+   
 
+// 모바일폰 사이즈 마다 버튼 사이즈 밑 margin 조정하기
 const plusBtnSize=width *0.1527
 const plusBtnMgTop=height *0.1620
-const topSize =height *-0.071
-console.log(hasTodayData,'hasTodayData')
+const topSize =lines >5?height *0.010:height *-0.071
+// ------------------------------------
 
   return (
     <View style={{backgroundColor:colors.background,alignItems:'center'}}>
@@ -166,23 +155,18 @@ console.log(hasTodayData,'hasTodayData')
          
         </Animated.ScrollView>
 
-
-
       { 
 
         visible?  <Animated.View style={[{borderRadius:21,alignItems:'center',marginTop: topSize},animatedStyle]}>
             <DetailMode visible={visible} date={dateF} item={newAData}  />
           </Animated.View>:
           <View style={{justifyContent:'center',alignItems:'center',marginTop:plusBtnMgTop,marginBottom:200}}>
-          <TouchableOpacity onPress={currentDateForm} style={hasTodayData?{display:'none'}: {justifyContent: 'center', alignItems: 'center', backgroundColor: colors.text, width: plusBtnSize, height: plusBtnSize, borderRadius: 100 }}>
+          <TouchableOpacity onPress={currentDateForm} style={!hasTodayData?{justifyContent: 'center', alignItems: 'center', backgroundColor: colors.text, width: plusBtnSize, height: plusBtnSize, borderRadius: 100 }:{display:'none'}}>
             <Fontisto name="plus-a" size={16} color={colors.background} />
           </TouchableOpacity>
           </View>
           }
           
-
-        
-
       </ScrollView>
     
     </View>

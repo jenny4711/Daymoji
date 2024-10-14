@@ -43,7 +43,7 @@ const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown}:any) => {
 
   function getWeeksInMonth(year:any, month:any) {
     // 해당 달의 첫째 날의 요일 (getDay: 0 = 일요일, 1 = 월요일)
-    const firstDayOfMonth = new Date(year, month, 5).getDay();
+    const firstDayOfMonth = new Date(year, month, 0).getDay();
   
     // 해당 달의 마지막 날짜
     const lastDateOfMonth = new Date(year, month + 1, 0).getDate();
@@ -60,7 +60,8 @@ const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown}:any) => {
     return weeks; 
   }
 
-
+  
+  
 
 
   // 데이터 로딩 상태와 관련된 커스텀 훅
@@ -84,6 +85,7 @@ const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown}:any) => {
       setMonthF(currMonth);  // monthF 업데이트
       setYearF(currYear);  // yearF 업데이트
      const weeks = getWeeksInMonth(currYear, currMonth );
+     console.log(weeks,'weeks')
      setLines(weeks)
     
 
@@ -91,9 +93,7 @@ const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown}:any) => {
 
     updateHeaderAndMonth();
   }, [currentDate]);  // currentDate가 변경될 때마다 헤더와 monthF 업데이트
-useEffect(()=>{
-  console.log(currentDate,'currentDate')
-},[])
+
 
 
 const handleScrollEnd = async (event: any) => {
@@ -142,7 +142,7 @@ const preloadMonth = async (newMonth: number) => {
   
   if (newMonth < monthF) {
     // 이전 달 데이터 로드
-    console.log(currentDate,'currentDate');
+
     if (!prevData) {
       // 데이터를 로드하는 로직 필요
       console.log('prevData',newMonth);

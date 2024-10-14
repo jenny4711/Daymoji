@@ -1,16 +1,13 @@
-import { View, Text, Dimensions,  TouchableOpacity, StyleSheet ,Image as RnImage, ImageBackground} from 'react-native';
+import { View, Text, Dimensions,  TouchableOpacity, StyleSheet ,Image as RnImage, ImageBackground, ActivityIndicator} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 // import {  uploadImage } from '../utils/cloudinary';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { FadeInRight } from 'react-native-reanimated';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useTheme } from '../../Theme/ThemeProvider';
 import { Image } from 'expo-image';
 import { uploadImageStorage ,deleteImageStorage, updatePhoto} from '../../utils/fireStoreFn'
 import { useDateContext } from '~/context/DataContext';
-import { ScaledSheet,scale, verticalScale, moderateScale } from 'react-native-size-matters';
-import { set } from 'lodash';
 import { useNavigation } from '@react-navigation/native';
 import EachImage from './EachImage';
 const { width, height } = Dimensions.get('window');
@@ -25,40 +22,44 @@ const AddPhoto=({showDone,photo,setPhoto,hideKeyboard}:any)=>{
   const [img,setImg]=useState<any>('')
   const [imges,setImges]=useState<any>([])
   const deletedIcon = require('../../assets/delete.png')
-const {dateF,monthF,newAData,setNewAData,setPreImages,preImages}=useDateContext()
+const {dateF,monthF,newAData,setNewAData,setPreImages,preImages,setProgress,progress,setIsLoading}=useDateContext()
 const screenSize = Dimensions.get('window');
 const [imgSize,setImgSize]=useState({width:0,height:0})
 const [deleteMargin,setDeleteMargin]=useState({top:16,right:16})
+const [press,setPress]=useState(false)
+// useEffect(()=>{
+//   if(press && progress<100){
+//     setIsLoading(true)
+//     setPress(false)
+//   }else{
+//     setIsLoading(false)
+//     setPress(false)
+//   }
+// },[progress,press])
 
 useEffect(()=>{
-  if(dateF !== newAData?.date){
- setNewAData(null)
-  }
-},[newAData,dateF])
-useEffect(()=>{
-  
- if(newAData?.photo  && typeof newAData.photo ==='string'){
+  if(newAData?.photo  && typeof newAData.photo ==='string'){
   setImg(photo)
- 
 
  }else if(newAData?.photo && Array.isArray(newAData.photo) &&dateF === newAData?.date){
   setImges(newAData.photo)
-  
-
+  setPreImages(newAData.photo)
  
+ 
+
  }
 
 },[newAData])
 
 
 useEffect(()=>{
-  if(imges.length===2){
+  if(imges.length===1){
     setImgSize({width:(screenSize.width - 48) / 2 -8,height:(screenSize.width - 48) / 2 -8})
-    setDeleteMargin({top:7,right:7})
+    setDeleteMargin({top:12,right:12})
    
-  }else if(imges.length>2){
+  }else if(imges.length===2 || imges.length===3){
     setImgSize({width:(screenSize.width - 48) / 3 -8,height:(screenSize.width - 48) / 3 -8})
-    setDeleteMargin({top:5,right:5})
+    setDeleteMargin({top:8,right:8})
  
   }else{
     setImgSize({width:screenSize.width-48,height:screenSize.width-48})
@@ -75,46 +76,66 @@ useEffect(()=>{
     }
   }, [img,photo]);
 
+
+
+
   const pickImage = async () => {
-    hideKeyboard()
-   
+    hideKeyboard();
+    // setPress(true)
+    setIsLoading(true);
+    if (imges.length >= 3 || photo.length >= 3) {
+      return; // 이미지가 이미 3개이면 종료
+    }
+
     let result: any = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       aspect: [4, 3],
       quality: 0.5,
-   
+      selectionLimit:3-imges.length, // 최대 3개까지 선택 가능
+      allowsMultipleSelection: true, // 여러 이미지 선택 허용
     });
 
     if (!result.canceled) {
-      const selectedImageUri = result.assets[0].uri;
-      setImg(selectedImageUri)
-      setImges((prevImgs: any) => [...prevImgs, selectedImageUri ]);
-      setPreImages((prevImgs: any) => [...prevImgs, selectedImageUri ]);
-
-
-   
-      
-    // photo 배열에 새로운 이미지 추가
-    if(photo?.length>=3){
-      console.log('photo length is more than 3')
-      return;
-    }
-    const res= await uploadImageStorage(selectedImageUri,'image')
-      
-    const newImageUri = res
-    // setImges((prevImgs: any) => [...prevImgs, newImageUri]);
-    // setPreImages((prevImgs: any) => [...prevImgs, newImageUri]);
-    setPhoto((prevPhotos: any) => [...prevPhotos, newImageUri]);
-
-    // 상태로 사용될 img 및 imges 업데이트
-    setImg(newImageUri);
-  
-  
+      const selectedImages = result.assets;
  
+
+      const uploadPromises = selectedImages.map(async (selectedImage: any) => {
+      
+
+        const selectedImageUri = selectedImage.uri;
+        setImges((prevImgs: any) => [...prevImgs, selectedImageUri]);
+        setPreImages((prevImgs: any) => [...prevImgs, selectedImageUri]);
+
+       
+
+      
+
+       
+
+        // 업로드 시작
+        // setIsLoading(true);
+        const res = await uploadImageStorage(selectedImageUri, 'image', (progressValue: number) => {
+          setProgress(progressValue);
+        });
+
+        const newImageUri = res;
+       
+       
+          setPhoto((prevPhotos: any) => [...prevPhotos, newImageUri]);
+
+         
+        
+       
+      });
+
+      // 모든 이미지 업로드 완료 대기
+      // if (imges.length >= 3 || photo.length >= 3) {
+      //   return; // 이미지가 이미 3개이면 종료
+      // }
+      await Promise.all(uploadPromises);
+      setIsLoading(false);
     }
-
-
   };
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -134,20 +155,28 @@ useEffect(()=>{
   });
 
   const deleteImage = async (imgUri: string) => {
+
     try {
-      setImges((prevImgs: any) => prevImgs.filter((imgUriItem: string) => imgUriItem !== imgUri));
-      setPhoto((prevPhotos: any) => prevPhotos.filter((photoUri: string) => photoUri !== imgUri));
-      // Firestore에서 특정 이미지에 대한 데이터를 업데이트하거나 제거
-      await updatePhoto({ date: dateF, month: monthF });
+    const findIndex = imges.findIndex((imgUriItem: string) => imgUriItem === imgUri);
+    const findUriByIndex=photo[findIndex]
   
-      // Firebase 스토리지에서 이미지 삭제
-      await deleteImageStorage(imgUri);
+        if(newAData?.photo && Array.isArray(newAData.photo)){
+          await updatePhoto({ date: dateF, month: monthF })
+          await deleteImageStorage(imgUri);
+          setPhoto((prevPhotos: any) => prevPhotos.filter((photoUri: string) => photoUri !== findUriByIndex));
+          setImges((prevImgs: any) => prevImgs.filter((imgUriItem: string) => imgUriItem !== imgUri));
+           setPreImages((prevImgs: any) => prevImgs.filter((imgUriItem: string) => imgUriItem !== imgUri));
+        
+        }else{
+          await deleteImageStorage(findUriByIndex);
+            setImges((prevImgs: any) => prevImgs.filter((imgUriItem: string) => imgUriItem !== imgUri));
+            setPhoto((prevPhotos: any) => prevPhotos.filter((photoUri: string) => photoUri !== findUriByIndex));
+             setPreImages((prevImgs: any) => prevImgs.filter((imgUriItem: string) => imgUriItem !== imgUri));
+      
+        }  
+        // Firebase 스토리지에서 이미지 삭제
   
-      // 상태에서 해당 이미지 제거 (새로운 photo 배열 생성)
-     
- 
-  
-      console.log(`Image ${imgUri} deleted successfully`);
+       console.log(`Image ${imgUri} deleted successfully`);
   
     } catch (error) {
       console.error('Failed to delete image:', error);
@@ -155,18 +184,7 @@ useEffect(()=>{
   };
 
  return (
-    <View style={{alignItems:'center',paddingBottom:100}}>
-
-    
-     {!img &&imges.length<1 ?  <TouchableOpacity style={{width:60,height:60,borderRadius:100,backgroundColor:colors.inputBk,justifyContent:'center',alignItems:'center'}} onPress={pickImage}>
-     {dark ? (
-        <Image source={imgBtn} style={{ width: 24, height: 24 }} />
-      ) : (
-        <Image source={imgBtnBk} style={{ width: 19.5, height: 16.5 }} />
-      )}
-        </TouchableOpacity>
-        :null
-        }
+    <View style={{alignItems:'center',paddingBottom:100,flexDirection:'row',justifyContent:'center'}}>
 
  {/* 이미지 배열 */}
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -195,25 +213,38 @@ useEffect(()=>{
               idx={index}
               deleteMargin={deleteMargin}
               imges={imges}
+              progress={progress}
             />
           </View>
         )
         ) }
-    </View>
-     
-     
-     
-     
-     {img && preImages.length>=1 && imges.length <4  ?(
-      <TouchableOpacity style={{width:60,height:60,borderRadius:100,backgroundColor:colors.inputBk,justifyContent:'center',alignItems:'center',marginTop:16}} onPress={pickImage}>
-      {dark ? (
-         <Image source={imgBtn} style={{ width: 24, height: 24 }} />
-       ) : (
-         <Image source={imgBtnBk} style={{ width: 19.5, height: 16.5 }} />
-       )}
-         </TouchableOpacity>
 
-     ):null}
+   
+    </View>
+    
+    {/* {progress >0 && progress < 100?(<ActivityIndicator style={{marginTop:16}} size="small" color={'red'} />):null} */}
+   
+         {imges.length<3  ?  <TouchableOpacity style={[styles.btnView,!img?{ backgroundColor:colors.inputBk,width:imgSize.width,height:imgSize.height}:{backgroundColor:colors.inputBk,marginTop:16,width:imgSize.width,height:imgSize.height}]} onPress={pickImage}>
+     {dark ? (
+      <View style={{width:82,height:19,justifyContent:'center',alignItems:'center'}}>
+        <Image source={imgBtn} style={{ width: 19.5, height: 16.5 ,marginBottom:8}} />
+        <Text style={{color:colors.text,fontSize:16}}>Add Photo</Text>
+        </View>
+      
+      ) : (
+        <View style={{width:82,height:19,justifyContent:'center',alignItems:'center'}}>
+        <Image source={imgBtnBk} style={{ width: 19.5, height: 16.5 ,marginBottom:8}} />
+        <Text style={{color:colors.text,fontSize:16}}>Add Photo</Text>
+        </View>
+      )}
+        </TouchableOpacity>
+        :null
+        }
+
+
+
+
+       
        
    
     </View>
@@ -232,16 +263,19 @@ const styles = StyleSheet.create({
    
   },
   btnView: {
-    justifyContent:'center',
-    alignItems:'center' ,
-    width:width-48
+   width:345,
+   height:345,
+   borderRadius:24,
+  
+   justifyContent:'center',
+   alignItems:'center'
   },
   backgroundImage: {
-    width: width - 48, // 배경 이미지 크기
-    height: height / 2, // 배경 이미지 높이
+    width: width - 48, 
+    height: height / 2, 
   },
   imageStyle: {
-    borderRadius: 24, // 이미지에 borderRadius 적용
+    borderRadius: 24, 
   },
 
 });

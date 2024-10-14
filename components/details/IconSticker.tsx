@@ -64,8 +64,7 @@ const IconSticker = ({setEmotion,emotion,hideKeyboard}:any) => {
     );
   };
 
-console.log(emotionValue,'emotionValue')
-console.log(emotion,'emotion')
+
 
 
   return (

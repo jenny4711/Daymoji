@@ -1,6 +1,6 @@
 
 import Head from 'expo-router/head'
-import { View, Text ,Alert,SafeAreaView} from 'react-native'
+import { View, Text ,Alert,SafeAreaView,ActivityIndicator,StyleSheet} from 'react-native'
 import React ,{useState,useEffect,useCallback}from 'react'
 import FirstView from '~/components/details/FirstView'
 import { useData ,useSaveData,useDeletedData} from '~/hooks/useData'
@@ -23,7 +23,7 @@ return [
 }
 const Detail = () => {
   const { date, month }: any = useLocalSearchParams();
-  const { dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
+  const {isLoading, dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
   const queryClient = useQueryClient();
 const navigation=useNavigation()
 
@@ -40,8 +40,7 @@ const addMutation=useSaveData({date,month})
 const deletedMuation=useDeletedData({date,month})
 const [save,setSave]=useState<any>(false)
 const {data}=useData(month)
-console.log(preImages,'newAdata-detail')
-console.log(date,'date')
+
 // dateformat -> 2022-01-01
 //monthformat->1
 
@@ -77,7 +76,7 @@ setYear(year)
 
 useEffect(()=>{
   if(newAData?.date===date){
-    console.log(newAData,'newAdata')
+  
     setStory(newAData?.story)
     setPhoto(newAData?.photo)
     setEmotion(newAData?.emotion)
@@ -101,9 +100,7 @@ async function doneHandler() {
   // `newAData.photo`와 `photo`를 배열로 관리
   let photos: string[] = [];
   
-  // if (newAData !== null && Array.isArray(newAData.photo)) {
-  //   photos = [...newAData.photo]; // 기존 사진 배열 복사
-  // }
+ 
   
   // 현재 선택된 `photo`가 배열인지 단일 값인지 확인
   if (Array.isArray(photo)) {
@@ -150,6 +147,11 @@ const handleDeleted = async () => {
   return (
     
     <SafeAreaView style={{backgroundColor:colors.background}}>
+        {isLoading && (
+        <View style={[styles.loadingOverlay,{backgroundColor:colors. loadingBK}]}>
+          <ActivityIndicator size="small" color={colors.text} />
+        </View>
+      )}
          <View style={[{alignItems:'center'},{backgroundColor:colors.background}]}>
          {
          
@@ -205,3 +207,17 @@ const handleDeleted = async () => {
 }
 
 export default Detail
+
+const styles=StyleSheet.create({
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 배경
+    zIndex: 1, // 메인 컨텐츠 위에 오버레이가 렌더링되도록 설정
+  },
+})

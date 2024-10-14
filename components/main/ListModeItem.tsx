@@ -14,38 +14,40 @@ import { useDeletedData } from '~/hooks/useData'
 const ListModeItem = ({item}:any) => {
   const {colors,dark}=useTheme()
   const navigation=useNavigation()
-  const { monthF,setVisible} = useDateContext();
+  const { monthF,setVisible,setNewAData} = useDateContext();
   const [imgSize,setImgSize]=useState({width:0,height:0})
+  const [deleteMargin,setDeleteMargin]=useState({top:16,right:16})
+const [images,setImages]=useState<any>([])
+const [actualData,setActualData]=useState<any>(null)
   const screenSize = Dimensions.get('window');
   const queryClient = useQueryClient();
+
+
+
+
+
+  useEffect(()=>{
+    if(actualData?.photo && Array.isArray(item.photo)){
+      setImages(item.photo)
+    }
+  },[item?.photo])
  
   const deletedMuation=useDeletedData({date:item?.date,monthF})
-  useEffect(() => {
-
+  useEffect(()=>{
+    if(images.length===2){
+      setImgSize({width:(screenSize.width - 96) / 2 -8,height:(screenSize.width - 96) / 2 -8})
+      setDeleteMargin({top:7,right:7})
+     
+    }else if(images.length>2){
+      setImgSize({width:(screenSize.width - 96) / 3 -8,height:(screenSize.width - 96) / 3 -8})
+      setDeleteMargin({top:5,right:5})
+   
+    }else{
+      setImgSize({width:screenSize.width-96,height:screenSize.width-96})
+      setDeleteMargin({top:16,right:16})
   
-    if (item?.photo !== undefined && item?.photo !== null) {
-      try {
-        RNimage.getSize(
-          item.photo,
-          (width, height) => {
-            const ratio = width / height;
-            const newHeight = screenSize.width / ratio;
-            setImgSize({ width: screenSize.width - 96, height: newHeight });
-            console.log(width, height, 'width, height');
-          },
-          (error) => {
-            console.log('Failed to get size for image', error);
-            setImgSize({ width: 0, height: 0 }); // 이미지가 유효하지 않으면 크기를 0으로 설정
-          }
-        );
-      } catch (error) {
-        console.log('Error getting image size', error);
-        setImgSize({ width: 0, height: 0 }); // 예외 발생 시 크기를 0으로 설정
-      }
-    } else {
-      setImgSize({ width: 0, height: 0 });
     }
-  }, [item?.photo]);
+  },[images])
 
   const handleDeleted = async () => {
     deletedMuation.mutate(
@@ -58,7 +60,7 @@ const ListModeItem = ({item}:any) => {
         
           (navigation as any).navigate('main');
           setVisible(false)
-  
+          setNewAData(null)
         
         },
       }
@@ -83,7 +85,7 @@ const ListModeItem = ({item}:any) => {
       style={{width:60,height:60,borderRadius:100,justifyContent:'center',alignItems:'center',marginTop:16,backgroundColor:colors.inputBk2}}
       >
 
-       <EmotionSticker emotion={'happy'} size={24}/>
+       <EmotionSticker emotion={item.emotion} size={24}/>
       </Animated.View>
       <View style={{flexDirection:'row'}}>
         <TouchableOpacity onPress={handleEditBtn} style={{marginRight:16}}>
@@ -101,22 +103,34 @@ const ListModeItem = ({item}:any) => {
     </View>
 
     <View style={{marginVertical:16,width:screenSize.width-96,alignItems:'flex-start',backgroundColor:colors.inputBk2,justifyContent:'center',borderRadius:24}}>
-      <Text style={{fontFamily:'SFCompactRoundedBD',fontSize:16,color:colors.text,paddingVertical:24,paddingLeft:24}}>{item?.story}</Text>
+      <Text style={{fontFamily:'SFCompactRoundedBD',fontSize:16,color:colors.text,paddingVertical:24,paddingLeft:24}}>{item.story}</Text>
 
       </View>
-      {item?.photo? 
-        <View style={{marginTop:16,height:imgSize.height,backgroundColor:'gray'}}>
-       <Image
-        contentFit="cover" 
-         source={{uri:item?.photo}}
-          style={{height:imgSize.height,width:imgSize.width,borderRadius:24}}
-        
-          />
-          </View>
+      <View  style={{flexWrap: 'wrap', borderRadius:25,alignItems:'center',justifyContent:'center',flexDirection:'row',marginBottom:25}}>
+      {item && item.photo?item.photo.map((itemImg:any,index:any)=>(
+
+
+<TouchableOpacity key={index} activeOpacity={1} onPress={()=>(navigation as any).navigate('imgDetail/[img]',{img:"",idx:index})}>
+<Image
+contentFit='cover' 
+source={{uri:itemImg}}
+
+style={{height:imgSize.height,width:imgSize.width,borderRadius: 25,margin: 4,}}
+
+/>
+</TouchableOpacity>
+
+      ))
+      
+      
+      
+      
+      
           :
           null
           }
      
+     </View>
 
        
    

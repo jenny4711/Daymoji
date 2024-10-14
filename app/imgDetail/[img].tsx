@@ -8,7 +8,7 @@ import { Image as ExpoImage } from 'expo-image'
 import { useTheme } from '~/Theme/ThemeProvider';
 import {useDateContext} from '~/context/DataContext'
 import { get } from 'lodash';
-
+// react-native-reanimated-carousel
 const Img = () => {
   const { img ,idx} = useLocalSearchParams<any>()
   const {colors,dark}=useTheme()
@@ -17,7 +17,7 @@ const Img = () => {
   const screenSize = Dimensions.get('window'); // 화면 크기 가져오기
 const {setNewAData,newAData,preImages}=useDateContext()
 
-
+console.log(preImages,'imgDetail')
 useEffect(()=>{
  
   if(img ===""){

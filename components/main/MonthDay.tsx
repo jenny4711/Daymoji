@@ -1,10 +1,13 @@
 
 import React, { useState, useRef ,useEffect,memo} from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView ,TouchableOpacity,Alert} from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ScrollView ,TouchableOpacity,Alert,Pressable} from 'react-native';
 import EmotionSticker from '../EmotionSticker';
 import { useDateContext } from '~/context/DataContext';
 import {useNavigation} from 'expo-router'
 import * as Haptics from 'expo-haptics';
+
+
+
 import { useTheme } from '~/Theme/ThemeProvider';
 const { width } = Dimensions.get('window');
 const circleSize = width * 0.1104;
@@ -21,7 +24,7 @@ const today=new Date()
 const selectedDate=new Date(yearF,monthF-1,day)
 const isDisabled=selectedDate>today
 
-console.log(clickedDay,'clickedDay')
+
 useEffect(()=>{
 if(itemMonth !==monthF){
   letBoxDown(false)
@@ -57,7 +60,7 @@ const saveData = (day: any) => {
   }
 
   setClickedDay((prevDay:any) => (prevDay === day ? null : day));
-//  setItemMonth(monthF)
+
   setDateF(date);
   return (navigation as any).navigate('details/[date]', { date, month: monthF });
 };
@@ -70,8 +73,11 @@ const showDetailItem=(day:any)=>{
   const monthS = monthF < 10 ? `0${monthF}` : monthF;
   const itemDate =new Date(item?.date).getMonth()+1
   const date = `${yearF}-${monthS}-${dateS}`;
+  const checkEmotion = item?.emotion === undefined || item?.emotion === '';
+  const checkStory = item?.story === undefined || item?.story === '';
+  const checkPhoto = item?.photo?.length === 0 || item?.photo === undefined;
 
-  if(item.emotion ===undefined){
+  if(checkEmotion && checkStory &&checkPhoto){
     return (navigation as any).navigate('details/[date]', { date, month: monthF });
   }
   setNewAData(item)
@@ -105,8 +111,9 @@ setClickedDay((prevDay:any) => (prevDay === day ? null : day));
 
             <View key={index} style={[styles.dayBox]}>
               {item !==undefined  ?(
-                <TouchableOpacity 
+                <TouchableOpacity
                 activeOpacity={1}
+                delayPressIn={0}
                 style={[styles.circle, {
                   backgroundColor:item && item.emotion !== undefined? colors.inputBk:colors.inputWithoutEm,
                 
@@ -120,9 +127,10 @@ setClickedDay((prevDay:any) => (prevDay === day ? null : day));
                   {item?.emotion && <EmotionSticker size={25} emotion={item?.emotion} />}
                 </TouchableOpacity>
               ):(
-                <TouchableOpacity 
+                <Pressable
                 onPress={()=>saveData(day)}
-                activeOpacity={1}
+                // activeOpacity={1}
+                // delayPressIn={0}
                 style={[styles.circle, {
                  
                   backgroundColor: colors.inputBk,
@@ -136,7 +144,7 @@ setClickedDay((prevDay:any) => (prevDay === day ? null : day));
                 
                 >
                   <View style={{ width: circleSize, height: circleSize, borderRadius: circleSize / 2, backgroundColor: colors.text, opacity: 0.1 }} />
-                </TouchableOpacity>
+                </Pressable>
               )}
               
               <View style={{marginTop:.1,backgroundColor:item && item.isToday?colors.text:colors.background,borderRadius:100,width:27,height:18,justifyContent:'center',alignItems:'center'}}>

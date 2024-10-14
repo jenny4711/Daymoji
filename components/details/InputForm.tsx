@@ -7,7 +7,7 @@ const {width,height}=Dimensions.get('window')
 const InputForm = ({story,setStory,marginLeft}:any) => {
   const {colors,dark}=useTheme()
   const [inputHeight, setInputHeight] = useState(67); 
-  const [showStory, setShowStory] = useState('');
+  // const [showStory, setShowStory] = useState('');
 const lineHeight=19.09
 const paddingVertical = 20;
 const handleContentSizeChange = (contentSize: { height: number }) => {
@@ -17,7 +17,7 @@ const handleContentSizeChange = (contentSize: { height: number }) => {
 
   // 두 번째 줄부터 높이를 조정
   if (numberOfLines > 2) {
-   console.log('numberOfLines',numberOfLines)
+  
      newHeight = Math.max(67, numberOfLines * lineHeight+paddingVertical+paddingVertical); // 두 번째 줄부터 높이를 조정
   } else {
     newHeight = 67; // 첫 번째 줄일 때는 기본 높이 유지
@@ -61,12 +61,9 @@ const styles = StyleSheet.create({
 
     fontSize: 16,
     fontWeight: 700,
-    // lineHeight: 19.09,
+   
     paddingVertical:24,
-    // marginTop: 15,
-    // marginLeft:24,
-  //  paddingBottom:15,
-    // marginBottom:15,
+  
     paddingHorizontal:24,
    
 

@@ -93,7 +93,7 @@ const navigation = useNavigation<any>();
       const credential = GoogleAuthProvider.credential(id_token);
      
       signInWithCredential(FIREBASE_AUTH, credential).then(()=>{
-        console.log('success')
+      
         if (Platform.OS === 'web') {
           WebBrowser.dismissBrowser();  // 팝업 닫기 (웹 환경에서 팝업 닫는 로직 추가)
         }

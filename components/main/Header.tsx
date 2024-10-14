@@ -20,7 +20,7 @@ const Header = ({day,showListMode,setShowListMode}:any) => {
   
     <TouchableOpacity onPress={() => setShowListMode(!showListMode)}>
       {showListMode?
-      <Octicons name="calendar" size={16} color="black" />
+      <Octicons name="calendar" size={16} color={colors.text} />
       :
       <HeaderL color={colors.text}/>
     }

@@ -32,7 +32,7 @@ useEffect(()=>{
 const checkTimeForTheme = () => {
   const currentTime = new Date();
   const hours = currentTime.getHours();
-  console.log(hours, 'hours');
+
 
   if (hours >= 6 && hours < 18) {
     setScheme('light'); // 오전 6시부터 오후 6시까지는 light mode

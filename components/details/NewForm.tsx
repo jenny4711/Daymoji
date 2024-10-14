@@ -10,7 +10,8 @@ import {
   Image,
   Platform,
   Button,
-  ScrollView
+  ScrollView,
+  ActivityIndicator
 } from 'react-native';
 import React,{useState,useEffect} from 'react'
 import { useTheme } from '~/Theme/ThemeProvider';
@@ -18,11 +19,14 @@ import IconSticker from './IconSticker'
 import { useSaveData } from '~/hooks/useData';
 import InputForm from './InputForm';
 import AddPhoto from './AddPhoto';
+
+
 const {width,height}=Dimensions.get('window')
 
 
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming, runOnJS, FadeInLeft } from 'react-native-reanimated';
 import { FadeIn, FadeInUp, FadeInDown, FadeInRight } from 'react-native-reanimated';
+
 const NewForm = ({
 showDone,
  setShowDone,
@@ -40,6 +44,7 @@ showDone,
   const [keyboardVisible, setKeyboardVisible] = useState<boolean>(false);
   const deletedIcon = require('../../assets/delete.png')
 // const {data,isError}=useSaveData({date,month})
+
 
 
 
@@ -68,10 +73,7 @@ showDone,
   };
 }, [setKeyboardVisible, keyboardVisible]);
 
-const deleteImage = () => {
- setPhoto('')
- 
-};
+
 
 
 const hideKeyboard=()=>{
@@ -89,14 +91,12 @@ const hideKeyboard=()=>{
         <IconSticker setEmotion={setEmotion}  hideKeyboard={hideKeyboard}/>
         <InputForm story={story} setStory={setStory} marginLeft={24}/>
         <View style={{marginTop:16}}>
+     
         <AddPhoto  setPhoto={setPhoto} showDone={showDone} photo={photo} hideKeyboard={hideKeyboard}/>
        
 
         </View>
       
-      
-        
-
       </KeyboardAvoidingView>
       
 

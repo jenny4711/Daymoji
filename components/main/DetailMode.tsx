@@ -16,15 +16,16 @@ import { saveIsToday } from '~/utils/fireStoreFn'
 const {width,height}=Dimensions.get('window')
 const DetailMode = ({date,item,currentDateForm}:any) => {
   const {colors,dark}=useTheme()
-  const { monthF,setVisible,setNewAData,todayDate} = useDateContext();
+  const { monthF,setVisible,setNewAData,todayDate,newAData} = useDateContext();
   const [images,setImages]=useState<any>([])
 const screenSize = Dimensions.get('window');
 const queryClient = useQueryClient();
 const navigation=useNavigation()
 const newDate=new Date(date ).toLocaleString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone: 'UTC', })
-const deletedMuation=useDeletedData({date,monthF})
+const deletedMuation=useDeletedData({date,monthF,newAData})
 const [imgSize,setImgSize]=useState({width:0,height:0})
 const [deleteMargin,setDeleteMargin]=useState({top:16,right:16})
+
 useEffect(()=>{
   if(item?.photo && Array.isArray(item.photo)){
     setImages(item.photo)
@@ -51,7 +52,7 @@ useEffect(()=>{
 
 
 
-
+//itemDelete (잠시 보류)
 const handleDeleted = async () => {
   
 
@@ -99,7 +100,7 @@ const handleEditBtn = async () => {
     <ScrollView style={{borderRadius:21,paddingBottom:100}}>
     <View style={{marginBottom:50,backgroundColor:colors.inputBk,width:screenSize.width-48,borderRadius:24,alignItems:'center'}}>
      
-    <View style={{flexDirection:'row',marginTop:0,marginBottom:0,height:67,width:screenSize.width-140,justifyContent:'space-around',alignItems:'center',marginLeft:'35%'}}>
+    <View style={{flexDirection:'row',marginTop:0,marginBottom:0,height:67,width:screenSize.width,justifyContent:'center',alignItems:'center'}}>
       <Animated.View 
     
       style={{width:60,height:60,borderRadius:100,justifyContent:'center',alignItems:'center',marginTop:16,backgroundColor:colors.inputBk2}}
@@ -107,13 +108,14 @@ const handleEditBtn = async () => {
 
        <EmotionSticker emotion={item?.emotion} size={24}/>
       </Animated.View>
-      <View style={{flexDirection:'row'}}>
-        <TouchableOpacity onPress={handleEditBtn} style={{marginRight:16}}>
+      <View style={{position: 'absolute',right:49}}>
+        <TouchableOpacity onPress={handleEditBtn} style={{marginRight:0}}>
       <Octicons name="pencil" size={16} color={colors.text} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleDeleted}>
+      {/* deleteItem 잠시 보류 */}
+      {/* <TouchableOpacity onPress={handleDeleted}>
       <Octicons name="trash" size={16} color={colors.text}/>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       </View>
     </View>
 
