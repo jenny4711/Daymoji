@@ -108,9 +108,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   btn: {
-    marginTop:16,
+    marginVertical:16,
    
-    borderRadius: 100, 
+    borderRadius: 24, 
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'center',

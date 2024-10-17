@@ -7,20 +7,24 @@ import { useNavigation } from 'expo-router';
 import { useDeletedAllData } from '~/hooks/useData';
 import { useQueryClient } from '@tanstack/react-query';
 import LogOutSec from '~/components/setting/LogOutSec';
+import { useDateContext } from '~/context/DataContext';
 import { useColorScheme } from 'react-native';
 const {width,height}=Dimensions.get('window')
 
 const Setting = () => {
   const { dark, colors, setScheme } = useTheme();
   const [colorStyle,setColorStyle]=useState<any>(colors)
-  const [themeMode,setThemeMode]=useState<string>( 'auto')
+  const [themeMode,setThemeMode]=useState<string>( '')
   const [text,setText]=useState<string>(colorStyle.text)
   const [inputBk,setInputBk]=useState<string>( colorStyle.inputBk)
   const [inputBk2,setInputBk2]=useState<string>( colorStyle.inputBk2)
   const [inputWithoutEm,setInputWithoutEm]=useState<string>( colorStyle.inputWithoutEm)
   const [background,setBackground]=useState<string>( colorStyle.background)
+  const [indexOpacity,setIndexOpacity]=useState<string>( colorStyle.indexOpacity)
+  const [loadingBK,setLoadingBK]=useState<string>( colorStyle.loadingBK)
   const colorScheme:any = useColorScheme(); 
-  const month:any ='7'
+  const {monthF}=useDateContext()
+  const month:any =monthF
 const deletedAllMutation=useDeletedAllData(month)
 const queryClient = useQueryClient();
 useEffect(()=>{
@@ -57,12 +61,17 @@ useEffect(() => {
       background: background,
       inputBk: inputBk,
       inputBk2:inputBk2,
-      inputWithoutEm:inputWithoutEm
+      inputWithoutEm:inputWithoutEm,
+      indexOpacity:indexOpacity,
+      loadingBK:loadingBK
+      
+
+
     });
   } else {
     setScheme('dark');
   }
-}, [themeMode, text, inputBk, background, colorScheme]); //
+}, [themeMode, text, inputBk, background, colorScheme]); 
 
 const handleAlldeletedList = () => {
   Alert.alert('Delete All Entries', 'Are you sure you want to delete all entries? This action cannot be undone', [
@@ -74,32 +83,12 @@ const handleAlldeletedList = () => {
     {text: 'Delete',style:'destructive',onPress: () =>{
       
      deletedAllMutation.mutate(month)
-  queryClient.invalidateQueries({ queryKey: ['data'] });  
+  queryClient.invalidateQueries({ queryKey: ['data',monthF] });  
+
     }
     },
   ])
-  // ;Alert.alert('Delete All Entries', 'Are you sure you want to delete all entries? This action cannot be undone', [
-  //   {
-  //     text: 'Ask me later',
-  //     onPress: () => console.log('Ask me later pressed'),
-  //   },
-   
-  //   {text: 'OK', onPress: () => console.log('OK Pressed')},
-  // ]);Alert.alert('Delete All Entries', 'Are you sure you want to delete all entries? This action cannot be undone', [
-  //   {
-  //     text: 'Ask me later',
-  //     onPress: () => console.log('Ask me later pressed'),
-  //   },
-   
-  //   {text: 'OK', onPress: () => console.log('OK Pressed')},
-  // ]);
 
-
-
-
-
-  // deletedAllMutation.mutate(month)
-  // queryClient.invalidateQueries({ queryKey: ['data'] });
   
  
 }

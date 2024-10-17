@@ -139,8 +139,6 @@ export const deletedItem = async (date: any, month: any) => {
      return;
    }
 
-   
-
    const docRef = doc(FIRESTORE_DB, `users/${email}/${month}/${date}`);
    const docSnap = await getDoc(docRef);
 

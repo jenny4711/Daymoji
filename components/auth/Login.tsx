@@ -3,6 +3,7 @@ import React from 'react';
 import { useTheme } from '~/Theme/ThemeProvider';
 import * as WebBrowser from 'expo-web-browser';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { throttle } from 'lodash';
 import { GoogleIcon } from '~/utils/Icons';
 import Head from 'expo-router/head';
 interface LoginProps{
@@ -21,7 +22,7 @@ if(Platform.OS !== 'web'){
 const Login:React.FC<LoginProps> = ({promptAsync}) => {
  const {colors}=useTheme()
  
- const handleGoogleLogin = async () => {
+ const handleGoogleLogin =throttle (async () => {
   try {
     const result = await promptAsync();
     console.log(result,'result')
@@ -29,7 +30,7 @@ const Login:React.FC<LoginProps> = ({promptAsync}) => {
   } catch (error) {
     console.error('Error during login:', error);
   }
-};
+});
 
   return (
     <>
@@ -39,9 +40,9 @@ const Login:React.FC<LoginProps> = ({promptAsync}) => {
     </Head>
    
     <View>
-      <TouchableOpacity style={[styles.googleBtn,{backgroundColor:colors.text}]} onPress={()=>handleGoogleLogin ()}>
+      <TouchableOpacity style={[styles.googleBtn,{backgroundColor:colors.text}]} onPress={()=>handleGoogleLogin ()} >
         <GoogleIcon size={24}/>
-      <Text style={{ color: colors.background ,marginLeft:8,fontSize:16,fontFamily:"SFCompactRoundedBD"}}>Sign up with Google</Text>
+      <Text style={{ color: colors.background ,marginLeft:8,fontSize:16,fontFamily:"SFCompactRoundedBD",lineHeight:19}}>Sign up with Google</Text>
       </TouchableOpacity>
     </View>
     </>
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'black', 
     width:345,
     height: 70,
-    borderRadius: 100, 
+    borderRadius: 24, 
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'center'

@@ -21,7 +21,7 @@ const EachImage = ({idx,img,imgBtn,imgBtnBk,deletedIcon,imgSize,setImgSize,setIm
      
           <View key={idx}  style={{alignItems:'center'}}>
            
-   <TouchableOpacity activeOpacity={1} onPress={()=>(navigation as any).navigate('imgDetail/[img]',{img:img,idx:idx})}>
+   <TouchableOpacity style={{marginHorizontal:imges.length>1?8:0,}} activeOpacity={1} onPress={()=>(navigation as any).navigate('imgDetail/[img]',{img:img,idx:idx})}>
              <Image
             
             contentFit='cover'

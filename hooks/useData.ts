@@ -1,4 +1,4 @@
-import { getData ,getAdayData,saveDiaryEntry,deletedItem,deletedAllItem} from '~/utils/fireStoreFn';
+import { getData ,saveDiaryEntry,deletedItem,deletedAllItem} from '~/utils/fireStoreFn';
 import { useQuery, useQueryClient ,useMutation, UseQueryOptions } from '@tanstack/react-query';
 import { useNavigation } from 'expo-router';
 export const useData=(month:any)=>{
@@ -22,43 +22,6 @@ export const useData=(month:any)=>{
 
   })
 }
-
-// export const useAdayData = ({ date }: any) => {
-//   return useQuery<{ emotion: any; story: any; photo: any }, Error>({
-//     queryKey: ["aDayData", date],
-//     queryFn: async () => {
-//       if (!date) {
-//         throw new Error('No date provided');  // 명시적으로 에러 던지기
-//       }
-
-//       const data = await getAdayData({ date });
-
-//       if (!data) {
-//         throw new Error('No data found for the given date');  // 명시적으로 에러 던지기
-//       }
-
-//       const { emotion, story, photo } = data;
-//       return { emotion, story, photo };  // 정상 데이터 반환
-//     },
-//     enabled: !!date,
-//     staleTime: 0,
-//     refetchOnWindowFocus: true,
-
-  
-
-//     select: (data) => {
-//       console.log('Inside select with data:', data);
-//       return data;
-//     },
-//   });
-// };
-
-
-
-
-
-
-
 
 
 
@@ -99,8 +62,8 @@ export const useDeletedAllData=(month:any)=>{
       return  deletedAllItem(month);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey:['data']})
-      queryClient.refetchQueries({ queryKey: ['data'] });
+      queryClient.invalidateQueries({queryKey:['data',month]})
+      queryClient.refetchQueries({ queryKey: ['data',month] });
       
       setTimeout(() => {
         (navigation as any).replace('main');

@@ -5,7 +5,7 @@ import { useDateContext } from '~/context/DataContext'
 import { useData } from '~/hooks/useData'
 import { useTheme } from '~/Theme/ThemeProvider'
 import { checkData } from '~/utils/utilsFn'
-const {width}=Dimensions.get('window')
+const {width,height}=Dimensions.get('window')
 const ListMode = () => {
 
   
@@ -30,7 +30,8 @@ const ListMode = () => {
 
 
   return (
-    <View style={{backgroundColor:colors.background}}>
+    <View style={{flex:1,backgroundColor:colors.background}}>
+      
       {
         filteredData?.map((item:any,idx:any)=>(
           <ListModeItem key={idx} item={item} />

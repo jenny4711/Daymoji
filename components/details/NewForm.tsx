@@ -11,106 +11,97 @@ import {
   Platform,
   Button,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
-import React,{useState,useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '~/Theme/ThemeProvider';
-import IconSticker from './IconSticker'
+import IconSticker from './IconSticker';
 import { useSaveData } from '~/hooks/useData';
 import InputForm from './InputForm';
 import AddPhoto from './AddPhoto';
 
+const { width, height } = Dimensions.get('window');
 
-const {width,height}=Dimensions.get('window')
-
-
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming, runOnJS, FadeInLeft } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  runOnJS,
+  FadeInLeft,
+} from 'react-native-reanimated';
 import { FadeIn, FadeInUp, FadeInDown, FadeInRight } from 'react-native-reanimated';
 
 const NewForm = ({
-showDone,
- setShowDone,
- date,
- month,
- story,
- setStory,
- setPhoto,
- photo,
- emotion,
- setEmotion
-}:any) => {
+  showDone,
+  setShowDone,
+  date,
+  month,
+  story,
+  setStory,
+  setPhoto,
+  photo,
+  emotion,
+  setEmotion,
+}: any) => {
   const { dark, colors, setScheme } = useTheme();
 
   const [keyboardVisible, setKeyboardVisible] = useState<boolean>(false);
-  const deletedIcon = require('../../assets/delete.png')
-// const {data,isError}=useSaveData({date,month})
+  const deletedIcon = require('../../assets/delete.png');
+  // const {data,isError}=useSaveData({date,month})
 
-
-
-
-
-
- useEffect(()=>{
-  setShowDone(true)
- },[])
- useEffect(() => {
-  const keyboardDidShowListener = Keyboard.addListener(
-    'keyboardDidShow',
-    () => {
+  useEffect(() => {
+    setShowDone(true);
+  }, []);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisible(true); // or some other action
-    }
-  );
-  const keyboardDidHideListener = Keyboard.addListener(
-    'keyboardDidHide',
-    () => {
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardVisible(false); // or some other action
-    }
-  );
+    });
 
-  return () => {
-    keyboardDidHideListener.remove();
-    keyboardDidShowListener.remove();
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, [setKeyboardVisible, keyboardVisible]);
+
+  const hideKeyboard = () => {
+    Keyboard.dismiss();
   };
-}, [setKeyboardVisible, keyboardVisible]);
-
-
-
-
-const hideKeyboard=()=>{
-  Keyboard.dismiss()
-}
-
 
   return (
-    <ScrollView style={{height:'100%',width:'100%',backgroundColor:colors.background}}>
+    <ScrollView style={{ height: '100%', width: '100%', backgroundColor: colors.background }}>
       <KeyboardAvoidingView
-        style={{alignItems:'center', backgroundColor: colors.background }}
+        style={{
+          alignItems: 'center',
+          backgroundColor: colors.background,
+          justifyContent: 'center',
+        }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.select({ ios: -500, android: 80 })}
-      >
-        <IconSticker setEmotion={setEmotion}  hideKeyboard={hideKeyboard}/>
-        <InputForm story={story} setStory={setStory} marginLeft={24}/>
-        <View style={{marginTop:16}}>
-     
-        <AddPhoto  setPhoto={setPhoto} showDone={showDone} photo={photo} hideKeyboard={hideKeyboard}/>
-       
-
+        keyboardVerticalOffset={Platform.select({ ios: -500, android: 80 })}>
+        <IconSticker setEmotion={setEmotion} hideKeyboard={hideKeyboard} />
+        <InputForm story={story} setStory={setStory} marginLeft={24} />
+        <View style={{ marginTop: 16 }}>
+          <AddPhoto
+            setPhoto={setPhoto}
+            showDone={showDone}
+            photo={photo}
+            hideKeyboard={hideKeyboard}
+          />
         </View>
-      
       </KeyboardAvoidingView>
-      
-
     </ScrollView>
-  )
-}
+  );
+};
 
-export default NewForm
+export default NewForm;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    marginTop:16,
-
+    marginTop: 16,
   },
   dateText: {
     fontSize: 16,
@@ -128,7 +119,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: ((width-48)/5)/5,
+    marginRight: (width - 48) / 5 / 5,
   },
   storyInput: {
     marginTop: 14,
@@ -136,16 +127,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   storyInputView: {
-    width: width-48,
+    width: width - 48,
     height: 67,
-    marginVertical:14,
+    marginVertical: 14,
     borderRadius: 24,
     justifyContent: 'space-between',
   },
 
   showKeyboard: {
-    width:  '100%',
-    height: "8.29%",
+    width: '100%',
+    height: '8.29%',
     marginTop: 110,
     fontWeight: 'bold',
     borderRadius: 24,
@@ -153,8 +144,8 @@ const styles = StyleSheet.create({
   noKeyboard: {
     width: 40,
     height: 40,
-    top:30,
-    right:16,
+    top: 30,
+    right: 16,
     fontWeight: 'bold',
     borderRadius: 24,
   },

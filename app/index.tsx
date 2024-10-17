@@ -191,8 +191,8 @@ const openService =async () => {
 
            <View style={open?{display:'none'}:{}}>{<Login promptAsync={promptAsync} />}</View>
            <View>{<AppleLogin />}</View>
-           <View style={{width:341,height:42,justifyContent:'center',alignItems:'center',marginTop:16}}>
-      <Text style={{fontSize:14,color:'gray',fontFamily:"SFCompactRoundedRG",lineHeight:21}} >By signing up. I agree to Daymoji's <Text style={{color:colors.text}} onPress={openService}>Terms of Service</Text> and  </Text>
+           <View style={{width:341,height:42,justifyContent:'center',alignItems:'center'}}>
+      <Text style={{fontSize:14,color:colors.indexOpacity,fontFamily:"SFCompactRoundedRG",lineHeight:21}} >By signing up. I agree to Daymoji's <Text style={{color:colors.text,opacity:1}} onPress={openService}>Terms of Service</Text> and  </Text>
       <Text style={{fontSize:14,color:colors.text,fontFamily:"SFCompactRoundedRG",lineHeight:21}} onPress={openPolicy}>PrivacyPolicy</Text>
      </View>
         

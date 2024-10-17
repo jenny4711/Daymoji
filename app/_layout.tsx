@@ -9,7 +9,7 @@ import { QueryClientProvider ,QueryClient} from '@tanstack/react-query';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useTheme } from '~/Theme/ThemeProvider';
-import { set } from 'lodash';
+ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient()
 //npm run export       
 export const unstable_settings={
@@ -36,6 +36,7 @@ function Layout() {
 }
 
 export default function App(){
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   SplashScreen.preventAutoHideAsync();
   setTimeout(SplashScreen.hideAsync, 1000);
  
@@ -54,7 +55,8 @@ export default function App(){
           "SFCompactRoundedMD":require('../assets/fonts/SF-Compact-Rounded-Medium.otf'),
           "SFCompactRoundedHV":require('../assets/fonts/SF-Compact-Rounded-Heavy.otf'),
         });
-        
+        setFontsLoaded(true);
+        await SplashScreen.hideAsync();
       }catch(error){
         console.log(error,'error-font')
       }
@@ -62,6 +64,9 @@ export default function App(){
     loadFonts()
     },[])
   
+    if (!fontsLoaded) {
+      return null; // 또는 로딩 스피너를 보여줄 수도 있습니다.
+    }
   return(
     <ThemeProvider>
     <DateProvider>

@@ -26,16 +26,12 @@ const {dateF,monthF,newAData,setNewAData,setPreImages,preImages,setProgress,prog
 const screenSize = Dimensions.get('window');
 const [imgSize,setImgSize]=useState({width:0,height:0})
 const [deleteMargin,setDeleteMargin]=useState({top:16,right:16})
+const [imgMarginHR,setImgMarginHR]=useState(0)
 const [press,setPress]=useState(false)
-// useEffect(()=>{
-//   if(press && progress<100){
-//     setIsLoading(true)
-//     setPress(false)
-//   }else{
-//     setIsLoading(false)
-//     setPress(false)
-//   }
-// },[progress,press])
+
+useEffect(()=>{
+  setPreImages([])
+},[dateF])
 
 useEffect(()=>{
   if(newAData?.photo  && typeof newAData.photo ==='string'){
@@ -49,17 +45,19 @@ useEffect(()=>{
 
  }
 
-},[newAData])
+},[newAData,dateF])
 
 
 useEffect(()=>{
   if(imges.length===1){
     setImgSize({width:(screenSize.width - 48) / 2 -8,height:(screenSize.width - 48) / 2 -8})
     setDeleteMargin({top:12,right:12})
+    setImgMarginHR(8)
    
   }else if(imges.length===2 || imges.length===3){
     setImgSize({width:(screenSize.width - 48) / 3 -8,height:(screenSize.width - 48) / 3 -8})
     setDeleteMargin({top:8,right:8})
+    setImgMarginHR(8)
  
   }else{
     setImgSize({width:screenSize.width-48,height:screenSize.width-48})
@@ -82,7 +80,7 @@ useEffect(()=>{
   const pickImage = async () => {
     hideKeyboard();
     // setPress(true)
-    setIsLoading(true);
+    // setIsLoading(true);
     if (imges.length >= 3 || photo.length >= 3) {
       return; // 이미지가 이미 3개이면 종료
     }
@@ -104,9 +102,8 @@ useEffect(()=>{
       
 
         const selectedImageUri = selectedImage.uri;
-        setImges((prevImgs: any) => [...prevImgs, selectedImageUri]);
-        setPreImages((prevImgs: any) => [...prevImgs, selectedImageUri]);
-
+     
+        setIsLoading(false);
        
 
       
@@ -117,14 +114,22 @@ useEffect(()=>{
         // setIsLoading(true);
         const res = await uploadImageStorage(selectedImageUri, 'image', (progressValue: number) => {
           setProgress(progressValue);
+          if( progressValue!==100){
+            setIsLoading(true);
+
+          }else if( progressValue===100){
+            setIsLoading(false);
+
+          }
         });
-
+        setImges((prevImgs: any) => [...prevImgs, selectedImageUri]);
+        setPreImages((prevImgs: any) => [...prevImgs, selectedImageUri]);
         const newImageUri = res;
+        // setImges((prevImgs: any) => [...prevImgs, newImageUri]);
+        // setPreImages((prevImgs: any) => [...prevImgs, newImageUri]);
        
+          setPhoto((prevPhotos: any) => [...prevPhotos, newImageUri])
        
-          setPhoto((prevPhotos: any) => [...prevPhotos, newImageUri]);
-
-         
         
        
       });
@@ -133,8 +138,9 @@ useEffect(()=>{
       // if (imges.length >= 3 || photo.length >= 3) {
       //   return; // 이미지가 이미 3개이면 종료
       // }
-      await Promise.all(uploadPromises);
-      setIsLoading(false);
+      await Promise.all(uploadPromises)
+     
+     
     }
   };
 
@@ -161,17 +167,19 @@ useEffect(()=>{
     const findUriByIndex=photo[findIndex]
   
         if(newAData?.photo && Array.isArray(newAData.photo)){
-          await updatePhoto({ date: dateF, month: monthF })
-          await deleteImageStorage(imgUri);
+        
           setPhoto((prevPhotos: any) => prevPhotos.filter((photoUri: string) => photoUri !== findUriByIndex));
           setImges((prevImgs: any) => prevImgs.filter((imgUriItem: string) => imgUriItem !== imgUri));
            setPreImages((prevImgs: any) => prevImgs.filter((imgUriItem: string) => imgUriItem !== imgUri));
+           await updatePhoto({ date: dateF, month: monthF })
+           await deleteImageStorage(imgUri);
         
         }else{
-          await deleteImageStorage(findUriByIndex);
+         
             setImges((prevImgs: any) => prevImgs.filter((imgUriItem: string) => imgUriItem !== imgUri));
             setPhoto((prevPhotos: any) => prevPhotos.filter((photoUri: string) => photoUri !== findUriByIndex));
              setPreImages((prevImgs: any) => prevImgs.filter((imgUriItem: string) => imgUriItem !== imgUri));
+             await deleteImageStorage(findUriByIndex);
       
         }  
         // Firebase 스토리지에서 이미지 삭제
@@ -184,7 +192,7 @@ useEffect(()=>{
   };
 
  return (
-    <View style={{alignItems:'center',paddingBottom:100,flexDirection:'row',justifyContent:'center'}}>
+    <View style={{flexDirection:'row',justifyContent:'center',width:width-48}}>
 
  {/* 이미지 배열 */}
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -194,11 +202,11 @@ useEffect(()=>{
             key={index}
             style={{
               width:imgSize.width, // 이미지 크기 (두 개씩 보이게 설정)
-              margin: 4, // 이미지 간격
+              // marginTop:16, 
               flexDirection: 'row',
-            
+                marginRight:index===2?0:imgMarginHR,// 이미지 간격
               justifyContent: 'center',
-              alignItems: 'center',
+              // alignItems: 'center',
             }}
           >
             <EachImage
@@ -220,19 +228,19 @@ useEffect(()=>{
         ) }
 
    
-    </View>
+   
     
     {/* {progress >0 && progress < 100?(<ActivityIndicator style={{marginTop:16}} size="small" color={'red'} />):null} */}
    
          {imges.length<3  ?  <TouchableOpacity style={[styles.btnView,!img?{ backgroundColor:colors.inputBk,width:imgSize.width,height:imgSize.height}:{backgroundColor:colors.inputBk,marginTop:16,width:imgSize.width,height:imgSize.height}]} onPress={pickImage}>
      {dark ? (
-      <View style={{width:82,height:19,justifyContent:'center',alignItems:'center'}}>
+      <View style={{width:imgSize.width,height:imgSize.height,justifyContent:'center',alignItems:'center'}}>
         <Image source={imgBtn} style={{ width: 19.5, height: 16.5 ,marginBottom:8}} />
         <Text style={{color:colors.text,fontSize:16}}>Add Photo</Text>
         </View>
       
       ) : (
-        <View style={{width:82,height:19,justifyContent:'center',alignItems:'center'}}>
+        <View style={{width:imgSize.width,height:imgSize.height,justifyContent:'center',alignItems:'center'}}>
         <Image source={imgBtnBk} style={{ width: 19.5, height: 16.5 ,marginBottom:8}} />
         <Text style={{color:colors.text,fontSize:16}}>Add Photo</Text>
         </View>
@@ -245,7 +253,7 @@ useEffect(()=>{
 
 
        
-       
+</View>
    
     </View>
   );

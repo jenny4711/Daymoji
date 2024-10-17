@@ -28,7 +28,7 @@ getUserEmail()
 
 const navigation=useNavigation()
 const handleLogOut=async()=>{
-  Alert.alert('Delete All Entries', 'Are you sure you want to log out? You will need to sign in again to access your account', [
+  Alert.alert('Log Out', 'Are you sure you want to log out? You will need to sign in again to access your account', [
     {
       text: 'Cancel',
       onPress: () => console.log('Ask me later pressed'),

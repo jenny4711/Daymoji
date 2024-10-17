@@ -40,6 +40,10 @@ const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown}:any) => {
   const { headerTitle, setHeaderTitle, setMonthF, setYearF, monthF,setVisible } = useDateContext();
   const { colors } = useTheme();
 
+  const [beforeData,setBeforeData]=useState<any>(null)
+  const [afterData,setAfterData]=useState<any>(null)
+  const [thisMonthData,setThisMonthData]=useState<any>(null)
+
 
   function getWeeksInMonth(year:any, month:any) {
     // 해당 달의 첫째 날의 요일 (getDay: 0 = 일요일, 1 = 월요일)
@@ -73,6 +77,25 @@ const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown}:any) => {
   const currentMonthDays = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
   const prevMonthDays = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth() - 1);
   const nextMonthDays = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth() + 1);
+
+
+useEffect(()=>{
+  if(currentData){
+    setThisMonthData(currentData)
+  }
+
+  if(prevData){
+    setBeforeData(prevData)
+  }
+
+  if(nextData){
+    setAfterData(nextData)
+  }
+
+},[currentData,prevData,nextData])
+
+
+
 
   // 현재 날짜 정보 및 타이틀 설정
   useEffect(() => {
@@ -202,7 +225,7 @@ const handleScrollBeginDrag = () => {
         <View style={styles.monthContainer}>
           {prevMonthDays.map((day, index) => (
             <View key={index} style={styles.dayBox}>
-              {day ? <MonthDay setClickedDay={setClickedDay} clickedDay={clickedDay} letBoxDown={letBoxDown} triggerAnimation={triggerAnimation}  month={monthF - 1} day={day} data={prevData} /> : null}
+              {day ? <MonthDay setClickedDay={setClickedDay} clickedDay={clickedDay} letBoxDown={letBoxDown} triggerAnimation={triggerAnimation}  month={monthF - 1} day={day} data={beforeData} /> : null}
             </View>
           ))}
         </View>
@@ -211,7 +234,7 @@ const handleScrollBeginDrag = () => {
         <View style={styles.monthContainer}>
           {currentMonthDays.map((day, index) => (
             <View key={index} style={styles.dayBox}>
-              {day ? <MonthDay setClickedDay={setClickedDay} clickedDay={clickedDay} letBoxDown={letBoxDown} triggerAnimation={triggerAnimation}  month={monthF} day={day} data={currentData} /> : null}
+              {day ? <MonthDay setClickedDay={setClickedDay} clickedDay={clickedDay} letBoxDown={letBoxDown} triggerAnimation={triggerAnimation}  month={monthF} day={day} data={thisMonthData} /> : null}
             </View>
           ))}
         </View>

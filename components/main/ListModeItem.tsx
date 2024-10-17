@@ -14,7 +14,7 @@ import { useDeletedData } from '~/hooks/useData'
 const ListModeItem = ({item}:any) => {
   const {colors,dark}=useTheme()
   const navigation=useNavigation()
-  const { monthF,setVisible,setNewAData} = useDateContext();
+  const { monthF,setVisible,setNewAData,setPreImages,preImages,setDateF} = useDateContext();
   const [imgSize,setImgSize]=useState({width:0,height:0})
   const [deleteMargin,setDeleteMargin]=useState({top:16,right:16})
 const [images,setImages]=useState<any>([])
@@ -23,14 +23,22 @@ const [actualData,setActualData]=useState<any>(null)
   const queryClient = useQueryClient();
 
 
-
+useEffect(()=>{
+  if(item){
+    setNewAData(item)
+  }
+},[item])
 
 
   useEffect(()=>{
-    if(actualData?.photo && Array.isArray(item.photo)){
+
+    if(item?.photo && Array.isArray(item.photo)){
       setImages(item.photo)
+     
+    
     }
   },[item?.photo])
+
  
   const deletedMuation=useDeletedData({date:item?.date,monthF})
   useEffect(()=>{

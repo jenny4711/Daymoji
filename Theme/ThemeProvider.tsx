@@ -4,8 +4,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface ThemeContextType {
   dark: boolean;
-  colors: typeof lightColors | typeof darkColors | { primary: string; text: string; background: string; inputBk: string ,inputBk2:string,inputWithoutEm:string, loadingBK:string};
-  setScheme: (scheme: 'light' | 'dark' | 'random', customColors?: { primary: string; text: string; background: string; inputBk: string,inputBk2:string,inputWithoutEm:string, loadingBK:string }) => void;
+  colors: typeof lightColors | typeof darkColors | { primary: string; text: string; background: string; inputBk: string ,inputBk2:string,inputWithoutEm:string, loadingBK:string,indexOpacity:string};
+  setScheme: (scheme: 'light' | 'dark' | 'random', customColors?: { primary: string; text: string; background: string; inputBk: string,inputBk2:string,inputWithoutEm:string, loadingBK:string,indexOpacity:string }) => void;
 }
 
 export const ThemeContext = createContext<ThemeContextType>({
@@ -36,7 +36,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = (props) => {
   }, [colorScheme]);
 
   // 사용자가 직접 테마를 설정할 수 있도록 setScheme 함수 수정
-  const setScheme = (scheme: 'light' | 'dark' | 'random', customColors?: { primary: string; text: string; background: string; inputBk: string ,inputBk2:string,inputWithoutEm:string, loadingBK:string}) => {
+  const setScheme = (scheme: 'light' | 'dark' | 'random', customColors?: { primary: string; text: string; background: string; inputBk: string ,inputBk2:string,inputWithoutEm:string, loadingBK:string,indexOpacity:string}) => {
     if (scheme === 'random' && customColors) {
       setColors(customColors);
     } else if (scheme === 'light' || scheme === 'dark') {
