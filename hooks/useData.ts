@@ -1,6 +1,14 @@
 import { getData ,saveDiaryEntry,deletedItem,deletedAllItem} from '~/utils/fireStoreFn';
 import { useQuery, useQueryClient ,useMutation, UseQueryOptions } from '@tanstack/react-query';
 import { useNavigation } from 'expo-router';
+
+
+
+
+
+
+
+
 export const useData=(month:any)=>{
 
   return useQuery({
@@ -57,17 +65,31 @@ export const useDeletedData=({date,month}:any)=>{
 export const useDeletedAllData=(month:any)=>{
   const queryClient = useQueryClient();
  const navigation=useNavigation()
+ const monthArr=['1','2','3','4','5','6','7','8','9','10','11','12']
   return useMutation({
     mutationFn: () => {
       return  deletedAllItem(month);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey:['data',month]})
-      queryClient.refetchQueries({ queryKey: ['data',month] });
+    onSuccess: async() => {
+     
+      await Promise.all(monthArr.map(mon => queryClient.refetchQueries({ queryKey: ['data', mon] })));
+      await queryClient.invalidateQueries();
+    
+  
       
-      setTimeout(() => {
-        (navigation as any).replace('main');
-      }, 1000);
+      
     },
+    onSettled:async()=>{
+     
+
+      await queryClient.invalidateQueries();
+      await Promise.all(monthArr.map(mon => queryClient.refetchQueries({ queryKey: ['data', mon] })));
+      (navigation as any).replace('main');
+
+     
+    },
+    onError:(error)=>{
+      console.log('error-allDeleted',error)
+    }
   });
 }

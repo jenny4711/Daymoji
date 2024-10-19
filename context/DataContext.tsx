@@ -34,6 +34,8 @@ interface DateContextType {
   setProgress:(progress:any)=>void
   isLoading:any
   setIsLoading:(isLoading:boolean)=>void
+  allDeleted:any
+  setAllDeleted:(deleted:any)=>void
 }
 
 const DateContext = createContext<DateContextType>('' as any);
@@ -54,10 +56,11 @@ const [todayDate,setTodayDate]=useState('' as any)
 const [preImages,setPreImages]=useState([] as any)
 const [isLoading,setIsLoading]=useState(false)  
 const [progress,setProgress]=useState(0)
+const [allDeleted,setAllDeleted]=useState(false)
 
 
   return (
-    <DateContext.Provider value={{isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
+    <DateContext.Provider value={{allDeleted,setAllDeleted,isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
       {children}
     </DateContext.Provider>
   );

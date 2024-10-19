@@ -9,7 +9,9 @@ const InputForm = ({story,setStory,marginLeft}:any) => {
   const [inputHeight, setInputHeight] = useState(67); 
   // const [showStory, setShowStory] = useState('');
 const lineHeight=19.09
-const paddingVertical = 20;
+const initialHeight = 67; // 기본 높이
+const paddingVertical = 24;
+
 const handleContentSizeChange = (contentSize: { height: number }) => {
   // 입력된 높이를 바탕으로 줄 수를 계산
   const numberOfLines = Math.ceil(contentSize.height / lineHeight);
@@ -17,10 +19,14 @@ const handleContentSizeChange = (contentSize: { height: number }) => {
 
   // 두 번째 줄부터 높이를 조정
   if (numberOfLines > 2) {
-  
-     newHeight = Math.max(67, numberOfLines * lineHeight+paddingVertical+paddingVertical); // 두 번째 줄부터 높이를 조정
+    newHeight = contentSize.height + paddingVertical * 2;
+    //  newHeight = Math.max(67, numberOfLines * lineHeight+paddingVertical+paddingVertical); 
+    
   } else {
-    newHeight = 67; // 첫 번째 줄일 때는 기본 높이 유지
+    newHeight = initialHeight;
+    // newHeight = 67;
+   
+    // 첫 번째 줄일 때는 기본 높이 유지
   }
 
   setInputHeight(newHeight); // 새로운 높이 설정

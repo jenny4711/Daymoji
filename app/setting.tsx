@@ -14,7 +14,7 @@ const {width,height}=Dimensions.get('window')
 const Setting = () => {
   const { dark, colors, setScheme } = useTheme();
   const [colorStyle,setColorStyle]=useState<any>(colors)
-  const [themeMode,setThemeMode]=useState<string>( '')
+  const [themeMode,setThemeMode]=useState<string>( 'auto')
   const [text,setText]=useState<string>(colorStyle.text)
   const [inputBk,setInputBk]=useState<string>( colorStyle.inputBk)
   const [inputBk2,setInputBk2]=useState<string>( colorStyle.inputBk2)
