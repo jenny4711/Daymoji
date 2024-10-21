@@ -2,7 +2,7 @@ import React,{useState,useEffect} from 'react';
 import {Dimensions, View, Text,Image,TouchableOpacity ,StyleSheet,Alert} from 'react-native'
 import { FIREBASE_AUTH } from '~/config/firebase';
 import { signOut } from 'firebase/auth'
-import { useNavigation } from 'expo-router';
+import { useNavigation ,useRouter} from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/Theme/ThemeProvider';
@@ -10,6 +10,7 @@ const {width,height}=Dimensions.get('window')
 const LogOutSec = () => {
   const [userEmail,setUserEmail]=useState<string>('') 
 const {colors}=useTheme()
+const router=useRouter()
 useEffect(()=>{
   const getUserEmail=async()=>{
 const getEmail=await AsyncStorage.getItem('email')
@@ -37,7 +38,14 @@ const handleLogOut=async()=>{
     {text: 'Log Out',style:'destructive',onPress: async() =>{
       
       await signOut(FIREBASE_AUTH).then(()=>{
-        return (navigation as any).navigate('index')
+        AsyncStorage.setItem('isLogin','false')
+        AsyncStorage.setItem('token','')
+        AsyncStorage.removeItem('email').then(()=>{
+          return (router as any).replace('index')
+        }).catch((error)=>{
+          console.log(error,'-logout')
+        })
+        // return (navigation as any).navigate('index')
           }).catch((error)=>{
             console.log(error,'-logout')
           })

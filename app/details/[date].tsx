@@ -147,11 +147,11 @@ const handleDeleted = async () => {
   return (
     
     <SafeAreaView style={{backgroundColor:colors.background}}>
-        {isLoading && (
+        {/* {isLoading && (
         <View style={[styles.loadingOverlay,{backgroundColor:colors. loadingBK}]}>
           <ActivityIndicator size="small" color={colors.text} />
         </View>
-      )}
+      )} */}
          <View style={[{alignItems:'center'},{backgroundColor:colors.background}]}>
          {
          

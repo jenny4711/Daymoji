@@ -1,4 +1,4 @@
-import {updateIsToday,saveIsToday} from '../utils/fireStoreFn'
+import {updateIsToday,saveIsToday,isTodayEventNotToday} from '../utils/fireStoreFn'
 
 export const checkData=(data:any)=>{
   const checkStory = data?.story === undefined || data?.story === '';
@@ -33,7 +33,7 @@ const yesterdayYear = yesterdayDateObj.getFullYear();
 const yesterdayDateS = yesterdayDate < 10 ? `0${yesterdayDate}` : yesterdayDate;
 const yesterdayMonthS = yesterdayMonth < 10 ? `0${yesterdayMonth}` : yesterdayMonth;
 const yesterday = `${yesterdayYear}-${yesterdayMonthS}-${yesterdayDateS}`;
-
+await isTodayEventNotToday()
 await updateIsToday({date:yesterday,month:yesterdayMonth,isToday:false})
 await saveIsToday({date:currentDate,month,isToday:true})
 

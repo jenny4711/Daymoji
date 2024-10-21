@@ -29,3 +29,4 @@ if(Platform.OS==='web'){
 export const FIRESTORE_DB = getFirestore(FIREBASE_APP);
 export const FIREBASE_STORAGE = getStorage(FIREBASE_APP);
 export const FIREBASE_AUTH=auth
+console.log('firebase',FIREBASE_APP)

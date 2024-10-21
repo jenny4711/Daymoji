@@ -40,6 +40,7 @@ const Main = () => {
   } = useDateContext();
   const [showListMode, setShowListMode] = useState(false);
   const translateY = useSharedValue(0); // 애니메이션 상태
+  const [today,setToday]=useState<any>(new Date())
   const navigation = useNavigation<any>();
   const date = new Date();
   const year = date.getFullYear();
@@ -47,15 +48,12 @@ const Main = () => {
   const day = date.getDate();
   let currentDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
   const updateToday=async()=>{
+    
     await handleTodayDate()
   }
 
 
-useEffect(()=>{
-  console.log('updateToday~~~~~~~~~~~~~~~~~~~~~~')
-  
-  updateToday()
-},[todayDate])
+
 
 
 
@@ -92,6 +90,7 @@ useEffect(()=>{
 
   useEffect(() => {
     checkTimeForTheme();
+    updateToday()
   }, []);
 
   //-------------------------

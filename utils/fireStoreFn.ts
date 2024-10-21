@@ -28,6 +28,46 @@ return daysData
 };
 
 
+
+export const isTodayEventNotToday=async()=>{
+  try{
+    const email=await AsyncStorage.getItem('email')
+    if(!email) return;
+    const monthArr = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+    const allDayData: any[] = [];
+    // const allDayCollection=collection(FIRESTORE_DB,`users/${email}`);
+    // const allDaySnapshot=await getDocs(allDayCollection)
+    for (const month of monthArr) {
+      const allDayCollection = collection(FIRESTORE_DB, `users/${email}/${month}`);
+      const allDaySnapshot = await getDocs(allDayCollection);
+      const monthData = allDaySnapshot.docs.map((doc) => doc.data());
+      allDayData.push(...monthData); // 모든 데이터를 합침
+    }
+
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    const date = today.getDate();
+    const dateS = date < 10 ? `0${date}` : date;
+    const monthS = month < 10 ? `0${month}` : month;
+    const currentDate = `${year}-${monthS}-${dateS}`;
+
+    const todayData = allDayData.filter((data: any) => data.isToday === true);
+
+    if (todayData.length > 0 && todayData[0].date !== currentDate) {
+      todayData.map(async (data: any) => {
+        await updateIsToday({ date: data.date, month: month, isToday: false });
+      });
+    }
+
+      // 오늘 날짜 저장
+      await saveIsToday({ date: currentDate, month, isToday: true });
+  
+
+  }catch(error){console.log(error)}
+}
+
+
 export const findTodayData=async(month:any,currentDate:any)=>{
  try{
 const email=await AsyncStorage.getItem('email')
@@ -58,8 +98,7 @@ export const saveDiaryEntry = async ({ date, emotion, story, photo, month }: any
     const todayFulldate = `${today.getFullYear()}-${todayMonth}-${todayDate}`;
 
     let isToday;
-    console.log(date, 'date');
-    console.log(todayFulldate, 'todayFulldate');
+  
     
     if (date === todayFulldate) {
       isToday = true;
@@ -67,7 +106,7 @@ export const saveDiaryEntry = async ({ date, emotion, story, photo, month }: any
       isToday = false;
     }
 
-    console.log(photo, 'photo');
+   
     const data = {
       date,
       emotion: emotion,
@@ -87,45 +126,6 @@ export const saveDiaryEntry = async ({ date, emotion, story, photo, month }: any
 };
 
 
-// export   const saveDiaryEntry = async ({date,emotion,story,photo,month}:any) => {
-//  try {
-//    const email = await AsyncStorage.getItem('email');
-//    const today = new Date()
-//    const todayDate =today.getDate()>10?today.getDate().toString():`0${today.getDate()}`
-//    const todayMonth = today.getMonth() + 1 >= 9 ? (today.getMonth() + 1).toString() : `0${today.getMonth() + 1}`;
-
-//   const todayFulldate =`${today.getFullYear()}-${todayMonth}-${todayDate}`
-//   let isToday;
-// console.log(todayFulldate,'todayFulldate')
-// console.log(date,'date')
-//    if(date===todayFulldate){
-//      isToday=true
-//    }else{
-//      isToday=false
-//    }
-
-
-//    const data = {
-//      date,
-//      emotion: emotion,
-//      story,
-//     photo,
-//      isToday
-     
-//    };
-
-//    let docRef;
-// console.log(data,'data-fireStore')
-//    docRef = doc(FIRESTORE_DB, `users/${email}/${month}/${date}`);;
-//    await setDoc(docRef, data);
-  
-
-
-//  } catch (error) {
-//    console.log('Error updating document: ', error);
-//  }
-// };
-
 export const deletedItem = async (date: any, month: any) => {
  try {
  
@@ -135,7 +135,7 @@ export const deletedItem = async (date: any, month: any) => {
     const todayMonth = today.getMonth() + 1 >= 10 ? (today.getMonth() + 1).toString() : `0${today.getMonth() + 1}`;
     const todayFulldate = `${today.getFullYear()}-${todayMonth}-${todayDate}`;
    if (!email) {
-     console.log("Email not found");
+ 
      return;
    }
 
@@ -148,7 +148,7 @@ export const deletedItem = async (date: any, month: any) => {
    }
 
    await deleteDoc(docRef);
-   console.log("Document successfully deleted");
+
    if(todayFulldate===date){
      await saveIsToday({date,month,isToday:true})
    }
@@ -322,7 +322,11 @@ export const updateIsToday = async ({date, month, isToday}: any) => {
    if (!email) return;
 
    const docRef = doc(FIRESTORE_DB, `users/${email}/${month}/${date}`);
-
+   const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
+      console.log('No such document!');
+      return;
+    }
    // 'isToday' 필드만 업데이트
    await updateDoc(docRef, {
      isToday: isToday,  // 다른 필드는 유지되고, 이 필드만 업데이트됨

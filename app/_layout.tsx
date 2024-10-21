@@ -12,9 +12,9 @@ import { useTheme } from '~/Theme/ThemeProvider';
  SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient()
 //npm run export       
-export const unstable_settings={
-  initialRouteName:'index',
-}
+// export const unstable_settings={
+//   initialRouteName:'index',
+// }
 
 function Layout() {
   return (

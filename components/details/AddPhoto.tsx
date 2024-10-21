@@ -28,6 +28,7 @@ const [imgSize,setImgSize]=useState({width:0,height:0})
 const [deleteMargin,setDeleteMargin]=useState({top:16,right:16})
 const [imgMarginHR,setImgMarginHR]=useState(0)
 const [press,setPress]=useState(false)
+const [isLoadingImages, setIsLoadingImages] = useState<boolean[]>([]);
 
 useEffect(()=>{
   setPreImages([])
@@ -94,16 +95,22 @@ useEffect(()=>{
       allowsMultipleSelection: true, // 여러 이미지 선택 허용
     });
 
+      // 로딩 상태 추가
+
+
     if (!result.canceled) {
       const selectedImages = result.assets;
+
+      const initialLoadingState = new Array(selectedImages.length).fill(true);
+      setIsLoadingImages((prev) => [...prev, ...initialLoadingState]);
  
 
-      const uploadPromises = selectedImages.map(async (selectedImage: any) => {
+      const uploadPromises = selectedImages.map(async (selectedImage: any,index:any) => {
       
 
         const selectedImageUri = selectedImage.uri;
      
-        setIsLoading(false);
+     
        
 
       
@@ -112,13 +119,21 @@ useEffect(()=>{
 
         // 업로드 시작
         // setIsLoading(true);
-        const res = await uploadImageStorage(selectedImageUri, 'image', (progressValue: number) => {
+        const res =await  uploadImageStorage(selectedImageUri, 'image', (progressValue: number) => {
           setProgress(progressValue);
           if( progressValue!==100){
-            setIsLoading(true);
+            setIsLoadingImages((prev:any,) => {
+              const updatedLoading = [...prev];
+              updatedLoading[imges.length + index] = true;
+              return updatedLoading;
+            });
 
           }else if( progressValue===100){
-            setIsLoading(false);
+            setIsLoadingImages((prev) => {
+              const updatedLoading = [...prev];
+              updatedLoading[imges.length + index] = false;
+              return updatedLoading;
+            });
 
           }
         });
@@ -222,6 +237,7 @@ useEffect(()=>{
               deleteMargin={deleteMargin}
               imges={imges}
               progress={progress}
+              isLoading={isLoadingImages[index]} 
             />
           </View>
         )
