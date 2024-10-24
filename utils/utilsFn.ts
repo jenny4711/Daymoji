@@ -1,4 +1,4 @@
-import {updateIsToday,saveIsToday,isTodayEventNotToday} from '../utils/fireStoreFn'
+import {updateIsToday,saveIsToday,isTodayEventNotToday,getData} from '../utils/fireStoreFn'
 
 export const checkData=(data:any)=>{
   const checkStory = data?.story === undefined || data?.story === '';
@@ -46,3 +46,16 @@ console.log('handleTodayDate!!!!!!!!!!!!!!!!!!!!!!!')
 
   }catch(error){console.log(error)}
 }
+
+export const fetchInitialData = async (month:any) => {
+  // 여기서 필요한 데이터를 비동기적으로 가져오는 로직을 구현합니다.
+  // 예를 들어, API 요청이나 로컬 데이터베이스 조회 등을 할 수 있습니다.
+  await getData(month)
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log('fetchInitialData!!!!!!!!!!!!!!!!!!!!!!!')
+      // 테스트용으로 1초 뒤에 데이터를 가져온다고 가정합니다.
+      resolve("데이터 로딩 성공");
+    }, 1000);
+  });
+};

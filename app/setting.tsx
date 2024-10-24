@@ -9,12 +9,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import LogOutSec from '~/components/setting/LogOutSec';
 import { useDateContext } from '~/context/DataContext';
 import { useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const {width,height}=Dimensions.get('window')
 
 const Setting = () => {
   const { dark, colors, setScheme } = useTheme();
   const [colorStyle,setColorStyle]=useState<any>(colors)
-  const [themeMode,setThemeMode]=useState<string>( 'auto')
+  // const [themeMode,setThemeMode]=useState<string>( 'auto')
   const [text,setText]=useState<string>(colorStyle.text)
   const [inputBk,setInputBk]=useState<string>( colorStyle.inputBk)
   const [inputBk2,setInputBk2]=useState<string>( colorStyle.inputBk2)
@@ -23,7 +24,7 @@ const Setting = () => {
   const [indexOpacity,setIndexOpacity]=useState<string>( colorStyle.indexOpacity)
   const [loadingBK,setLoadingBK]=useState<string>( colorStyle.loadingBK)
   const colorScheme:any = useColorScheme(); 
-  const {monthF}=useDateContext()
+  const {monthF,themeMode,setThemeMode}=useDateContext()
   const month:any =monthF
 const deletedAllMutation=useDeletedAllData(month)
 const queryClient = useQueryClient();
@@ -33,15 +34,36 @@ useEffect(()=>{
   
 },[])
 
-const checkTimeForTheme = () => {
+  useEffect(() => {
+    // AsyncStorage에서 테마 불러오기
+    const loadTheme = async () => {
+      const storedTheme = await AsyncStorage.getItem('themeMode');
+      setThemeMode(storedTheme || 'auto');
+    };
+    loadTheme();
+  }, []);
+
+  // 테마 변경 함수
+  const handleThemeChange = async (value: any) => {
+    setThemeMode(value);
+    setScheme(value);
+    await AsyncStorage.setItem('themeMode', value); // 테마 설정을 저장
+  };
+
+ 
+
+const checkTimeForTheme = async() => {
   const currentTime = new Date();
   const hours = currentTime.getHours();
 
 
   if (hours >= 6 && hours < 18) {
+
     setScheme('light'); // 오전 6시부터 오후 6시까지는 light mode
+    await AsyncStorage.setItem('themeMode', 'light');
   } else {
     setScheme('dark'); // 오후 6시부터 오전 6시까지는 dark mode
+    await AsyncStorage.setItem('themeMode', 'dark');
   }
 };
 
@@ -49,28 +71,21 @@ const checkTimeForTheme = () => {
 
 const navigation=useNavigation()
 useEffect(() => {
-  // themeMode가 'auto'일 경우 시스템 테마에 따라 자동으로 설정
-  if (themeMode === 'auto') {
+ async function saveThemeMode(){
+   // themeMode가 'auto'일 경우 시스템 테마에 따라 자동으로 설정
+   if (themeMode === 'auto') {
     checkTimeForTheme();  // 시스템 테마에 맞추어 자동으로 설정
   } else if (themeMode === 'light') {
     setScheme('light');
-  } else if (themeMode === 'random') {
-    setScheme('random', {
-      primary: background,
-      text: text,
-      background: background,
-      inputBk: inputBk,
-      inputBk2:inputBk2,
-      inputWithoutEm:inputWithoutEm,
-      indexOpacity:indexOpacity,
-      loadingBK:loadingBK
-      
+    await AsyncStorage.setItem('themeMode', 'light');
+  
+ }else{
+   setScheme('dark');
+    await AsyncStorage.setItem('themeMode', 'dark');
+ }
 
-
-    });
-  } else {
-    setScheme('dark');
-  }
+}
+saveThemeMode()
 }, [themeMode, text, inputBk, background, colorScheme]); 
 
 const handleAlldeletedList = () => {
@@ -137,7 +152,7 @@ const goToMainPage = () => {
   <View style={{backgroundColor:colors.inputBk2,width:width-48,alignItems:'center',paddingVertical:12 ,borderRadius:24}}>
 {
   ThemeArray.map((item:any,index:any)=>(
-    <TouchableOpacity key={index} activeOpacity={1} onPress={()=>setThemeMode(item.value)} style={{width:width-96,flexDirection:'row',justifyContent:'space-between',paddingVertical:12,alignItems:'center'}}>
+    <TouchableOpacity key={index} activeOpacity={1} onPress={()=>handleThemeChange(item.value)} style={{width:width-96,flexDirection:'row',justifyContent:'space-between',paddingVertical:12,alignItems:'center'}}>
       <Text style={[styles.TextStyle,{color:colors.text}]}>{item.title}</Text>
       {themeMode === item.value?<Ionicons name={'checkmark'} size={16} color={colors.text}/>:null}
       {/* <Text style={{color:colors.text}}>{themeMode === item.value?'x':''}</Text> */}
@@ -196,3 +211,58 @@ width:width-48,
 alignItems:'flex-start'
  }
 })
+
+
+// import React, { useState, useEffect } from 'react';
+// import { SafeAreaView, Text, TouchableOpacity, Dimensions, Alert } from 'react-native';
+// import { useTheme } from '~/Theme/ThemeProvider';
+// import Ionicons from '@expo/vector-icons/Ionicons';
+// import { ThemeArray } from '~/utils/selectionArray';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// const { width, height } = Dimensions.get('window');
+
+// const Setting = () => {
+//   const { colors, setScheme } = useTheme();
+//   const [themeMode, setThemeMode] = useState<string>('auto');
+
+//   useEffect(() => {
+//     // AsyncStorage에서 테마 불러오기
+//     const loadTheme = async () => {
+//       const storedTheme = await AsyncStorage.getItem('themeMode');
+//       setThemeMode(storedTheme || 'auto');
+//     };
+//     loadTheme();
+//   }, []);
+
+//   // 테마 변경 함수
+//   const handleThemeChange = async (value: string) => {
+//     setThemeMode(value);
+//     setScheme(value);
+//     await AsyncStorage.setItem('themeMode', value); // 테마 설정을 저장
+//   };
+
+//   return (
+//     <SafeAreaView style={{ backgroundColor: colors.background, flex: 1 }}>
+//       <Text style={{ color: colors.text, fontSize: 24 }}>Settings</Text>
+//       <Text style={{ color: colors.text }}>Style</Text>
+//       {ThemeArray.map((item) => (
+//         <TouchableOpacity
+//           key={item.value}
+//           onPress={() => handleThemeChange(item.value)}
+//           style={{
+//             flexDirection: 'row',
+//             justifyContent: 'space-between',
+//             paddingVertical: 12,
+//             width: width - 96,
+//           }}
+//         >
+//           <Text style={{ color: colors.text }}>{item.title}</Text>
+//           {themeMode === item.value && <Ionicons name="checkmark" size={16} color={colors.text} />}
+//         </TouchableOpacity>
+//       ))}
+//     </SafeAreaView>
+//   );
+// };
+
+// export default Setting;

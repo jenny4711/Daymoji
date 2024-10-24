@@ -38,16 +38,33 @@
     },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",  // 여기서 light를 automatic으로 변경
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/splashLight.png",
+       "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "dark": {
+        "image": "./assets/splash.png",
+         "resizeMode": "contain",
+      "backgroundColor": "#000000"
+      }
+     
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
+      "splash": {
+      "image": "./assets/splashLight.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "dark": {
+        "image": "./assets/splash.png",
+         "resizeMode": "contain",
+      "backgroundColor": "#000000"
+      }
+     
+    },
       "supportsTablet": true,
       "bundleIdentifier": "com.jjenny4711.Daymoji",
       "associatedDomains": [
@@ -55,10 +72,21 @@
       ]
     },
     "android": {
+      "splash":{
+      "image": "./assets/splashLight.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "dark": {
+        "image": "./assets/splash.png",
+         "resizeMode": "contain",
+      "backgroundColor": "#000000"
+      }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      
       "package": "com.jjenny4711.Daymoji"
     },
     "extra": {
@@ -71,3 +99,4 @@
     }
   }
 }
+

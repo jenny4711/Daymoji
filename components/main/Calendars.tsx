@@ -5,6 +5,15 @@ import { useTheme } from '~/Theme/ThemeProvider';
 import { useDateContext } from '~/context/DataContext';
 import MonthDay from './MonthDay';
 import { useData } from '~/hooks/useData';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSequence,
+  Easing,
+  runOnJS,
+  FadeIn,
+} from 'react-native-reanimated';
 
 const { width ,height} = Dimensions.get('window');
 const circleSize = width * 0.1104;
@@ -108,7 +117,7 @@ useEffect(()=>{
       setMonthF(currMonth);  // monthF 업데이트
       setYearF(currYear);  // yearF 업데이트
      const weeks = getWeeksInMonth(currYear, currMonth );
-     console.log(weeks,'weeks')
+    
      setLines(weeks)
     
 
@@ -198,7 +207,7 @@ const handleScrollBeginDrag = () => {
 
 
   return (
-    <View style={{backgroundColor:colors.background,height:height *.58}}>
+    <Animated.View entering={FadeIn.duration(500).easing(Easing.ease)} style={{backgroundColor:colors.background,height:height *.58}}>
       <View style={[styles.header,{backgroundColor:colors.background}]}>
         {/* <Header /> */}
       </View>
@@ -248,7 +257,7 @@ const handleScrollBeginDrag = () => {
           ))}
         </View>
       </ScrollView>
-    </View>
+    </Animated.View>
   );
 };
 

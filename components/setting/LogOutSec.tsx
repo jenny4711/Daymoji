@@ -41,7 +41,7 @@ const handleLogOut=async()=>{
         AsyncStorage.setItem('isLogin','false')
         AsyncStorage.setItem('token','')
         AsyncStorage.removeItem('email').then(()=>{
-          return (router as any).replace('index')
+          return (navigation as any).replace('index')
         }).catch((error)=>{
           console.log(error,'-logout')
         })

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState,useEffect } from 'react';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Context 생성
 
@@ -36,6 +36,10 @@ interface DateContextType {
   setIsLoading:(isLoading:boolean)=>void
   allDeleted:any
   setAllDeleted:(deleted:any)=>void
+  initialDisplay:any
+  setInitialDisplay:(display:any)=>void
+  themeMode:any
+  setThemeMode:(mode:any)=>void
 }
 
 const DateContext = createContext<DateContextType>('' as any);
@@ -57,10 +61,20 @@ const [preImages,setPreImages]=useState([] as any)
 const [isLoading,setIsLoading]=useState(false)  
 const [progress,setProgress]=useState(0)
 const [allDeleted,setAllDeleted]=useState(false)
+const [initialDisplay, setInitialDisplay] = useState(true); 
+const [themeMode,setThemeMode]=useState<string>( '')
 
+
+useEffect(()=>{
+  const loadTheme = async () => {
+    const storedTheme = await AsyncStorage.getItem('themeMode');
+    setThemeMode(storedTheme || 'auto');
+  };
+  loadTheme();
+},[])
 
   return (
-    <DateContext.Provider value={{allDeleted,setAllDeleted,isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
+    <DateContext.Provider value={{themeMode,setThemeMode,initialDisplay,setInitialDisplay,allDeleted,setAllDeleted,isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
       {children}
     </DateContext.Provider>
   );

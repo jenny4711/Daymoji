@@ -317,7 +317,7 @@ export const saveIsToday = async ({date, month, isToday}: any) => {
 
 export const updateIsToday = async ({date, month, isToday}: any) => {
  try {
-   console.log(date,month,isToday,'updateIsToday')
+ 
    const email = await AsyncStorage.getItem('email');
    if (!email) return;
 

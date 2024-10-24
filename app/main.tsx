@@ -1,4 +1,4 @@
-import { View, Text, Touchable, TouchableOpacity } from 'react-native';
+import { View, Text, Touchable, TouchableOpacity ,Image} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useCallback } from 'react';
 import Head from 'expo-router/head';
@@ -14,6 +14,9 @@ import ListMode from '~/components/main/ListMode';
 import { handleTodayDate } from '~/utils/utilsFn';
 import { findTodayData } from '~/utils/fireStoreFn';
 import { checkData } from '~/utils/utilsFn';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useColorScheme } from 'react-native';
+
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -21,6 +24,7 @@ import Animated, {
   withSequence,
   Easing,
   runOnJS,
+  FadeIn,
 } from 'react-native-reanimated';
 const { width, height } = Dimensions.get('window');
 import { useDateContext } from '~/context/DataContext';
@@ -37,10 +41,17 @@ const Main = () => {
     headerTitle,
     setTodayDate,
     todayDate,
+    isLoading,
+    initialDisplay,
+    setInitialDisplay,
+    themeMode,
+    setThemeMode,
+
   } = useDateContext();
   const [showListMode, setShowListMode] = useState(false);
   const translateY = useSharedValue(0); // 애니메이션 상태
   const [today,setToday]=useState<any>(new Date())
+  const colorScheme=useColorScheme()
   const navigation = useNavigation<any>();
   const date = new Date();
   const year = date.getFullYear();
@@ -51,12 +62,16 @@ const Main = () => {
     
     await handleTodayDate()
   }
+  useEffect(() => {
+    if (!isLoading ) {
+      // 로딩 완료 후 스플래시 화면을 10초 동안 유지
+      const timer = setTimeout(() => {
+        setInitialDisplay(false);
+      }, 5000);
 
-
-
-
-
-
+      return () => clearTimeout(timer); // 컴포넌트가 언마운트될 때 타이머 정리
+    }
+  }, [isLoading]);
 
   //오늘 날씨에 데이터가 있는지 확인
   useEffect(() => {
@@ -89,9 +104,23 @@ const Main = () => {
   };
 
   useEffect(() => {
-    checkTimeForTheme();
-    updateToday()
-  }, []);
+    async function saveThemeMode(){
+      // themeMode가 'auto'일 경우 시스템 테마에 따라 자동으로 설정
+      const theme = await await AsyncStorage.getItem('themeMode')
+      if (theme === 'auto') {
+       checkTimeForTheme();  // 시스템 테마에 맞추어 자동으로 설정
+     } else if (theme === 'light') {
+       setScheme('light');
+      
+     
+    }else{
+      setScheme('dark');
+     
+    }
+   
+   }
+   saveThemeMode()
+   }, [themeMode,colorScheme]); 
 
   //-------------------------
   // 이모지 혹은 스토리 혹은 사진이 있을 때만 애니메이션 실행
@@ -139,13 +168,8 @@ const Main = () => {
   // ----------------------------
   // 오늘 날짜 데이터 생성함수
   const currentDateForm = useCallback(async () => {
-    // const date = new Date();
-    // const year = date.getFullYear();
-    // const month = date.getMonth() + 1;
-    // const day = date.getDate();
-    // let currentDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
 
-    // 현재 날짜를 사용하여 라우팅
+ // 현재 날짜를 사용하여 라우팅
     return (navigation as any).navigate('details/[date]', { date: currentDate, month });
   }, [navigation]);
   // -----------------------------------
@@ -156,27 +180,41 @@ const Main = () => {
   const topSize = lines > 5 ? height * 0.01 : height * -0.071;
   // ------------------------------------
 
+  if (initialDisplay ) {
+ 
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:colors.background }}>
+        {/* <ActivityIndicator size="large" color={colors.text} /> */}
+{ dark?      
+ <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
+ : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> }
+      </View>
+    );
+  }
+
+
+
   return (
-    <View style={{ backgroundColor: colors.background, alignItems: 'center' }}>
+    <Animated.View  style={{ backgroundColor: colors.background, alignItems: 'center' }}>
       <Head>
         <title>Daymoji Login</title>
         <meta name="description" content="Index" />
       </Head>
 
-      <Header
+     {!isLoading && <Header
         headerTitle={headerTitle}
         day={dateF}
         showListMode={showListMode}
         setShowListMode={setShowListMode}
-      />
+      />}
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ backgroundColor: colors.background }}>
-        <Animated.ScrollView style={{ marginTop: 0 }}>
+        <Animated.ScrollView  entering={FadeIn.duration(500).easing(Easing.inOut(Easing.ease))}style={{ marginTop: 0 }}>
           {showListMode ? (
             <ListMode />
           ) : (
-            <Calendars
+            !isLoading &&<Calendars
               lines={lines}
               setLines={setLines}
               letBoxDown={letBoxDown}
@@ -198,7 +236,7 @@ const Main = () => {
               marginTop: plusBtnMgTop,
               marginBottom: 200,
             }}>
-            <TouchableOpacity
+          {!isLoading&&<TouchableOpacity
               onPress={currentDateForm}
               style={
                 !hasTodayData
@@ -213,11 +251,11 @@ const Main = () => {
                   : { display: 'none' }
               }>
               <Fontisto name="plus-a" size={16} color={colors.background} />
-            </TouchableOpacity>
+            </TouchableOpacity>}
           </View>
         )}
       </ScrollView>
-    </View>
+    </Animated.View>
   );
 };
 

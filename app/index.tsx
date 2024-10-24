@@ -1,7 +1,6 @@
 
-
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Linking ,ActivityIndicator} from 'react-native';
+import { StyleSheet, Text, View, Linking ,ActivityIndicator,Image} from 'react-native';
 import Login from '~/components/auth/Login';
 import { Platform } from 'react-native';
 import { FIREBASE_AUTH } from '../config/firebase';
@@ -17,9 +16,11 @@ import { Dimensions } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
 import { saveIsToday, updateIsToday } from '~/utils/fireStoreFn';
 import { MainLogo } from '~/utils/Icons';
-import * as SplashScreen from 'expo-splash-screen';
-const { width, height } = Dimensions.get('window');
+import {fetchInitialData} from '~/utils/utilsFn'
 
+import { set } from 'lodash';
+const { width, height } = Dimensions.get('window');
+import { useColorScheme } from 'react-native';
 if (Platform.OS !== 'web') {
   WebBrowser.maybeCompleteAuthSession();
 }
@@ -29,9 +30,9 @@ const Page = () => {
   const [checkStatus, setCheckStatus] = useState<boolean>(false);
   const [loadingAuthState, setLoadingAuthState] = useState(true); // 로그인 상태 로딩 여부를 위한 상태 추가
   const [userInfo, setUserInfo] = useState<any>(null);
-
-  const { email, setEmail, token, setToken, setIsLoading, isLoading } = useDateContext();
-  const { colors, setScheme } = useTheme();
+const [hold,setHold]=useState(true)
+  const {themeMode,setThemeMode, email, setEmail, token, setToken, setIsLoading, isLoading ,initialDisplay ,setInitialDisplay} = useDateContext();
+  const { colors, setScheme ,dark} = useTheme();
 
   const today = new Date();
   const month = today.getMonth() + 1;
@@ -50,33 +51,79 @@ const Page = () => {
   const yesterdayDateS = yesterdayDate < 10 ? `0${yesterdayDate}` : yesterdayDate;
   const yesterdayMonthS = yesterdayMonth < 10 ? `0${yesterdayMonth}` : yesterdayMonth;
   const yesterday = `${yesterdayYear}-${yesterdayMonthS}-${yesterdayDateS}`;
+  const colorScheme:any = useColorScheme(); 
+
+
+
+
+
+
+ 
+
+
+
 
   async function authStatus() {
     const status = await AsyncStorage.getItem('isLogin');
-    if (status === 'true') {
+    const email=await AsyncStorage.getItem('email');
+     setIsLoading(true);
+
+    if (status && email !==null ) {
       setCheckStatus(true);
+      setIsLoading(false);
+    
+      (navigation as any).navigate('main');
+    }else{
+      
+      setCheckStatus(false);
+
+      setIsLoading(false);
+      setHold(false)
+      return;
     }
   }
-
   useEffect(() => {
+
     setIsLoading(true);
     authStatus();
-    setIsLoading(false);
-  }, []);
+    
+     
+    }, []);
+  
 
-  const checkTimeForTheme = () => {
+  const checkTimeForTheme = async() => {
     const currentTime = new Date();
     const hours = currentTime.getHours();
     if (hours >= 6 && hours < 18) {
       setScheme('light');
+      await AsyncStorage.setItem('themeMode', 'light');
+
     } else {
       setScheme('dark');
+      await AsyncStorage.setItem('themeMode', 'dark');
     }
   };
 
   useEffect(() => {
-    checkTimeForTheme();
-  }, []);
+    async function saveThemeMode(){
+      // themeMode가 'auto'일 경우 시스템 테마에 따라 자동으로 설정
+      const theme = await AsyncStorage.getItem('themeMode')
+      if (theme === 'auto') {
+       checkTimeForTheme();  // 시스템 테마에 맞추어 자동으로 설정
+     } else if (theme === 'light') {
+       setScheme('light');
+      
+     
+    }else{
+      setScheme('dark');
+     
+    }
+   
+   }
+   saveThemeMode()
+   }, [themeMode,colorScheme]); 
+
+
 
   const clientID = Platform.OS === 'ios' 
     ? process.env.EXPO_PUBLIC_IOS_CLIENT_ID
@@ -107,6 +154,7 @@ const Page = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (user: any) => {
+      setIsLoading(true);
       if (user) {
         setUserInfo(user);
         const token = user.stsTokenManager?.accessToken;
@@ -118,7 +166,7 @@ const Page = () => {
           setEmail(email);
           setToken(token);
         } else {
-          await AsyncStorage.setItem('isLogin', 'true');
+          await AsyncStorage.setItem('isLogin','true');
           await AsyncStorage.setItem('token', token);
           await AsyncStorage.setItem('email', email);
           setEmail(email);
@@ -128,11 +176,18 @@ const Page = () => {
           await saveIsToday({ date: currentDate, month, isToday: true });
         }
 
-        setLoadingAuthState(false); // 로그인 상태 확인 완료
-        navigation.navigate('main');
+        
+          setLoadingAuthState(false); // 로그인 상태 확인 완료
+          setIsLoading(false);
+      
+
+        
+          (navigation as any).navigate('main');
       } else {
         setUserInfo(null);
-        setLoadingAuthState(false); // 로그인 상태 확인 완료
+      
+          setLoadingAuthState(false); // 로그인 상태 확인 완료
+          setIsLoading(false);
       }
     });
 
@@ -158,19 +213,23 @@ const Page = () => {
       console.log(`Don't know how to open this URL: ${url}`);
     }
   };
-
-  if (isLoading || loadingAuthState) {
-
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:colors.background }}>
-        <ActivityIndicator size="large" color={colors.text} />
-      </View>
-    );
-  }
+console.log('isLoading-index!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',isLoading)
+//   if (isLoading ) {
+ 
+//     return (
+//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:colors.background }}>
+//         {/* <ActivityIndicator size="large" color={colors.text} /> */}
+// { dark?      
+//  <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
+//  : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> }
+//       </View>
+//     );
+//   }
 
   return (
     <>
-      {!checkStatus ? (
+  
+      {!checkStatus && !isLoading &&!hold ? (
         <GestureHandlerRootView style={{ flex: 1 }}>
           <View style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={[styles.loginContainer, { backgroundColor: colors.background }]}>
@@ -194,7 +253,7 @@ const Page = () => {
             </View>
           </View>
         </GestureHandlerRootView>
-      ) : null}
+      ) : <View style={{width:width,height:height,backgroundColor:colors.background}}/>}
     </>
   );
 };

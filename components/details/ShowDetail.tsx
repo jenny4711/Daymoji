@@ -105,7 +105,7 @@ const ShowDetail = ({
         
       </Animated.View>
 
-      <Animated.View style={{marginTop:16,width:width-24,paddingBottom:40}}>
+      <Animated.View style={{marginTop:16,width:width-24,paddingBottom:40,justifyContent:'center',alignItems:'center'}}>
        
         
         

@@ -9,11 +9,11 @@ import { HeaderL } from '~/utils/Icons';
 const Header = ({day,showListMode,setShowListMode}:any) => {
   const {colors}=useTheme()
   const navigation = useNavigation<any>();
-  const {headerTitle}=useDateContext()
+  const {headerTitle,isLoading}=useDateContext()
  
   return (
-    <View style={{flexDirection:'column',marginTop:64}}>
-    <View style={[styles.header,{marginBottom:24}]}>
+  <View style={{flexDirection:'column',marginTop:64}}>
+ {!isLoading &&   <View style={[styles.header,{marginBottom:24}]}>
     <Text style={[styles.headerText, { color: colors.text }]}>{headerTitle}</Text>
     <View style={{flexDirection:'row'}}>
 
@@ -31,7 +31,7 @@ const Header = ({day,showListMode,setShowListMode}:any) => {
     <Octicons name="gear" size={16} color={colors.text} />
     </TouchableOpacity>
     </View>
-</View>
+</View>}
 
   </View>
   )

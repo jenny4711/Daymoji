@@ -15,7 +15,7 @@ const MonthDay = ({setClickedDay,clickedDay,month,data,day,index,triggerAnimatio
 
   const navigation = useNavigation();
   const {colors}=useTheme()
-   const {dateF, newAData,setNewAData,dateWithLang ,monthF,setDateF,yearF,visible} = useDateContext();
+   const {dateF, newAData,setNewAData,dateWithLang ,monthF,setDateF,yearF,visible,setIsLoading,isLoading} = useDateContext();
   const [date,setDate]=useState<any>(`${yearF}-${monthF}-${day}`)
   const [item,setItem]=useState<any>(null)
   const [itemMonth,setItemMonth]=useState<any>(null)
@@ -37,13 +37,16 @@ if(itemMonth !==monthF){
 
 
 useEffect(()=>{
+
   const dateS = day < 10 ? `0${day}` : day;
   const monthS = month < 10 ? `0${month}` : month;
   const date = `${yearF}-${monthS}-${dateS}`;
+
   if(data){
     const result = data.find((item:any) =>  item.date === date);
 
     setItem(result);
+    
   }
 },[data])
 
