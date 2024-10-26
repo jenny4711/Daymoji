@@ -207,15 +207,19 @@ import * as Font from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/Theme/ThemeProvider';
 import { useColorScheme } from 'react-native';
-
+import { useDateContext } from '~/context/DataContext';
 const { width, height } = Dimensions.get('window');
 
 SplashScreen.preventAutoHideAsync();
-setTimeout(SplashScreen.hideAsync, 1000);
+setTimeout(SplashScreen.hideAsync, 8000);
 const queryClient = new QueryClient();
 
-const Layout = ({ loggedIn }) => {
+const Layout = ({logIn}:any) => {
   const { colors } = useTheme();
+
+
+
+
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -228,7 +232,7 @@ const Layout = ({ loggedIn }) => {
           contentStyle: { backgroundColor: colors.background },
         }}
       >
-        {loggedIn === false ? (
+        {logIn === false ? (
           <Stack.Screen
             name="index"
             options={{ headerShown: false, gestureEnabled: false }}
@@ -236,7 +240,7 @@ const Layout = ({ loggedIn }) => {
         ) : (
           <Stack.Screen
             name="main"
-            options={{ headerShown: false, gestureEnabled: false }}
+            options={{ headerShown: false, gestureEnabled: false ,animation:'none'}}
           />
         )}
         <Stack.Screen
@@ -272,10 +276,11 @@ const Layout = ({ loggedIn }) => {
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [appInitialized, setAppInitialized] = useState(false);
-  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+   const [logIn, setLogIn] = useState<boolean | null>(null);
   const { setScheme,colors } = useTheme();
   const colorScheme = useColorScheme();
   const appearance = Appearance.getColorScheme();
+ 
 
   useEffect(() => {
     async function initializeApp() {
@@ -304,7 +309,8 @@ export default function App() {
 
         // 로그인 상태 확인
         const user = await AsyncStorage.getItem('isLogin');
-        setLoggedIn(user ? true : false);
+        setLogIn(user ? true : false);
+     
       } catch (error) {
         console.error("App initialization failed:", error);
       } finally {
@@ -326,7 +332,7 @@ export default function App() {
     <ThemeProvider>
       <DateProvider>
         <QueryClientProvider client={queryClient}>
-          <Layout loggedIn={loggedIn} />
+          <Layout logIn={logIn} />
         </QueryClientProvider>
       </DateProvider>
     </ThemeProvider>

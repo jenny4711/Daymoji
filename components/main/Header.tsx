@@ -1,5 +1,5 @@
 import { Dimensions, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import React from 'react'
+import React ,{useState,useEffect}from 'react'
 import { useTheme } from '~/Theme/ThemeProvider'
 import { useNavigation } from '@react-navigation/native';
 const {width,height}=Dimensions.get('window')
@@ -9,13 +9,20 @@ import { HeaderL } from '~/utils/Icons';
 const Header = ({day,showListMode,setShowListMode}:any) => {
   const {colors}=useTheme()
   const navigation = useNavigation<any>();
-  const {headerTitle,isLoading}=useDateContext()
+  const [showBtn,setShowBtn]=useState(false)
+  const {headerTitle,isLoading,initialDisplay}=useDateContext()
+
+  useEffect(()=>{
+    if(!initialDisplay){
+      setShowBtn(true)
+    }
+  },[initialDisplay])
  
   return (
   <View style={{flexDirection:'column',marginTop:64}}>
  {!isLoading &&   <View style={[styles.header,{marginBottom:24}]}>
     <Text style={[styles.headerText, { color: colors.text }]}>{headerTitle}</Text>
-    <View style={{flexDirection:'row'}}>
+    <View style={[!showBtn?{opacity:0}:{flexDirection:'row',opacity:1}]}>
 
   
     <TouchableOpacity onPress={() => setShowListMode(!showListMode)}>

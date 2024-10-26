@@ -176,13 +176,13 @@ const [hold,setHold]=useState(true)
           await saveIsToday({ date: currentDate, month, isToday: true });
         }
 
-        
+        (navigation as any).navigate('main');
           setLoadingAuthState(false); // 로그인 상태 확인 완료
           setIsLoading(false);
       
 
         
-          (navigation as any).navigate('main');
+         
       } else {
         setUserInfo(null);
       

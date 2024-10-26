@@ -28,6 +28,7 @@ import Animated, {
 } from 'react-native-reanimated';
 const { width, height } = Dimensions.get('window');
 import { useDateContext } from '~/context/DataContext';
+import { set } from 'lodash';
 const Main = () => {
   const { dark, colors, setScheme } = useTheme();
   const [lines, setLines] = useState(0);
@@ -46,9 +47,11 @@ const Main = () => {
     setInitialDisplay,
     themeMode,
     setThemeMode,
+    loggedIn,
 
   } = useDateContext();
   const [showListMode, setShowListMode] = useState(false);
+  const [showBtn,setShowBtn]=useState(false)
   const translateY = useSharedValue(0); // 애니메이션 상태
   const [today,setToday]=useState<any>(new Date())
   const colorScheme=useColorScheme()
@@ -62,16 +65,29 @@ const Main = () => {
     
     await handleTodayDate()
   }
+
+
   useEffect(() => {
     if (!isLoading ) {
       // 로딩 완료 후 스플래시 화면을 10초 동안 유지
       const timer = setTimeout(() => {
         setInitialDisplay(false);
-      }, 5000);
+      }, 8000);
 
       return () => clearTimeout(timer); // 컴포넌트가 언마운트될 때 타이머 정리
     }
   }, [isLoading]);
+
+
+  useEffect(()=>{
+    if(!isLoading && !initialDisplay){
+      const timer = setTimeout(() => {
+        setShowBtn(true);
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  },[isLoading,initialDisplay])
 
   //오늘 날씨에 데이터가 있는지 확인
   useEffect(() => {
@@ -184,7 +200,7 @@ const Main = () => {
  
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:colors.background }}>
-        {/* <ActivityIndicator size="large" color={colors.text} /> */}
+       
 { dark?      
  <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
  : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> }
@@ -201,7 +217,7 @@ const Main = () => {
         <meta name="description" content="Index" />
       </Head>
 
-     {!isLoading && <Header
+     {!initialDisplay && <Header
         headerTitle={headerTitle}
         day={dateF}
         showListMode={showListMode}
@@ -214,7 +230,7 @@ const Main = () => {
           {showListMode ? (
             <ListMode />
           ) : (
-            !isLoading &&<Calendars
+            !isLoading&&<Calendars
               lines={lines}
               setLines={setLines}
               letBoxDown={letBoxDown}
@@ -236,7 +252,7 @@ const Main = () => {
               marginTop: plusBtnMgTop,
               marginBottom: 200,
             }}>
-          {!isLoading&&<TouchableOpacity
+          {!isLoading&&showBtn&&<TouchableOpacity
               onPress={currentDateForm}
               style={
                 !hasTodayData
