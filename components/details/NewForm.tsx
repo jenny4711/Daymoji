@@ -43,6 +43,8 @@ const NewForm = ({
   photo,
   emotion,
   setEmotion,
+  imges,
+  setImges,
 }: any) => {
   const { dark, colors, setScheme } = useTheme();
 
@@ -89,6 +91,8 @@ const NewForm = ({
             showDone={showDone}
             photo={photo}
             hideKeyboard={hideKeyboard}
+            imges={imges}
+            setImges={setImges}
           />
         </View>
       </KeyboardAvoidingView>

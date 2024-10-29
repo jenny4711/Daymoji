@@ -42,6 +42,8 @@ interface DateContextType {
   setThemeMode:(mode:any)=>void
   loggedIn:boolean | null
   setLoggedIn:(loggedIn:boolean | null)=>void
+  readyForShow:any
+  setReadyForShow:(ready:any)=>void
 }
 
 const DateContext = createContext<DateContextType>('' as any);
@@ -66,6 +68,7 @@ const [allDeleted,setAllDeleted]=useState(false)
 const [initialDisplay, setInitialDisplay] = useState(true); 
 const [themeMode,setThemeMode]=useState<string>( '')
 const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+const [readyForShow,setReadyForShow]=useState(false)
 
 useEffect(()=>{
   const loadTheme = async () => {
@@ -76,7 +79,7 @@ useEffect(()=>{
 },[])
 
   return (
-    <DateContext.Provider value={{loggedIn,setLoggedIn,themeMode,setThemeMode,initialDisplay,setInitialDisplay,allDeleted,setAllDeleted,isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
+    <DateContext.Provider value={{readyForShow,setReadyForShow,loggedIn,setLoggedIn,themeMode,setThemeMode,initialDisplay,setInitialDisplay,allDeleted,setAllDeleted,isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
       {children}
     </DateContext.Provider>
   );

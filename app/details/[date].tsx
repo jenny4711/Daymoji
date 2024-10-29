@@ -26,7 +26,7 @@ const Detail = () => {
   const {isLoading, dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
   const queryClient = useQueryClient();
 const navigation=useNavigation()
-
+const [imges,setImges]=useState<any>([])
 const [showDone,setShowDone]=useState<any>(false)
 const {colors,dark}=useTheme()
 const [showDate,setShowDate]=useState<any>('')
@@ -90,10 +90,9 @@ useEffect(()=>{
 async function doneHandler() {
   const email = await AsyncStorage.getItem('email');
 
-  // if (emotion === '') {
-  //   Alert.alert('Alert', 'Please select emotion');
-  //   return;
-  // }
+ if(emotion === '' && story === '' && photo.length === 0){
+  return (navigation as any).navigate('main');
+ }
   
   setSave(true);
   
@@ -118,8 +117,9 @@ async function doneHandler() {
   
   setNewAData({ date, emotion, story, photo: photos, email, month });
   setDateF(date);
-  setVisible(true);
-
+  // setVisible(true);
+setPhoto([])
+setImges([])
   return (navigation as any).navigate('main');
 }
 
@@ -175,6 +175,8 @@ const handleDeleted = async () => {
         emotion={emotion}
         setEmotion={setEmotion}
         handleDeleted={handleDeleted}
+        imges={imges}
+        setImges={setImges}
         />)
       :
       <NewForm 
@@ -188,6 +190,8 @@ const handleDeleted = async () => {
         setPhoto={setPhoto}
         emotion={emotion}
         setEmotion={setEmotion}
+        imges={imges}
+        setImges={setImges}
        
        
        

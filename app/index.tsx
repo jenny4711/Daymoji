@@ -66,7 +66,7 @@ const [hold,setHold]=useState(true)
   async function authStatus() {
     const status = await AsyncStorage.getItem('isLogin');
     const email=await AsyncStorage.getItem('email');
-     setIsLoading(true);
+    //  setIsLoading(true);
 
     if (status && email !==null ) {
       setCheckStatus(true);
@@ -84,7 +84,7 @@ const [hold,setHold]=useState(true)
   }
   useEffect(() => {
 
-    setIsLoading(true);
+    // setIsLoading(true);
     authStatus();
     
      
@@ -154,7 +154,7 @@ const [hold,setHold]=useState(true)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (user: any) => {
-      setIsLoading(true);
+      // setIsLoading(true);
       if (user) {
         setUserInfo(user);
         const token = user.stsTokenManager?.accessToken;
@@ -176,9 +176,10 @@ const [hold,setHold]=useState(true)
           await saveIsToday({ date: currentDate, month, isToday: true });
         }
 
-        (navigation as any).navigate('main');
+     
           setLoadingAuthState(false); // 로그인 상태 확인 완료
           setIsLoading(false);
+          (navigation as any).navigate('main');
       
 
         
@@ -213,18 +214,7 @@ const [hold,setHold]=useState(true)
       console.log(`Don't know how to open this URL: ${url}`);
     }
   };
-console.log('isLoading-index!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',isLoading)
-//   if (isLoading ) {
- 
-//     return (
-//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:colors.background }}>
-//         {/* <ActivityIndicator size="large" color={colors.text} /> */}
-// { dark?      
-//  <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
-//  : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> }
-//       </View>
-//     );
-//   }
+
 
   return (
     <>

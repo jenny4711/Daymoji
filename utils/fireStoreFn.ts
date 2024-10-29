@@ -5,7 +5,7 @@ import { deleteUser } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import {ref,uploadBytesResumable,getDownloadURL,deleteObject} from 'firebase/storage'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PollingWatchKind } from 'typescript';
+
 type Data = {
   date: string;
   emotion: string;
@@ -257,8 +257,8 @@ export const uploadImageStorage = async (uri: any, fileType: any,onProgress:(pro
          console.log(error, 'error');
          reject(error);
        },
-       () => {
-         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
+       async() => {
+        await getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
            console.log('File available at', downloadUrl);
            resolve(downloadUrl); // Resolve the promise with the download URL
          });
@@ -279,10 +279,16 @@ export const deleteImageStorage = async (downloadUrl: string) => {
    const storageRef = ref(FIREBASE_STORAGE, downloadUrl);
 
    const checkUrl = await getDownloadURL(storageRef);
-    console.log('checkUrl', checkUrl);
+    console.log('checkUrl-deleteImageStorage!!!!!!!!!!!!!',typeof checkUrl);
+
+  if(checkUrl ==="" || checkUrl === null){
+    console.log('No such document!');
+    return;
+  }
    
    // 파일 삭제
    await deleteObject(storageRef);
+   
    console.log('Image successfully deleted');
  } catch (error) {
    console.log(error, 'deleteImage');

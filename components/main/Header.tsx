@@ -20,12 +20,12 @@ const Header = ({day,showListMode,setShowListMode}:any) => {
  
   return (
   <View style={{flexDirection:'column',marginTop:64}}>
- {!isLoading &&   <View style={[styles.header,{marginBottom:24}]}>
+ {!isLoading &&   <View style={[styles.header,{marginBottom:40}]}>
     <Text style={[styles.headerText, { color: colors.text }]}>{headerTitle}</Text>
     <View style={[!showBtn?{opacity:0}:{flexDirection:'row',opacity:1}]}>
 
   
-    <TouchableOpacity onPress={() => setShowListMode(!showListMode)}>
+    {/* <TouchableOpacity onPress={() => setShowListMode(!showListMode)}>
       {showListMode?
       <Octicons name="calendar" size={16} color={colors.text} />
       :
@@ -33,7 +33,7 @@ const Header = ({day,showListMode,setShowListMode}:any) => {
     }
    
 
-    </TouchableOpacity>
+    </TouchableOpacity> */}
     <TouchableOpacity style={{marginLeft:16}} onPress={() => (navigation as any).navigate('setting')}>
     <Octicons name="gear" size={16} color={colors.text} />
     </TouchableOpacity>

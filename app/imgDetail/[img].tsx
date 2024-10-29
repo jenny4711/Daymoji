@@ -12,6 +12,7 @@ const { width, height } = Dimensions.get('window');
 // react-native-reanimated-carousel
 const Img = () => {
   const { img, idx } = useLocalSearchParams<any>();
+ 
   const { colors, dark } = useTheme();
   const [getImg, setGetImg] = useState(img);
   const [imgArr, setImgArr] = useState<any>([]);
@@ -19,7 +20,7 @@ const Img = () => {
 
   const screenSize = Dimensions.get('window'); // 화면 크기 가져오기
   const { setNewAData, newAData, preImages ,dateF} = useDateContext();
-console.log(newAData,'newAData-img')
+
   useEffect(() => {
     if (img === '') {
       setImgArr(newAData?.photo);
@@ -61,13 +62,13 @@ console.log(newAData,'newAData-img')
             autoPlay={false}
             defaultIndex={idx}
             data={[...imgArr]}
-            style={{ justifyContent:'flex-start', alignItems:'center' }}
+            style={{flex:1, justifyContent:'flex-start', alignItems:'center' }}
             onSnapToItem={(index) => console.log('current index:', index)}
             renderItem={({ index }) => (
               <>
                 <ExpoImage
                   source={{ uri: imgArr[index] }} // 이미지 URI 설정
-                  style={{ width: screenSize.width, height: screenSize.height }} // 화면 너비에 맞춰 이미지 크기 조정
+                  style={{ flex: 1 }}// 화면 너비에 맞춰 이미지 크기 조정
                   contentFit="contain" // 이미지 비율 유지하며 화면에 맞춤
                   cachePolicy="none" // 캐시 사용 안 함
                 />

@@ -109,7 +109,7 @@ const handleEditBtn = async () => {
        <EmotionSticker emotion={item?.emotion} size={24}/>
       </Animated.View>
       <View style={{position: 'absolute',right:49}}>
-        <TouchableOpacity onPress={handleEditBtn} style={{marginRight:0}}>
+        <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}  onPress={handleEditBtn} style={{marginRight:0}}>
       <Octicons name="pencil" size={16} color={colors.text} />
       </TouchableOpacity>
       {/* deleteItem 잠시 보류 */}

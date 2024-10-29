@@ -1,5 +1,6 @@
 import { View, Text ,SafeAreaView ,Dimensions,TouchableOpacity,StyleSheet,Linking,Alert} from 'react-native'
 import React ,{useEffect,useState}from 'react'
+import { handleTodayDate } from '~/utils/utilsFn';
 import { ThemeArray } from '~/utils/selectionArray';
 import { useTheme } from '~/Theme/ThemeProvider';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -88,16 +89,17 @@ useEffect(() => {
 saveThemeMode()
 }, [themeMode, text, inputBk, background, colorScheme]); 
 
-const handleAlldeletedList = () => {
+const handleAlldeletedList =() => {
   Alert.alert('Delete All Entries', 'Are you sure you want to delete all entries? This action cannot be undone', [
     {
       text: 'Cancel',
-      onPress: () => console.log('Ask me later pressed'),
+      onPress:() => console.log('Ask me later pressed'),
     },
     
-    {text: 'Delete',style:'destructive',onPress: () =>{
+    {text: 'Delete',style:'destructive',onPress: async () =>{
       
      deletedAllMutation.mutate(month)
+     await handleTodayDate()
   queryClient.invalidateQueries({ queryKey: ['data',monthF] });  
 
     }

@@ -27,7 +27,9 @@ const ShowDetail = ({
  photo,
  emotion,
  setEmotion,
- handleDeleted
+ handleDeleted,
+ imges,
+  setImges
 }:any) => {
   // const {data,isLoading,isError,error}:any=useAdayData({date,month})
   const {colors,dark}=useTheme()
@@ -109,7 +111,7 @@ const ShowDetail = ({
        
         
         
-        <AddPhoto hideKeyboard={hideKeyboard} showDone={showDone} photo={photo}  setPhoto={setPhoto}/>
+        <AddPhoto hideKeyboard={hideKeyboard} showDone={showDone} photo={photo}  setPhoto={setPhoto}   imges={imges}  setImges={setImges} />
       
      
       </Animated.View>

@@ -1,9 +1,9 @@
 import {ActivityIndicator, View, Text, Dimensions,  TouchableOpacity, StyleSheet ,Image as RnImage, ImageBackground} from 'react-native';
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useTheme } from '~/Theme/ThemeProvider'  
 import { Image } from 'expo-image';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from 'expo-router';
 import { useDateContext } from '~/context/DataContext';
 import { moderateScale } from 'react-native-size-matters';
 
@@ -12,7 +12,8 @@ const { width, height } = Dimensions.get('window');
 const EachImage = ({idx,img,imgBtn,imgBtnBk,deletedIcon,imgSize,setImgSize,setImg,deleteImage,deleteMargin,imges,progress,isLoading}:any) => {
   const navigation=useNavigation()
   const {colors,dark} = useTheme()
-console.log(progress,idx,'EachImage')
+ 
+
   return (
     <>
      

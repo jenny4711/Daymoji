@@ -46,8 +46,8 @@ const Main = () => {
     initialDisplay,
     setInitialDisplay,
     themeMode,
-    setThemeMode,
-    loggedIn,
+ readyForShow,
+    setReadyForShow,
 
   } = useDateContext();
   const [showListMode, setShowListMode] = useState(false);
@@ -72,7 +72,7 @@ const Main = () => {
       // 로딩 완료 후 스플래시 화면을 10초 동안 유지
       const timer = setTimeout(() => {
         setInitialDisplay(false);
-      }, 8000);
+      }, 500);
 
       return () => clearTimeout(timer); // 컴포넌트가 언마운트될 때 타이머 정리
     }
@@ -141,8 +141,14 @@ const Main = () => {
   //-------------------------
   // 이모지 혹은 스토리 혹은 사진이 있을 때만 애니메이션 실행
   useEffect(() => {
-    if (newAData && checkData(newAData)) {
+    const check=checkData(newAData)
+    console.log(check,'newAData',newAData)
+    if (newAData && check) {
+      console.log(check,'newAData',newAData)
       triggerAnimation(true);
+    }else{
+      letBoxDown(false)
+      return;
     }
   }, [newAData]);
 
@@ -156,6 +162,10 @@ const Main = () => {
 
   // // RenderDay에서 애니메이션 트리거 시 실행될 함수
   const triggerAnimation = (shouldShow: boolean) => {
+    const check=checkData(newAData)
+    if( !check){
+      setVisible(false)
+    }
     setVisible(shouldShow); // RenderDay에서 클릭에 따라 상태 업데이트
 
     // 애니메이션 실행
@@ -196,14 +206,14 @@ const Main = () => {
   const topSize = lines > 5 ? height * 0.01 : height * -0.071;
   // ------------------------------------
 
-  if (initialDisplay ) {
+  if (initialDisplay  ) {
  
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:colors.background }}>
-       
-{ dark?      
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',position:'absolute',zIndex:1 }}>
+    
+ { dark?      
  <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
- : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> }
+ : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> } 
       </View>
     );
   }
@@ -211,13 +221,18 @@ const Main = () => {
 
 
   return (
-    <Animated.View  style={{ backgroundColor: colors.background, alignItems: 'center' }}>
-      <Head>
-        <title>Daymoji Login</title>
-        <meta name="description" content="Index" />
-      </Head>
+    <>
+     {!readyForShow&&<View style={{position:'absolute',width:width,height:height,zIndex:1}}>
+     { dark?      
+ <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
+ : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> } 
+      </View>
+      }
+  <Animated.View  style={{ backgroundColor: colors.background, alignItems: 'center' }}>
 
-     {!initialDisplay && <Header
+     
+
+     { <Header
         headerTitle={headerTitle}
         day={dateF}
         showListMode={showListMode}
@@ -230,7 +245,7 @@ const Main = () => {
           {showListMode ? (
             <ListMode />
           ) : (
-            !isLoading&&<Calendars
+           <Calendars
               lines={lines}
               setLines={setLines}
               letBoxDown={letBoxDown}
@@ -252,7 +267,7 @@ const Main = () => {
               marginTop: plusBtnMgTop,
               marginBottom: 200,
             }}>
-          {!isLoading&&showBtn&&<TouchableOpacity
+          {!isLoading&&<TouchableOpacity
               onPress={currentDateForm}
               style={
                 !hasTodayData
@@ -272,6 +287,8 @@ const Main = () => {
         )}
       </ScrollView>
     </Animated.View>
+   
+    </>
   );
 };
 

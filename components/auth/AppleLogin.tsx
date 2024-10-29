@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   btn: {
     marginVertical:16,
    
-    borderRadius: 24, 
+    borderRadius: 100, 
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'center',
