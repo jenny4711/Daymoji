@@ -62,7 +62,7 @@ useEffect(()=>{
    
   }else if(imges.length===2 || imges.length===3){
     setImgSize({width:(screenSize.width - 48) / 3 -8,height:(screenSize.width - 48) / 3 -8})
-    setDeleteMargin({top:8,right:8})
+    setDeleteMargin({top:8,right:16})
     setImgMarginHR(8)
  
   }else{

@@ -11,6 +11,7 @@ import LogOutSec from '~/components/setting/LogOutSec';
 import { useDateContext } from '~/context/DataContext';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { set } from 'lodash';
 const {width,height}=Dimensions.get('window')
 
 const Setting = () => {
@@ -25,7 +26,7 @@ const Setting = () => {
   const [indexOpacity,setIndexOpacity]=useState<string>( colorStyle.indexOpacity)
   const [loadingBK,setLoadingBK]=useState<string>( colorStyle.loadingBK)
   const colorScheme:any = useColorScheme(); 
-  const {monthF,themeMode,setThemeMode}=useDateContext()
+  const {monthF,themeMode,setThemeMode,setNewAData,setPreImages}=useDateContext()
   const month:any =monthF
 const deletedAllMutation=useDeletedAllData(month)
 const queryClient = useQueryClient();
@@ -99,7 +100,7 @@ const handleAlldeletedList =() => {
     {text: 'Delete',style:'destructive',onPress: async () =>{
       
      deletedAllMutation.mutate(month)
-     await handleTodayDate()
+    setNewAData(null)
   queryClient.invalidateQueries({ queryKey: ['data',monthF] });  
 
     }

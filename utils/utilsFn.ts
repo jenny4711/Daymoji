@@ -47,6 +47,21 @@ console.log('handleTodayDate!!!!!!!!!!!!!!!!!!!!!!!')
   }catch(error){console.log(error)}
 }
 
+
+export const getTodayDate=async()=>{
+  try{
+    const today = new Date()
+    const month = today.getMonth()+1
+    const year = today.getFullYear()
+    const date = today.getDate()
+    
+    const dateS = date < 10 ? `0${date}` : date;
+    const monthS = month < 10 ? `0${month}` : month;
+    const currentDate = `${year}-${monthS}-${dateS}`
+    return {currentDate,month:monthS}
+  }catch(error){console.log(error)}
+}
+
 export const fetchInitialData = async (month:any) => {
   // 여기서 필요한 데이터를 비동기적으로 가져오는 로직을 구현합니다.
   // 예를 들어, API 요청이나 로컬 데이터베이스 조회 등을 할 수 있습니다.

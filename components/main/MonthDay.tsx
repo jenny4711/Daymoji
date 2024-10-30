@@ -11,7 +11,7 @@ const circleSize = width * 0.1104;
 const MonthDay = ({setClickedDay,clickedDay,month,data,day,index,triggerAnimation ,letBoxDown}:any) => {
 const navigation = useNavigation();
 const {colors}=useTheme()
-const {dateF, newAData,setNewAData,dateWithLang ,monthF,setDateF,yearF,visible,setReadyForShow} = useDateContext();
+const {dateF, newAData,setNewAData,dateWithLang ,monthF,setDateF,yearF,visible,setReadyForShow,setPressedDone,pressedDone} = useDateContext();
 const [date,setDate]=useState<any>(`${yearF}-${monthF}-${day}`)
 const [item,setItem]=useState<any>(null)
 const [itemMonth,setItemMonth]=useState<any>(null)
@@ -99,7 +99,7 @@ letBoxDown(!visible)
 }else{
 
 
-if(checkEmotion && checkStory &&checkPhoto){
+if(!check){
   return (navigation as any).navigate('details/[date]', { date, month: monthF });
 }
 
@@ -122,12 +122,12 @@ if(checkEmotion && checkStory &&checkPhoto){
                 <TouchableOpacity
                 activeOpacity={1}
                 delayPressIn={0}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} 
+                hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }} 
                 style={[styles.circle, {
-                   backgroundColor:item && item.emotion !== undefined? colors.inputBk:colors.inputWithoutEm,
+                   backgroundColor:colors.inputBk,
                 
-                  borderWidth:clickedDay === day?2:0,
-                  zIndex: clickedDay === day ?100:0,
+                  borderWidth:clickedDay === day && check?2:0,
+                  zIndex: clickedDay === day && check ?100:0,
                   borderColor: colors.text
                 }]}
                 onPress={()=>showDetailItem(day)}
@@ -140,20 +140,20 @@ if(checkEmotion && checkStory &&checkPhoto){
                 onPress={()=>saveData(day)}
                 activeOpacity={1}
                 delayPressIn={0}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} 
+                hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }} 
                 style={[styles.circle, {
                  
-                    backgroundColor:item && item.emotion !== undefined? colors.inputBk:colors.inputWithoutEm,
+                    backgroundColor: colors.inputBk,
                   
-                  borderWidth:clickedDay === day ?2:0,
-                  zIndex:clickedDay === day ?100:0,
+                  borderWidth:clickedDay  === day && check ?2:0,
+                  zIndex:clickedDay === day && check ?100:0,
                   borderColor:colors.text
                 }]}
 
 
                 
                 >
-                  <View style={{ width: circleSize, height: circleSize, borderRadius: circleSize / 2, backgroundColor: colors.text, opacity: 0.1 }} />
+                  <View style={{ width: circleSize, height: circleSize, borderRadius: circleSize / 2}} />
                 </TouchableOpacity>
               )}
               

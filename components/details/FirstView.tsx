@@ -43,11 +43,11 @@ const styles=StyleSheet.create({
     flexDirection: 'row',
     width:width *.88,
     // width:width/1.35,
-    height:height/19,
-    // marginTop: 16,
+    // height:height/19,
+     marginTop: 27,
     alignItems: 'center',
     // paddingHorizontal: 24,
-   
+   backgroundColor:'red',
     // paddingTop:24,
     
     

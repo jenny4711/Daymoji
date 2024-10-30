@@ -5,6 +5,7 @@ import { deleteUser } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import {ref,uploadBytesResumable,getDownloadURL,deleteObject} from 'firebase/storage'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { handleTodayDate } from '../utils/utilsFn';
 
 type Data = {
   date: string;
@@ -205,6 +206,7 @@ export const getSettingData = async () => {
 export const deletedAllItem= async (month:any) => {
 try{
 
+
   const email=await AsyncStorage.getItem('email')
  if (!email) {
    console.log("Email not found");
@@ -219,9 +221,14 @@ try{
      return deleteDoc(docSnap.ref);
    });
    await Promise.all(deletePromises);
+   
  })
-console.log("All documents successfully deleted");
 
+
+
+
+await handleTodayDate()
+console.log("All documents successfully deleted");
 
 }catch(error){
   console.log('Error deleting document: ', error);
@@ -273,7 +280,7 @@ export const uploadImageStorage = async (uri: any, fileType: any,onProgress:(pro
 
 
 export const deleteImageStorage = async (downloadUrl: string) => {
-  console.log(downloadUrl,'downloadUrl')
+  
  try {
    // 파일을 가리키는 참조 만들기
    const storageRef = ref(FIREBASE_STORAGE, downloadUrl);

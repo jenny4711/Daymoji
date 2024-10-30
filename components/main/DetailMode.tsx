@@ -100,36 +100,39 @@ const handleEditBtn = async () => {
     <ScrollView style={{borderRadius:21,paddingBottom:100}}>
     <View style={{marginBottom:50,backgroundColor:colors.inputBk,width:screenSize.width-48,borderRadius:24,alignItems:'center'}}>
      
-    <View style={{flexDirection:'row',marginTop:0,marginBottom:0,height:67,width:screenSize.width,justifyContent:'center',alignItems:'center'}}>
-      <Animated.View 
+    <View style={{flexDirection:'row',marginTop:16,marginBottom:0,height:67,width:screenSize.width,justifyContent:'center',alignItems:'center'}}>
+  {item?.emotion !== "" ?   <Animated.View 
     
       style={{width:60,height:60,borderRadius:100,justifyContent:'center',alignItems:'center',marginTop:16,backgroundColor:colors.inputBk2}}
       >
 
        <EmotionSticker emotion={item?.emotion} size={24}/>
-      </Animated.View>
+      </Animated.View>:
+        <View style= {{marginTop:item?.emotion !==""?8:0,marginBottom:0,width:screenSize.width-96,alignItems:'center',justifyContent:'center',borderRadius:24}}>
+        <Text style={{fontFamily:'SFCompactRoundedBD',fontSize:16,color:colors.text}}>{newDate}</Text>
+  
+      </View>
+      
+      }
       <View style={{position: 'absolute',right:49}}>
         <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}  onPress={handleEditBtn} style={{marginRight:0}}>
       <Octicons name="pencil" size={16} color={colors.text} />
       </TouchableOpacity>
-      {/* deleteItem 잠시 보류 */}
-      {/* <TouchableOpacity onPress={handleDeleted}>
-      <Octicons name="trash" size={16} color={colors.text}/>
-      </TouchableOpacity> */}
+     
       </View>
     </View>
 
-    <View style= {{marginTop:8,width:screenSize.width-96,alignItems:'center',justifyContent:'center',borderRadius:24}}>
+   {item?.emotion !== ""? <View style= {{marginTop:item?.emotion !==""?8:0,marginBottom:16,width:screenSize.width-96,alignItems:'center',justifyContent:'center',borderRadius:24}}>
       <Text style={{fontFamily:'SFCompactRoundedBD',fontSize:16,color:colors.text}}>{newDate}</Text>
 
-    </View>
+    </View>:null}
 
-    <View style={{marginVertical:16,width:screenSize.width-96,alignItems:'flex-start',backgroundColor:colors.inputBk2,justifyContent:'center',borderRadius:24}}>
+   {item?.story !=="" ? <View style={{width:screenSize.width-96,alignItems:'flex-start',backgroundColor:colors.inputBk2,justifyContent:'center',borderRadius:24}}>
       <Text style={{fontFamily:'SFCompactRoundedBD',fontSize:16,color:colors.text,paddingVertical:24,paddingLeft:24}}>{item?.story}</Text>
 
-      </View>
+      </View>:null}
 
-      <View  style={{flexWrap: 'wrap', borderRadius:25,alignItems:'center',justifyContent:'center',flexDirection:'row',marginBottom:25}}>
+      <View  style={{flexWrap: 'wrap', borderRadius:25,alignItems:'center',justifyContent:'center',flexDirection:'row',marginBottom:25,marginTop:16}}>
       {item && item.photo?item.photo.map((itemImg:any,index:any)=>(
 
 

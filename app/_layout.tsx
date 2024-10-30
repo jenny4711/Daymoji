@@ -14,8 +14,8 @@ import { useColorScheme } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
 const { width, height } = Dimensions.get('window');
 
-SplashScreen.preventAutoHideAsync();
-setTimeout(SplashScreen.hideAsync, 8000);
+// SplashScreen.preventAutoHideAsync();
+// setTimeout(SplashScreen.hideAsync, 100);
 const queryClient = new QueryClient();
 
 const Layout = ({logIn}:any) => {
@@ -84,11 +84,36 @@ export default function App() {
   const { setScheme,colors } = useTheme();
   const colorScheme = useColorScheme();
   const appearance = Appearance.getColorScheme();
- 
+
+
+useEffect(()=>{
+  const loadTheme = async () => {
+    const storedTheme:any = await AsyncStorage.getItem('themeMode');
+    setScheme(storedTheme || 'auto');
+  };
+  loadTheme();
+},[])
+
+
+   SplashScreen.preventAutoHideAsync();
+  setTimeout(SplashScreen.hideAsync, 100);
 
   useEffect(() => {
     async function initializeApp() {
       try {
+
+         // 테마 설정 로드
+        //  const storedTheme:any = await AsyncStorage.getItem('themeMode');
+        //  if (storedTheme) {
+        //    setScheme(storedTheme);
+        //  console.log(storedTheme,'storedTheme')
+        //   await Appearance.setColorScheme(storedTheme);
+        //  } else {
+        //    setScheme(colorScheme || 'light');
+        // console.log(colorScheme,'colorScheme')
+        //     await Appearance.setColorScheme(colorScheme || 'light');
+        //  }
+    
         // 폰트 로드
         await Font.loadAsync({
           SFCompactRounded: require('../assets/fonts/SFCompactRounded.ttf'),
@@ -99,17 +124,7 @@ export default function App() {
           SFCompactRoundedHV: require('../assets/fonts/SF-Compact-Rounded-Heavy.otf'),
         });
 
-        // 테마 설정 로드
-        const storedTheme:any = await AsyncStorage.getItem('themeMode');
-        if (storedTheme) {
-          setScheme(storedTheme);
-        
-          await Appearance.setColorScheme(storedTheme);
-        } else {
-          setScheme(colorScheme || 'light');
        
-          await Appearance.setColorScheme(colorScheme || 'light');
-        }
 
         // 로그인 상태 확인
         const user = await AsyncStorage.getItem('isLogin');

@@ -23,7 +23,7 @@ return [
 }
 const Detail = () => {
   const { date, month }: any = useLocalSearchParams();
-  const {isLoading, dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
+  const {setPressedDone,isLoading, dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
   const queryClient = useQueryClient();
 const navigation=useNavigation()
 const [imges,setImges]=useState<any>([])
@@ -120,6 +120,7 @@ async function doneHandler() {
   // setVisible(true);
 setPhoto([])
 setImges([])
+setPressedDone(true)
   return (navigation as any).navigate('main');
 }
 

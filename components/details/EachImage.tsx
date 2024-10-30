@@ -26,7 +26,7 @@ const EachImage = ({idx,img,imgBtn,imgBtnBk,deletedIcon,imgSize,setImgSize,setIm
             <View style={[styles.loadingOverlay,{backgroundColor:colors. loadingBK}]}>
             <ActivityIndicator size="small" color={colors.text} />
           </View>}
-   <TouchableOpacity style={{marginHorizontal:imges.length>1?8:0,}} activeOpacity={1} onPress={()=>(navigation as any).navigate('imgDetail/[img]',{img:img,idx:idx})}>
+   <TouchableOpacity style={{marginHorizontal:imges.length>1?8:0,}} activeOpacity={1} onPress={()=>(navigation as any).navigate('imgDetail/[img]',{img:img,idx:idx,w: imgSize.width, h:imgSize.height,t:'hey'})}>
              <Image
             
             contentFit='cover'

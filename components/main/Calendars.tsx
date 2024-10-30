@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { useTheme } from '~/Theme/ThemeProvider';
 import { useDateContext } from '~/context/DataContext';
 import MonthDay from './MonthDay';
+import { getTodayDate } from '~/utils/utilsFn';
 import { useData } from '~/hooks/useData';
 import Animated, {
   useAnimatedStyle,
@@ -14,6 +15,7 @@ import Animated, {
   runOnJS,
   FadeIn,
 } from 'react-native-reanimated';
+import { get } from 'lodash';
 
 const { width ,height} = Dimensions.get('window');
 const circleSize = width * 0.1104;
@@ -48,10 +50,15 @@ const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown}:any) => {
   const [clickedDay, setClickedDay] = useState<number | null>(null);
   const { headerTitle, setHeaderTitle, setMonthF, setYearF, monthF,setVisible } = useDateContext();
   const { colors } = useTheme();
-
+const {month}:any=getTodayDate()
   const [beforeData,setBeforeData]=useState<any>(null)
   const [afterData,setAfterData]=useState<any>(null)
   const [thisMonthData,setThisMonthData]=useState<any>(null)
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  const isFutureMonth = currentDate.getFullYear() > currentYear || 
+                      (currentDate.getFullYear() === currentYear && currentDate.getMonth() >= currentMonth);
 
 
   function getWeeksInMonth(year:any, month:any) {
@@ -132,6 +139,23 @@ const handleScrollEnd = async (event: any) => {
   const offsetX = event.nativeEvent.contentOffset.x;
   const threshold = width * 0.5; // 페이지 이동 임계값을 화면 너비의 50%로 설정
   const pageIndex = Math.floor(offsetX / width); // 페이지 인덱스를 계산
+
+ 
+
+  // // 현재 달과 스크롤된 달 비교를 위한 현재 상태
+  // const newDate = new Date(currentDate);
+  // newDate.setMonth(currentDate.getMonth() + (offsetX - width > threshold ? 1 : (offsetX - width < -threshold ? -1 : 0)));
+
+  // // 현재 월을 넘어선 스크롤을 방지
+  // if (
+  //   newDate.getFullYear() > currentYear ||
+  //   (newDate.getFullYear() === currentYear && newDate.getMonth() > currentMonth)
+  // ) {
+  //   // 스크롤을 현재 페이지로 되돌립니다.
+
+  //   scrollRef.current?.scrollTo({ x: width, animated: true });
+  //   return;
+  // }
   
   setClickedDay(null); // 클릭된 날짜 초기화
   setIsScrolling(true);  // 스크롤 시작
@@ -227,7 +251,8 @@ const handleScrollBeginDrag = () => {
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleScrollEnd} // 스크롤 완료 시 handleScrollEnd 호출
         contentOffset={{ x: width, y: 0 }} // 초기 스크롤 위치를 현재 월로 설정
-        scrollEnabled={!isScrolling}  // 스크롤 중일 때 스크롤을 막음
+         scrollEnabled={!isScrolling}  // 스크롤 중일 때 스크롤을 막음
+       
         onScrollBeginDrag={handleScrollBeginDrag} 
       >
         {/* 이전 달 */}
@@ -249,7 +274,7 @@ const handleScrollBeginDrag = () => {
         </View>
 
         {/* 다음 달 */}
-        <View style={styles.monthContainer}>
+        <View style={[currentMonth<monthF?{display:'none'}:styles.monthContainer]}>
           {nextMonthDays.map((day, index) => (
             <View key={index} style={styles.dayBox}>
               {day ? <MonthDay setClickedDay={setClickedDay} clickedDay={clickedDay} letBoxDown={letBoxDown} triggerAnimation={triggerAnimation}  month={monthF + 1} day={day} data={nextData} /> : null}
@@ -296,5 +321,11 @@ const styles = StyleSheet.create({
 
   },
 });
+
+
+
+
+
+
 
 
