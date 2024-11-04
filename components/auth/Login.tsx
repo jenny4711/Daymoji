@@ -6,6 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { throttle } from 'lodash';
 import { GoogleIcon } from '~/utils/Icons';
 import Head from 'expo-router/head';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 interface LoginProps{
   promptAsync:()=>void
 
@@ -25,7 +26,8 @@ const Login:React.FC<LoginProps> = ({promptAsync}) => {
  const handleGoogleLogin =throttle (async () => {
   try {
     const result = await promptAsync();
-    console.log(result,'result')
+    const status = await AsyncStorage.getItem('isLogin');
+    console.log(status,'result')
    
   } catch (error) {
     console.error('Error during login:', error);

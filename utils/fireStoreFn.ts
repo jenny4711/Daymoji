@@ -99,7 +99,9 @@ export const saveDiaryEntry = async ({ date, emotion, story, photo, month }: any
     const todayFulldate = `${today.getFullYear()}-${todayMonth}-${todayDate}`;
 
     let isToday;
-  
+  if(photo.length>3){
+    photo.splice(3);  
+  }
     
     if (date === todayFulldate) {
       isToday = true;

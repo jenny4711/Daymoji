@@ -48,6 +48,9 @@ const Main = () => {
     themeMode,
  readyForShow,
     setReadyForShow,
+    save,
+    setSave,
+    setIsLoading,
 
   } = useDateContext();
   const [showListMode, setShowListMode] = useState(false);
@@ -66,6 +69,15 @@ const Main = () => {
     await handleTodayDate()
   }
 
+  useEffect(()=>{
+    async function checkStatus(){
+      const status = await AsyncStorage.getItem('isLogin');
+      if(status){
+        setIsLoading(false)
+      }
+    }
+    checkStatus()
+  },[isLoading])
 
   useEffect(() => {
     if (!isLoading ) {
@@ -77,8 +89,8 @@ const Main = () => {
       return () => clearTimeout(timer); // 컴포넌트가 언마운트될 때 타이머 정리
     }
   }, [isLoading]);
-
-
+console.log(visible,'vislble')
+console.log(newAData,'newAData')
   useEffect(()=>{
     if(!isLoading && !initialDisplay){
       const timer = setTimeout(() => {
@@ -122,7 +134,7 @@ const Main = () => {
   useEffect(() => {
     async function saveThemeMode(){
       // themeMode가 'auto'일 경우 시스템 테마에 따라 자동으로 설정
-      const theme = await await AsyncStorage.getItem('themeMode')
+      const theme =  await AsyncStorage.getItem('themeMode')
       if (theme === 'auto') {
        checkTimeForTheme();  // 시스템 테마에 맞추어 자동으로 설정
      } else if (theme === 'light') {
@@ -139,18 +151,27 @@ const Main = () => {
    }, [themeMode,colorScheme]); 
 
   //-------------------------
-  // 이모지 혹은 스토리 혹은 사진이 있을 때만 애니메이션 실행
+  // Done 버튼 누르고, 이모지 혹은 스토리 혹은 사진이 있을 때만 애니메이션 실행
   useEffect(() => {
-    const check=checkData(newAData)
-    console.log(check,'newAData',newAData)
-    if (newAData && check) {
-      console.log(check,'newAData',newAData)
-      triggerAnimation(true);
+   console.log(save,'save')
+  
+    if (save) {
+     
+     triggerAnimation(true);
+     
     }else{
-      letBoxDown(false)
+     if(visible){
+      setVisible(false)
       return;
+      
+     }
+    
+      
     }
-  }, [newAData]);
+   
+    
+   
+  }, [save]);
 
   // -------------------------
   // 디테일모드 에니메이션 (보여주기 에니메이션)
@@ -162,17 +183,16 @@ const Main = () => {
 
   // // RenderDay에서 애니메이션 트리거 시 실행될 함수
   const triggerAnimation = (shouldShow: boolean) => {
-    const check=checkData(newAData)
-    if( !check){
-      setVisible(false)
-    }
+  console.log(triggerAnimation,'triggerAnimation')
+ 
     setVisible(shouldShow); // RenderDay에서 클릭에 따라 상태 업데이트
-
+  
     // 애니메이션 실행
     translateY.value = withSequence(
       withTiming(shouldShow ? 410 : 0, { duration: 500, easing: Easing.out(Easing.exp) }), // 박스 내려오기/올라가기
       withTiming(0, { duration: 500, easing: Easing.bezier(0.42, 0, 0.58, 1) })
     );
+
   };
 
   const letBoxDown = (shouldShow: boolean) => {
@@ -182,7 +202,7 @@ const Main = () => {
       { duration: 800, easing: Easing.out(Easing.exp) }, // 애니메이션 설정
       (finished) => {
         if (finished) {
-          // console.log('Animation finished, calling setVisible');
+          
           // 애니메이션이 끝난 후 JS 스레드에서 상태 업데이트 (UI 스레드에서 실행하지 않음)
           runOnJS(setVisible)(shouldShow);
         } else {

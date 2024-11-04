@@ -20,13 +20,13 @@ const Setting = () => {
   // const [themeMode,setThemeMode]=useState<string>( 'auto')
   const [text,setText]=useState<string>(colorStyle.text)
   const [inputBk,setInputBk]=useState<string>( colorStyle.inputBk)
-  const [inputBk2,setInputBk2]=useState<string>( colorStyle.inputBk2)
-  const [inputWithoutEm,setInputWithoutEm]=useState<string>( colorStyle.inputWithoutEm)
+  // const [inputBk2,setInputBk2]=useState<string>( colorStyle.inputBk2)
+  // const [inputWithoutEm,setInputWithoutEm]=useState<string>( colorStyle.inputWithoutEm)
   const [background,setBackground]=useState<string>( colorStyle.background)
-  const [indexOpacity,setIndexOpacity]=useState<string>( colorStyle.indexOpacity)
-  const [loadingBK,setLoadingBK]=useState<string>( colorStyle.loadingBK)
+  // const [indexOpacity,setIndexOpacity]=useState<string>( colorStyle.indexOpacity)
+  // const [loadingBK,setLoadingBK]=useState<string>( colorStyle.loadingBK)
   const colorScheme:any = useColorScheme(); 
-  const {monthF,themeMode,setThemeMode,setNewAData,setPreImages}=useDateContext()
+  const {monthF,themeMode,setThemeMode,setNewAData,setVisible,newAData,save,setSave}=useDateContext()
   const month:any =monthF
 const deletedAllMutation=useDeletedAllData(month)
 const queryClient = useQueryClient();
@@ -98,11 +98,16 @@ const handleAlldeletedList =() => {
     },
     
     {text: 'Delete',style:'destructive',onPress: async () =>{
-      
+      setNewAData(null)
+      setVisible(false)
+      setSave(false)
      deletedAllMutation.mutate(month)
-    setNewAData(null)
+    
+    
   queryClient.invalidateQueries({ queryKey: ['data',monthF] });  
-
+ 
+ 
+    
     }
     },
   ])
@@ -136,7 +141,9 @@ const openService =async () => {
 
 
 const goToMainPage = () => {
+ 
   (navigation as any).navigate('main');
+  console.log(newAData,'newAData')
 }
 
 

@@ -12,7 +12,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import ShowDetail from '~/components/details/ShowDetail'
 import { saveIsToday ,updateIsToday} from '~/utils/fireStoreFn'
 import { useQueryClient } from '@tanstack/react-query';
+
+
 import { Image } from 'expo-image'
+import { checkData } from '../../utils/utilsFn';
 export async function generateStaticParams():Promise<Record<string,string>[]>{
 return [
   {date:'2022-01-01'},
@@ -23,7 +26,7 @@ return [
 }
 const Detail = () => {
   const { date, month }: any = useLocalSearchParams();
-  const {setPressedDone,isLoading, dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
+  const {setSave,save,setPressedDone,isLoading, dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
   const queryClient = useQueryClient();
 const navigation=useNavigation()
 const [imges,setImges]=useState<any>([])
@@ -38,18 +41,21 @@ const [emotion,setEmotion]=useState<any>( '')
 const [year,setYear]=useState<any>('')
 const addMutation=useSaveData({date,month})
 const deletedMuation=useDeletedData({date,month})
-const [save,setSave]=useState<any>(false)
+
 const {data}=useData(month)
+const check=checkData(newAData)
+
 
 // dateformat -> 2022-01-01
 //monthformat->1
 
 useEffect(()=>{
-  if(newAData?.date!==date){
+  if(newAData?.date!==date || check===false){
     setStory('')
     setPhoto([])
     setEmotion('')
     setNewAData(null)
+    setImges([])
   }
 },[newAData,date])
 
@@ -84,45 +90,103 @@ useEffect(()=>{
 },[newAData])
 
 
-
-
-
-async function doneHandler() {
-  const email = await AsyncStorage.getItem('email');
-
- if(emotion === '' && story === '' && photo.length === 0){
-  return (navigation as any).navigate('main');
- }
-  
-  setSave(true);
-  
-  // `newAData.photo`와 `photo`를 배열로 관리
+async function doneHandler(){
+  const email=await AsyncStorage.getItem('email')
   let photos: string[] = [];
-  
- 
-  
-  // 현재 선택된 `photo`가 배열인지 단일 값인지 확인
+  // // 현재 선택된 `photo`가 배열인지 단일 값인지 확인
   if (Array.isArray(photo)) {
     photos = [...photos, ...photo]; // 여러 사진을 추가
   } else if (photo) {
     photos.push(photo); // 단일 사진을 추가
   }
+const photosLength = photos.length === imges.length
+const allImagesUploaded = await new Promise((resolve)=>{
+  const checkImagesUploadedInterval = setInterval(()=>{
+    if(photosLength){
+      clearInterval(checkImagesUploadedInterval)
+      resolve(true)
+    }
+  },100)
+})
 
-  // 상태 저장 및 Firestore 업데이트
-  addMutation.mutate({ date, emotion, story, photo: photos, email, month });
+if(allImagesUploaded){
+  if (checkData({ emotion, story, photo }) === false) {
+    setSave(false);
+    return (navigation as any ).navigate('main');
+  }
 
-  setShowDone(false);
-
-  queryClient.invalidateQueries({ queryKey: ['data'] });
-  
-  setNewAData({ date, emotion, story, photo: photos, email, month });
-  setDateF(date);
-  // setVisible(true);
-setPhoto([])
-setImges([])
-setPressedDone(true)
-  return (navigation as any).navigate('main');
 }
+addMutation.mutate({ date, emotion, story, photo: photos, email, month });
+    queryClient.invalidateQueries({ queryKey: ['data'] });
+    setNewAData({ date, emotion, story, photo: photos, email, month });
+    setDateF(date);
+    setSave(true);
+    setPhoto([]);
+    setImges([]);
+    setPressedDone(true);
+
+    return (navigation as any ).navigate('main');
+
+
+
+
+}
+
+
+
+
+
+// async function doneHandler() {
+//   const email = await AsyncStorage.getItem('email');
+
+//  if(checkData({emotion,story,photo})===false){
+//   setSave(false)
+//   return (navigation as any).navigate('main');
+//  }
+  
+  
+  
+//   // `newAData.photo`와 `photo`를 배열로 관리
+//   let photos: string[] = [];
+  
+ 
+  
+//   // // 현재 선택된 `photo`가 배열인지 단일 값인지 확인
+//   if (Array.isArray(photo)) {
+//     photos = [...photos, ...photo]; // 여러 사진을 추가
+//   } else if (photo) {
+//     photos.push(photo); // 단일 사진을 추가
+//   }
+
+//   // 상태 저장 및 Firestore 업데이트
+//   console.log('photosssss',photos.length)
+//   if(imges.length !==photo.length){
+//     setTimeout(()=>{
+//       addMutation.mutate({ date, emotion, story, photo:photos, email, month });
+//     },1000)
+//     console.log('addMutation.mutate')
+
+//   }else{
+//     addMutation.mutate({ date, emotion, story, photo:photos, email, month });
+//     console.log('addMutation.mutate!!!!!!!!!!!!!!!!!!!!!!!')
+//   }
+ 
+
+//   setShowDone(false);
+
+//   queryClient.invalidateQueries({ queryKey: ['data'] });
+  
+//   setNewAData({ date, emotion, story, photo: photos, email, month });
+//   setDateF(date);
+//   setSave(true);
+
+//   // setVisible(true);
+// setPhoto([])
+// setImges([])
+// setPressedDone(true)
+
+//   return (navigation as any).navigate('main');
+// }
 
 const handleDeleted = async () => {
   deletedMuation.mutate(

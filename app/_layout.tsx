@@ -12,7 +12,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/Theme/ThemeProvider';
 import { useColorScheme } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
+import { LogBox } from 'react-native';
 const { width, height } = Dimensions.get('window');
+LogBox.ignoreLogs([
+  'Require cycle:', // 특정 경고 메시지 무시
+]);
 
 // SplashScreen.preventAutoHideAsync();
 // setTimeout(SplashScreen.hideAsync, 100);
@@ -90,6 +94,7 @@ useEffect(()=>{
   const loadTheme = async () => {
     const storedTheme:any = await AsyncStorage.getItem('themeMode');
     setScheme(storedTheme || 'auto');
+    await Appearance.setColorScheme(storedTheme || 'auto');
   };
   loadTheme();
 },[])

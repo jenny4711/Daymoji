@@ -122,7 +122,7 @@ const pickImage = async () => {
       try {
         const res = await uploadImageStorage(uri, 'image', (progressValue) => {
           setProgress(progressValue);
-
+        
           setIsLoadingImages((prevLoadingStates) => {
             const updatedLoadingStates = [...prevLoadingStates];
             const currentIndex = imges.length + index;
@@ -132,126 +132,38 @@ const pickImage = async () => {
         });
 
         // 업로드 완료 후 로딩 상태를 false로 설정
-        setIsLoadingImages((prevLoadingStates) => {
-          const updatedLoadingStates = [...prevLoadingStates];
-          updatedLoadingStates[imges.length + index] = false;
-          return updatedLoadingStates;
-        });
-
+       
+        
         setPhoto((prevPhotos:any) => [...prevPhotos, res]);
+          setIsLoadingImages((prevLoadingStates) => {
+            const updatedLoadingStates = [...prevLoadingStates];
+            updatedLoadingStates[imges.length + index] = false;
+          
+          
+            return updatedLoadingStates;
+  
+           
+            
+          });
+          
+    
+
+      
+
+       
+
+       
       } catch (error) {
         console.error('업로드 실패:', error);
       }
     });
-
+ 
     await Promise.all(uploadPromises);
   
   }
 };
 
-// const deleteImage = async (imgUri:any) => {
-//   try {
-//     const indexToRemove = imges.findIndex((uri:any) => uri === imgUri);
 
-//     // 이미지 및 로딩 상태를 삭제
-//     setImges((prevImgs:any) => prevImgs.filter((_:any, index:any) => index !== indexToRemove));
-//     setPreImages((prevImgs:any) => prevImgs.filter((_:any, index:any) => index !== indexToRemove));
-//     setIsLoadingImages((prevLoadingStates) => prevLoadingStates.filter((_, index) => index !== indexToRemove));
-
-//     setPhoto((prevPhotos:any) => prevPhotos.filter((photoUri:any) => photoUri !== imgUri));
-//     await deleteImageStorage(imgUri);
-//     console.log(`이미지 ${imgUri} 삭제 성공`);
-//   } catch (error) {
-//     console.error('이미지 삭제 실패:', error);
-//   }
-// };
-
-  
-
-  // const pickImage = async () => {
-  //   hideKeyboard();
-  //   // setPress(true)
-  //   // setIsLoading(true);
-  //   if (imges.length >= 3 || photo.length >= 3) {
-  //     return; // 이미지가 이미 3개이면 종료
-  //   }
-
-  //   let result: any = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-  //     allowsEditing: false,
-  //     aspect: [4, 3],
-  //     quality: 0.5,
-  //     selectionLimit:3-imges.length, // 최대 3개까지 선택 가능
-  //     allowsMultipleSelection: true, // 여러 이미지 선택 허용
-  //   });
-
-  //     // 로딩 상태 추가
-
-
-  //   if (!result.canceled) {
-  //     const selectedImages = result.assets;
-
-  //     const initialLoadingState = new Array(selectedImages.length).fill(true);
-  //     setIsLoadingImages((prev) => [...prev, ...initialLoadingState]);
-     
-  //     const uploadPromises = selectedImages.map(async (selectedImage: any,index:any) => {
-      
-
-  //       const selectedImageUri = selectedImage.uri;
-     
-  //       setImges((prevImgs: any) => [...prevImgs, selectedImageUri]);
-  //       setPreImages((prevImgs: any) => [...prevImgs, selectedImageUri]);
-       
-
-      
-
-       
-
-  //       // 업로드 시작
-  //       // setIsLoading(true);
-  //       const res =await  uploadImageStorage(selectedImageUri, 'image', (progressValue: number) => {
-         
-  //         setProgress(progressValue);
-  //         if( progressValue!==100){
-           
-  //           setIsLoadingImages((prev:any,) => {
-  //             const updatedLoading = [...prev];
-  //             updatedLoading[imges.length + index] = true;
-  //             console.log(updatedLoading,'updatedLoading@@@@@@@@@')
-  //             return updatedLoading;
-  //           });
-
-  //         }else if( progressValue===100){
-  //           setIsLoadingImages((prev) => {
-  //             const updatedLoading = [...prev];
-  //             updatedLoading[imges.length + index] = false;
-  //             console.log(imges.length + index,'imges.length + index')
-  //             console.log(updatedLoading,'updatedLoading')
-  //             return updatedLoading;
-  //           });
-
-  //         }
-  //       });
-       
-  //       const newImageUri = res;
-  //       // setImges((prevImgs: any) => [...prevImgs, newImageUri]);
-  //       // setPreImages((prevImgs: any) => [...prevImgs, newImageUri]);
-       
-  //         setPhoto((prevPhotos: any) => [...prevPhotos, newImageUri])
-       
-        
-       
-  //     });
-
-  //     // 모든 이미지 업로드 완료 대기
-  //     if (imges.length > 3 || photo.length > 3) {
-  //       return; // 이미지가 이미 3개이면 종료
-  //     }
-     
-     
-     
-  //   }
-  // };
 
  
 
@@ -278,7 +190,7 @@ const pickImage = async () => {
       
         }  
         // Firebase 스토리지에서 이미지 삭제
-  
+      
        console.log(`Image ${imgUri} deleted successfully`);
   
     } catch (error) {
@@ -289,9 +201,11 @@ const pickImage = async () => {
 
 
   useEffect(()=>{
-    console.log(imges,'imges')
-    console.log(isLoadingImages,'isLoadingImages')
-  },[isLoadingImages])
+    if(imges.length>3){
+      setImges( imges.splice(3)  )
+    }
+
+  },[isLoadingImages,imges])
 
  return (
     <View style={{flexDirection:'row',justifyContent:'center',width:width-48}}>

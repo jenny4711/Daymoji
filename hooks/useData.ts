@@ -84,7 +84,7 @@ export const useDeletedAllData=(month:any)=>{
 
       await queryClient.invalidateQueries();
       await Promise.all(monthArr.map(mon => queryClient.refetchQueries({ queryKey: ['data', mon] })));
-      (navigation as any).replace('main');
+       (navigation as any).replace('main');
 
      
     },

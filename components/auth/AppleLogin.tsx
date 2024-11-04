@@ -32,13 +32,14 @@ const navigation=useNavigation()
 
       const { identityToken, email, fullName }:any= credential;
       setUserToken(identityToken);
-     console.log(email,'email')
+    
       if (identityToken) {
         const provider = new OAuthProvider('apple.com');
         const firebaseCredential = provider.credential({
           idToken: identityToken,
         });
         await signInWithCredential(FIREBASE_AUTH, firebaseCredential);
+        
       }
     } catch (error) {
       console.log(error, 'errorAppleLogin');

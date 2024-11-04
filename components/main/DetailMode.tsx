@@ -12,11 +12,12 @@ import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler'
 import { deleteImageStorage } from '~/utils/fireStoreFn'
 import { saveIsToday } from '~/utils/fireStoreFn'
-
+import { checkData } from '~/utils/utilsFn'
+import { set } from 'lodash'
 const {width,height}=Dimensions.get('window')
 const DetailMode = ({date,item,currentDateForm}:any) => {
   const {colors,dark}=useTheme()
-  const { monthF,setVisible,setNewAData,todayDate,newAData} = useDateContext();
+  const { monthF,setVisible,setNewAData,todayDate,newAData,setSave,save} = useDateContext();
   const [images,setImages]=useState<any>([])
 const screenSize = Dimensions.get('window');
 const queryClient = useQueryClient();
@@ -25,7 +26,7 @@ const newDate=new Date(date ).toLocaleString('en-US',{year:'numeric',month:'long
 const deletedMuation=useDeletedData({date,monthF,newAData})
 const [imgSize,setImgSize]=useState({width:0,height:0})
 const [deleteMargin,setDeleteMargin]=useState({top:16,right:16})
-
+const check = checkData(item)
 useEffect(()=>{
   if(item?.photo && Array.isArray(item.photo)){
     setImages(item.photo)
@@ -91,13 +92,15 @@ const handleDeleted = async () => {
 const handleEditBtn = async () => {
 
   (navigation as any).navigate('details/[date]', { date, month: monthF });
+  setSave(false)
   setVisible(false)
 }
 
 
 
   return (
-    <ScrollView style={{borderRadius:21,paddingBottom:100}}>
+    <>
+    <ScrollView style={[{borderRadius:21,paddingBottom:100}]}>
     <View style={{marginBottom:50,backgroundColor:colors.inputBk,width:screenSize.width-48,borderRadius:24,alignItems:'center'}}>
      
     <View style={{flexDirection:'row',marginTop:16,marginBottom:0,height:67,width:screenSize.width,justifyContent:'center',alignItems:'center'}}>
@@ -162,6 +165,7 @@ style={{height:imgSize.height,width:imgSize.width,borderRadius: 25,margin: 4,}}
     </View>
 
     </ScrollView>
+    </>
   )
 }
 

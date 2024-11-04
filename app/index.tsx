@@ -16,9 +16,6 @@ import { Dimensions } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
 import { saveIsToday, updateIsToday } from '~/utils/fireStoreFn';
 import { MainLogo } from '~/utils/Icons';
-import {fetchInitialData} from '~/utils/utilsFn'
-
-import { set } from 'lodash';
 const { width, height } = Dimensions.get('window');
 import { useColorScheme } from 'react-native';
 if (Platform.OS !== 'web') {
@@ -33,7 +30,7 @@ const Page = () => {
 const [hold,setHold]=useState(true)
   const {themeMode,setThemeMode, email, setEmail, token, setToken, setIsLoading, isLoading ,initialDisplay ,setInitialDisplay} = useDateContext();
   const { colors, setScheme ,dark} = useTheme();
-
+  const [loginLoading,setLoginLoading]=useState(false)
   const today = new Date();
   const month = today.getMonth() + 1;
   const year = today.getFullYear();
@@ -52,15 +49,7 @@ const [hold,setHold]=useState(true)
   const yesterdayMonthS = yesterdayMonth < 10 ? `0${yesterdayMonth}` : yesterdayMonth;
   const yesterday = `${yesterdayYear}-${yesterdayMonthS}-${yesterdayDateS}`;
   const colorScheme:any = useColorScheme(); 
-
-
-
-
-
-
  
-
-
 
 
   async function authStatus() {
@@ -79,7 +68,8 @@ const [hold,setHold]=useState(true)
 
       setIsLoading(false);
       setHold(false)
-      return;
+      setLoginLoading(false)
+    
     }
   }
   useEffect(() => {
@@ -137,6 +127,7 @@ const [hold,setHold]=useState(true)
   const navigation = useNavigation<any>();
 
   useEffect(() => {
+    setLoginLoading(true)
     if (response?.type === 'success') {
       const { id_token } = response.params;
       const credential = GoogleAuthProvider.credential(id_token);
@@ -154,7 +145,7 @@ const [hold,setHold]=useState(true)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (user: any) => {
-      // setIsLoading(true);
+      setLoginLoading(true)
       if (user) {
         setUserInfo(user);
         const token = user.stsTokenManager?.accessToken;
@@ -171,15 +162,17 @@ const [hold,setHold]=useState(true)
           await AsyncStorage.setItem('email', email);
           setEmail(email);
           setToken(token);
+          setLoginLoading(false)
           
           await updateIsToday({ date: yesterday, month: yesterdayMonth, isToday: false });
           await saveIsToday({ date: currentDate, month, isToday: true });
+        
         }
 
      
           setLoadingAuthState(false); // 로그인 상태 확인 완료
           setIsLoading(false);
-          (navigation as any).navigate('main');
+           (navigation as any).navigate('main');
       
 
         
@@ -218,8 +211,16 @@ const [hold,setHold]=useState(true)
 
   return (
     <>
+    {loginLoading && 
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',position:'absolute',zIndex:1 }}>
+    
+  { dark?      
+  <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
+  : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> } 
+       </View>
+      }
   
-      {!checkStatus && !isLoading &&!hold ? (
+      {!checkStatus && !isLoading &&!hold &&!loginLoading? (
         <GestureHandlerRootView style={{ flex: 1 }}>
           <View style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={[styles.loginContainer, { backgroundColor: colors.background }]}>
