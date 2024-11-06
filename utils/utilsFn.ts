@@ -34,8 +34,8 @@ const yesterdayDateS = yesterdayDate < 10 ? `0${yesterdayDate}` : yesterdayDate;
 const yesterdayMonthS = yesterdayMonth < 10 ? `0${yesterdayMonth}` : yesterdayMonth;
 const yesterday = `${yesterdayYear}-${yesterdayMonthS}-${yesterdayDateS}`;
 await isTodayEventNotToday()
-await updateIsToday({date:yesterday,month:yesterdayMonth,isToday:false})
-await saveIsToday({date:currentDate,month,isToday:true})
+await updateIsToday({date:currentDate,month,isToday:true})
+// await saveIsToday({date:currentDate,month,isToday:true})
 
 console.log('todayDate',currentDate)
 console.log('yesterdayDate',yesterday)

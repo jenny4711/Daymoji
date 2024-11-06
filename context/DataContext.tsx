@@ -48,6 +48,8 @@ interface DateContextType {
   setPressedDone:(pressed:any)=>void
   save:any
   setSave:(save:any)=>void
+  showDone:any
+  setShowDone:(show:any)=>void
 }
 
 const DateContext = createContext<DateContextType>('' as any);
@@ -75,6 +77,7 @@ const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
 const [readyForShow,setReadyForShow]=useState(false)
 const [pressedDone,setPressedDone]=useState(false)
 const [save,setSave]=useState<any>(false)
+const [showDone,setShowDone]=useState<any>(false)
 useEffect(()=>{
   const loadTheme = async () => {
     const storedTheme = await AsyncStorage.getItem('themeMode');
@@ -84,7 +87,7 @@ useEffect(()=>{
 },[])
 
   return (
-    <DateContext.Provider value={{save,setSave,pressedDone,setPressedDone,readyForShow,setReadyForShow,loggedIn,setLoggedIn,themeMode,setThemeMode,initialDisplay,setInitialDisplay,allDeleted,setAllDeleted,isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
+    <DateContext.Provider value={{showDone,setShowDone,save,setSave,pressedDone,setPressedDone,readyForShow,setReadyForShow,loggedIn,setLoggedIn,themeMode,setThemeMode,initialDisplay,setInitialDisplay,allDeleted,setAllDeleted,isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
       {children}
     </DateContext.Provider>
   );

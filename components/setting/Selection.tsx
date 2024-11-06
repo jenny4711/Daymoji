@@ -3,6 +3,7 @@ import React from 'react'
 import { useTheme } from '~/Theme/ThemeProvider'
 import SelectDropdown from 'react-native-select-dropdown'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Gear } from '~/utils/Icons';
 const{width,height}=Dimensions.get('window')
 
 
@@ -29,7 +30,7 @@ const Selection = ({arr,setChange,text,themeMode}:any) => {
           <Text style={[styles.dropdownButtonTxtStyle,{color:colors.text,marginLeft:180}]}>
             {(selectedItem && selectedItem.title) || 'Select'}
           </Text>
-          <Ionicons size={12} name={'chevron-expand-outline'} style={[styles.dropdownButtonArrowStyle,{color:colors.text}]} />
+          <Ionicons size={12} name={'chevron-expand-outline'} style={[styles.dropdownButtonArrowStyle,{color:'red'}]} />
 
         </View>
       );
@@ -39,7 +40,10 @@ const Selection = ({arr,setChange,text,themeMode}:any) => {
         <View style={{...styles.dropdownItemStyle, ...( {backgroundColor: colors.background})}}>
 
 <View style={{width: 15}}> 
-    {isSelected ? <Ionicons name={'checkmark'} style={styles.dropdownItemIconStyle} color={colors.text}/> : null}
+    {/* {isSelected ? <Ionicons name={'checkmark'} style={styles.dropdownItemIconStyle} color={colors.text}/> : null} */}
+    {isSelected ? <View >
+      <Gear color={'red'}/>
+    </View> : null}
   </View>
          <Text style={[styles.dropdownItemTxtStyle,{color:colors.text}]}>{item.title}</Text>
          

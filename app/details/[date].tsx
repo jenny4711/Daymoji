@@ -26,11 +26,11 @@ return [
 }
 const Detail = () => {
   const { date, month }: any = useLocalSearchParams();
-  const {setSave,save,setPressedDone,isLoading, dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
+  const {setShowDone,showDone,setSave,save,setPressedDone,isLoading, dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
   const queryClient = useQueryClient();
 const navigation=useNavigation()
 const [imges,setImges]=useState<any>([])
-const [showDone,setShowDone]=useState<any>(false)
+
 const {colors,dark}=useTheme()
 const [showDate,setShowDate]=useState<any>('')
 const [email,setEmail]=useState<any>('')
@@ -45,9 +45,35 @@ const deletedMuation=useDeletedData({date,month})
 const {data}=useData(month)
 const check=checkData(newAData)
 
+useEffect(()=>{
+  console.log(showDone,'showDoneDate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+},[showDone])
 
 // dateformat -> 2022-01-01
 //monthformat->1
+
+useEffect(()=>{
+if(preImages.length>0){
+  console.log('11111111111111111')
+  if(preImages.length === photo.length){
+    console.log('222222222222222222222')
+    setTimeout(()=>{setShowDone(true)},300)
+  }else{
+    console.log('33333333333333333333333333')
+    setShowDone(false)
+  }
+
+}else{
+  console.log('4444444444444444')
+  setShowDone(true)
+}
+
+
+
+ 
+},[photo,preImages])
+
+
 
 useEffect(()=>{
   if(newAData?.date!==date || check===false){
@@ -92,8 +118,19 @@ useEffect(()=>{
 
 async function doneHandler(){
   const email=await AsyncStorage.getItem('email')
+  if(checkData({ emotion, story, photo })===false){
+    return (navigation as any ).navigate('main');
+  }
+
+  if(emotion ===""){
+    Alert.alert('Please select emoji', 'An emoji is required to save this entry');
+    return;
+  }
+
+
+
   let photos: string[] = [];
-  // // 현재 선택된 `photo`가 배열인지 단일 값인지 확인
+  // 현재 선택된 `photo`가 배열인지 단일 값인지 확인
   if (Array.isArray(photo)) {
     photos = [...photos, ...photo]; // 여러 사진을 추가
   } else if (photo) {
@@ -105,13 +142,18 @@ const allImagesUploaded = await new Promise((resolve)=>{
     if(photosLength){
       clearInterval(checkImagesUploadedInterval)
       resolve(true)
+
     }
   },100)
 })
 
 if(allImagesUploaded){
+
+ 
   if (checkData({ emotion, story, photo }) === false) {
+   
     setSave(false);
+    
     return (navigation as any ).navigate('main');
   }
 
@@ -125,8 +167,8 @@ addMutation.mutate({ date, emotion, story, photo: photos, email, month });
     setImges([]);
     setPressedDone(true);
 
-    return (navigation as any ).navigate('main');
-
+  (navigation as any ).navigate('main');
+setShowDone(false)
 
 
 
@@ -136,57 +178,7 @@ addMutation.mutate({ date, emotion, story, photo: photos, email, month });
 
 
 
-// async function doneHandler() {
-//   const email = await AsyncStorage.getItem('email');
 
-//  if(checkData({emotion,story,photo})===false){
-//   setSave(false)
-//   return (navigation as any).navigate('main');
-//  }
-  
-  
-  
-//   // `newAData.photo`와 `photo`를 배열로 관리
-//   let photos: string[] = [];
-  
- 
-  
-//   // // 현재 선택된 `photo`가 배열인지 단일 값인지 확인
-//   if (Array.isArray(photo)) {
-//     photos = [...photos, ...photo]; // 여러 사진을 추가
-//   } else if (photo) {
-//     photos.push(photo); // 단일 사진을 추가
-//   }
-
-//   // 상태 저장 및 Firestore 업데이트
-//   console.log('photosssss',photos.length)
-//   if(imges.length !==photo.length){
-//     setTimeout(()=>{
-//       addMutation.mutate({ date, emotion, story, photo:photos, email, month });
-//     },1000)
-//     console.log('addMutation.mutate')
-
-//   }else{
-//     addMutation.mutate({ date, emotion, story, photo:photos, email, month });
-//     console.log('addMutation.mutate!!!!!!!!!!!!!!!!!!!!!!!')
-//   }
- 
-
-//   setShowDone(false);
-
-//   queryClient.invalidateQueries({ queryKey: ['data'] });
-  
-//   setNewAData({ date, emotion, story, photo: photos, email, month });
-//   setDateF(date);
-//   setSave(true);
-
-//   // setVisible(true);
-// setPhoto([])
-// setImges([])
-// setPressedDone(true)
-
-//   return (navigation as any).navigate('main');
-// }
 
 const handleDeleted = async () => {
   deletedMuation.mutate(
@@ -229,8 +221,8 @@ const handleDeleted = async () => {
       <View>
       {showData ? (
         <ShowDetail 
-        showDone={showDone}
-       setShowDone={setShowDone} 
+      //   showDone={showDone}
+      //  setShowDone={setShowDone} 
        date={date} 
        month={month} 
        story={story}
@@ -245,8 +237,8 @@ const handleDeleted = async () => {
         />)
       :
       <NewForm 
-      showDone={showDone}
-       setShowDone={setShowDone} 
+      // showDone={showDone}
+      //  setShowDone={setShowDone} 
        date={date} 
        month={month} 
        story={story}

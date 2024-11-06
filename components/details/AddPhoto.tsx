@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import EachImage from './EachImage';
 const { width, height } = Dimensions.get('window');
 
-const AddPhoto=({showDone,photo,setPhoto,hideKeyboard,imges,setImges}:any)=>{
+const AddPhoto=({photo,setPhoto,hideKeyboard,imges,setImges}:any)=>{
   const navigation=useNavigation()
   const imgBtn=require('../../assets/imgBtn.png')
   const imgBtnBk=require('../../assets/imgBtnBk.png')
@@ -22,7 +22,7 @@ const AddPhoto=({showDone,photo,setPhoto,hideKeyboard,imges,setImges}:any)=>{
   const [img,setImg]=useState<any>('')
   // const [imges,setImges]=useState<any>([])
   const deletedIcon = require('../../assets/delete.png')
-const {dateF,monthF,newAData,setNewAData,setPreImages,preImages,setProgress,progress,setIsLoading}=useDateContext()
+const {showDone,setShowDone,dateF,monthF,newAData,setNewAData,setPreImages,preImages,setProgress,progress,setIsLoading}=useDateContext()
 const screenSize = Dimensions.get('window');
 const [imgSize,setImgSize]=useState({width:0,height:0})
 const [deleteMargin,setDeleteMargin]=useState({top:16,right:16})
@@ -34,8 +34,7 @@ const [isLoadingImages, setIsLoadingImages] = useState<boolean[]>([]);
 
 
 useEffect(()=>{
-  console.log(dateF,'dateF')
-  console.log(newAData,'newAData')
+
   setPreImages([])
 },[dateF])
 
@@ -190,7 +189,7 @@ const pickImage = async () => {
       
         }  
         // Firebase 스토리지에서 이미지 삭제
-      
+      setShowDone(true)
        console.log(`Image ${imgUri} deleted successfully`);
   
     } catch (error) {
@@ -249,7 +248,7 @@ const pickImage = async () => {
     
     {/* {progress >0 && progress < 100?(<ActivityIndicator style={{marginTop:16}} size="small" color={'red'} />):null} */}
    
-         {imges?.length<3  ?  <TouchableOpacity style={[styles.btnView,!img?{ backgroundColor:colors.inputBk,width:imgSize.width,height:imgSize.height}:{backgroundColor:colors.inputBk,marginTop:16,width:imgSize.width,height:imgSize.height}]} onPress={pickImage}>
+         {imges?.length<3  ?  <TouchableOpacity activeOpacity={1} style={[styles.btnView,!img?{ backgroundColor:colors.inputBk,width:imgSize.width,height:imgSize.height}:{backgroundColor:colors.inputBk,marginTop:16,width:imgSize.width,height:imgSize.height}]} onPress={pickImage}>
      {dark ? (
       <View style={{width:imgSize.width,height:imgSize.height,justifyContent:'center',alignItems:'center'}}>
         <Image source={imgBtn} style={{ width: 19.5, height: 16.5 ,marginBottom:8}} />

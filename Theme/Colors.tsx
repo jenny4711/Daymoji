@@ -1,7 +1,7 @@
 export const lightColors={
   primary:'white',
   text:'black',
-  background:'white',
+  background:'#ffffff',
   inputBk:'#0000001A',
   inputBk2:'#0000000D',
   inputWithoutEm:'#00000033',
@@ -14,8 +14,8 @@ loadingBK:'#FFFFFF80'
 export const darkColors={
   primary:'black',
   text:'white',
-  background:'black',
-  inputBk:'#FFFFFF1A',
+  background:'#000000',
+  inputBk:'#FFFFFF26',
   inputBk2:'#FFFFFF0D',
   inputWithoutEm:'#FFFFFF33',
   indexOpacity:'#FFFFFF80',
@@ -36,6 +36,7 @@ export const darkColors={
 //white
 //opacity0.05 == #FFFFFF0D
 //opacity:0.1 == #FFFFFF1A
+//opacity0.15 == #FFFFFF26
 //opacity:0.2 == #FFFFFF33
 //opacity:0.3 == #FFFFFF4D
 //opacity:0.4 == #FFFFFF66

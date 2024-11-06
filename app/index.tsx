@@ -147,6 +147,9 @@ const [hold,setHold]=useState(true)
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (user: any) => {
       setLoginLoading(true)
       if (user) {
+       
+        // await saveIsToday({ date: currentDate, month, isToday: true });
+        await updateIsToday({ date: currentDate, month, isToday: true });
         setUserInfo(user);
         const token = user.stsTokenManager?.accessToken;
         const email = user?.email;
@@ -164,8 +167,7 @@ const [hold,setHold]=useState(true)
           setToken(token);
           setLoginLoading(false)
           
-          await updateIsToday({ date: yesterday, month: yesterdayMonth, isToday: false });
-          await saveIsToday({ date: currentDate, month, isToday: true });
+        
         
         }
 
@@ -207,6 +209,8 @@ const [hold,setHold]=useState(true)
       console.log(`Don't know how to open this URL: ${url}`);
     }
   };
+
+
 
 
   return (

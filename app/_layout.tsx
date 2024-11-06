@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, TouchableOpacity, Platform, View, Appearance ,Dimensions} from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Stack, SplashScreen } from 'expo-router';
+import { Stack} from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { DateProvider } from '~/context/DataContext';
 import { ThemeProvider } from '~/Theme/ThemeProvider';
@@ -13,13 +13,14 @@ import { useTheme } from '~/Theme/ThemeProvider';
 import { useColorScheme } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
 import { LogBox } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
 const { width, height } = Dimensions.get('window');
 LogBox.ignoreLogs([
   'Require cycle:', // 특정 경고 메시지 무시
 ]);
 
-// SplashScreen.preventAutoHideAsync();
-// setTimeout(SplashScreen.hideAsync, 100);
+
+
 const queryClient = new QueryClient();
 
 const Layout = ({logIn}:any) => {
@@ -30,7 +31,7 @@ const Layout = ({logIn}:any) => {
 
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView  style={{ flex: 1 }}>
       <StatusBar style="auto" />
       <Stack
         screenOptions={{
@@ -43,7 +44,7 @@ const Layout = ({logIn}:any) => {
         {logIn === false ? (
           <Stack.Screen
             name="index"
-            options={{ headerShown: false, gestureEnabled: false }}
+            options={{ headerShown: false, gestureEnabled: false}}
           />
         ) : (
           <Stack.Screen
@@ -88,25 +89,28 @@ export default function App() {
   const { setScheme,colors } = useTheme();
   const colorScheme = useColorScheme();
   const appearance = Appearance.getColorScheme();
-
+  // SplashScreen.preventAutoHideAsync();
+  // setTimeout(SplashScreen.hideAsync, 1000);
 
 useEffect(()=>{
   const loadTheme = async () => {
     const storedTheme:any = await AsyncStorage.getItem('themeMode');
+    console.log(storedTheme,'storedTheme')
     setScheme(storedTheme || 'auto');
-    await Appearance.setColorScheme(storedTheme || 'auto');
+     Appearance.setColorScheme(storedTheme || 'auto');
   };
   loadTheme();
+  // SplashScreen.preventAutoHideAsync();
+  // setTimeout(SplashScreen.hideAsync, 300);
 },[])
 
-
-   SplashScreen.preventAutoHideAsync();
-  setTimeout(SplashScreen.hideAsync, 100);
+console.log(appearance,'appearance')
+ 
 
   useEffect(() => {
     async function initializeApp() {
       try {
-
+        // await SplashScreen.preventAutoHideAsync();
          // 테마 설정 로드
         //  const storedTheme:any = await AsyncStorage.getItem('themeMode');
         //  if (storedTheme) {
@@ -134,13 +138,13 @@ useEffect(()=>{
         // 로그인 상태 확인
         const user = await AsyncStorage.getItem('isLogin');
         setLogIn(user ? true : false);
-     
+        setFontsLoaded(true);
+        setAppInitialized(true);
       } catch (error) {
         console.error("App initialization failed:", error);
       } finally {
-        setFontsLoaded(true);
-        setAppInitialized(true);
-        SplashScreen.hideAsync(); // 모든 초기화가 끝난 후에 스플래시 화면 숨기기
+      
+       await SplashScreen.hideAsync(); // 모든 초기화가 끝난 후에 스플래시 화면 숨기기
       }
     }
 

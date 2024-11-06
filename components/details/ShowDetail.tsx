@@ -14,11 +14,11 @@ import InputForm from './InputForm'
 import Octicons from '@expo/vector-icons/Octicons';
 import { Image } from 'expo-image';
 import EmotionSticker from '../EmotionSticker';
-
+import { useDateContext } from '~/context/DataContext';
 const {width,height}=Dimensions.get('window')
 const ShowDetail = ({
-  showDone,
- setShowDone,
+//   showDone,
+//  setShowDone,
  date,
  month,
  story,
@@ -35,9 +35,10 @@ const ShowDetail = ({
   const {colors,dark}=useTheme()
   const opacity = useSharedValue(0);
   const [keyboardVisible, setKeyboardVisible] = useState<boolean>(false);
-  useEffect(()=>{
-    setShowDone(true)
-   },[])
+  const {showDone,setShowDone}=useDateContext()
+  // useEffect(()=>{
+  //   setShowDone(true)
+  //  },[])
    useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -111,7 +112,7 @@ const ShowDetail = ({
        
         
         
-        <AddPhoto hideKeyboard={hideKeyboard} showDone={showDone} photo={photo}  setPhoto={setPhoto}   imges={imges}  setImges={setImges} />
+        <AddPhoto hideKeyboard={hideKeyboard}  photo={photo}  setPhoto={setPhoto}   imges={imges}  setImges={setImges} />
       
      
       </Animated.View>

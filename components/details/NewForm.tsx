@@ -19,7 +19,7 @@ import IconSticker from './IconSticker';
 import { useSaveData } from '~/hooks/useData';
 import InputForm from './InputForm';
 import AddPhoto from './AddPhoto';
-
+import { useDateContext } from '~/context/DataContext';
 const { width, height } = Dimensions.get('window');
 
 import Animated, {
@@ -33,8 +33,8 @@ import Animated, {
 import { FadeIn, FadeInUp, FadeInDown, FadeInRight } from 'react-native-reanimated';
 
 const NewForm = ({
-  showDone,
-  setShowDone,
+  // showDone,
+  // setShowDone,
   date,
   month,
   story,
@@ -47,14 +47,10 @@ const NewForm = ({
   setImges,
 }: any) => {
   const { dark, colors, setScheme } = useTheme();
-
+ const {showDone,setShowDone}=useDateContext()
   const [keyboardVisible, setKeyboardVisible] = useState<boolean>(false);
   const deletedIcon = require('../../assets/delete.png');
-  // const {data,isError}=useSaveData({date,month})
 
-  useEffect(() => {
-    setShowDone(true);
-  }, []);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisible(true); // or some other action
@@ -88,7 +84,7 @@ const NewForm = ({
         <View style={{ marginTop: 16 }}>
           <AddPhoto
             setPhoto={setPhoto}
-            showDone={showDone}
+         
             photo={photo}
             hideKeyboard={hideKeyboard}
             imges={imges}

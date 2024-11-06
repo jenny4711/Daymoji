@@ -5,7 +5,7 @@ const {width,height}=Dimensions.get('window')
 const FirstView = ({date,showDone,fnBtn}:any) => {
 
   const {colors,dark}=useTheme()
- 
+ console.log(showDone,'showDone')
   return (
     < >
      <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -14,8 +14,8 @@ const FirstView = ({date,showDone,fnBtn}:any) => {
         
       </View>
 
-      <TouchableOpacity onPress={fnBtn} style={{position:'absolute',right:1}}>
-          <Text style={{ fontFamily: "SFCompactRoundedBD", color: colors.text, fontSize: 16 }}>{'Done'}</Text>
+      <TouchableOpacity disabled={showDone?false:true} onPress={fnBtn} style={{position:'absolute',right:1}}>
+          <Text style={{ fontFamily: "SFCompactRoundedBD", color: colors.text, fontSize: 16,opacity:showDone?1:0.5 }}>{'Done'}</Text>
         </TouchableOpacity>
 
     </View>

@@ -276,7 +276,7 @@ PODS:
     - ExpoModulesCore
   - ExpoWebBrowser (13.0.3):
     - ExpoModulesCore
-  - EXSplashScreen (0.27.5):
+  - EXSplashScreen (0.27.6):
     - DoubleConversion
     - ExpoModulesCore
     - glog
@@ -1867,7 +1867,7 @@ SPEC CHECKSUMS:
   ExpoModulesCore: f30a203ff1863bab3dd9f4421e7fc1564797f18a
   ExpoSystemUI: d4f065a016cae6721b324eb659cdee4d4cf0cb26
   ExpoWebBrowser: 7595ccac6938eb65b076385fd23d035db9ecdc8e
-  EXSplashScreen: fbf0ec78e9cee911df188bf17b4fe51d15a84b87
+  EXSplashScreen: 17a656c08a0095be15b620c52e61dfdb665863d2
   EXUpdatesInterface: 996527fd7d1a5d271eb523258d603f8f92038f24
   FBLazyVector: ac12dc084d1c8ec4cc4d7b3cf1b0ebda6dab85af
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
@@ -1938,4 +1938,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 485088fc72dbeb3da57edbba576d7ce3183d78e0
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

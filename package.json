@@ -55,7 +55,8 @@
     "react-native-select-dropdown": "^4.0.1",
     "react-native-size-matters": "^0.4.2",
     "react-native-svg": "15.2.0",
-    "react-native-web": "~0.19.10"
+    "react-native-web": "~0.19.10",
+    "expo-splash-screen": "~0.27.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

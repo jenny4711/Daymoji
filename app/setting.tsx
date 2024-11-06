@@ -11,7 +11,7 @@ import LogOutSec from '~/components/setting/LogOutSec';
 import { useDateContext } from '~/context/DataContext';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { set } from 'lodash';
+import { Check, Gear } from '~/utils/Icons';
 const {width,height}=Dimensions.get('window')
 
 const Setting = () => {
@@ -164,7 +164,7 @@ const goToMainPage = () => {
   ThemeArray.map((item:any,index:any)=>(
     <TouchableOpacity key={index} activeOpacity={1} onPress={()=>handleThemeChange(item.value)} style={{width:width-96,flexDirection:'row',justifyContent:'space-between',paddingVertical:12,alignItems:'center'}}>
       <Text style={[styles.TextStyle,{color:colors.text}]}>{item.title}</Text>
-      {themeMode === item.value?<Ionicons name={'checkmark'} size={16} color={colors.text}/>:null}
+      {themeMode === item.value?<Check color={colors.text}/>:null}
       {/* <Text style={{color:colors.text}}>{themeMode === item.value?'x':''}</Text> */}
 
     </TouchableOpacity>

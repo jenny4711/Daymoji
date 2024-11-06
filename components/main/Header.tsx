@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 const {width,height}=Dimensions.get('window')
 import { useDateContext } from '~/context/DataContext';
 import Octicons from '@expo/vector-icons/Octicons';
+import { Gear } from '~/utils/Icons';
 import { HeaderL } from '~/utils/Icons';
 const Header = ({day,showListMode,setShowListMode}:any) => {
   const {colors}=useTheme()
@@ -35,7 +36,8 @@ const Header = ({day,showListMode,setShowListMode}:any) => {
 
     </TouchableOpacity> */}
     <TouchableOpacity activeOpacity={1}   delayPressIn={0}  hitSlop={{top:15,bottom:15,left:15,right:15}} style={{marginLeft:16}} onPress={() => (navigation as any).navigate('setting')}>
-    <Octicons name="gear" size={16} color={colors.text} />
+    {/* <Octicons name="gear" size={24} color={colors.text} /> */}
+    <Gear color={colors.text}/>
     </TouchableOpacity>
     </View>
 </View>}

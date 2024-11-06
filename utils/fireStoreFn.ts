@@ -329,28 +329,73 @@ export const saveIsToday = async ({date, month, isToday}: any) => {
 
 
 //isToday Update
+export const updateIsToday = async ({ date, month, isToday }:any) => {
+  try {
+    const email = await AsyncStorage.getItem('email');
+    if (!email) return;
 
-export const updateIsToday = async ({date, month, isToday}: any) => {
- try {
- 
-   const email = await AsyncStorage.getItem('email');
-   if (!email) return;
+    console.log(date, month, isToday, 'updateIsToday');
 
-   const docRef = doc(FIRESTORE_DB, `users/${email}/${month}/${date}`);
-   const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) {
+    // Firestore 컬렉션 참조 가져오기
+    const userCollectionRef = collection(FIRESTORE_DB, `users/${email}/${month}`);
+    const allDocsSnapshot = await getDocs(userCollectionRef);
+
+    // 모든 문서의 isToday를 false로 업데이트
+    const updatePromises = allDocsSnapshot.docs.map(async (docSnap) => {
+      if (docSnap.exists() && docSnap.id !== date) {
+        await updateDoc(docSnap.ref, {
+          isToday: false,
+        });
+      }
+    });
+
+    // 모든 문서 업데이트가 완료될 때까지 기다림
+    await Promise.all(updatePromises);
+
+    // 오늘 날짜 문서의 isToday를 true로 업데이트
+    const todayDocRef = doc(FIRESTORE_DB, `users/${email}/${month}/${date}`);
+    const todayDocSnap = await getDoc(todayDocRef);
+    if (!todayDocSnap.exists()) {
       console.log('No such document!');
       return;
     }
-   // 'isToday' 필드만 업데이트
-   await updateDoc(docRef, {
-     isToday: isToday,  // 다른 필드는 유지되고, 이 필드만 업데이트됨
-   });
-   console.log('isToday updated successfully');
- } catch (error) {
-   console.log('Error updating isToday: ', error);
- }
+
+    await updateDoc(todayDocRef, {
+      isToday: isToday, // 오늘 날짜 문서의 isToday 필드를 업데이트
+    });
+
+    console.log('isToday updated successfully');
+  } catch (error) {
+    console.log('Error updating isToday: ', error);
+  }
 };
+
+
+
+
+
+
+// export const updateIsToday = async ({date, month, isToday}: any) => {
+//  try {
+ 
+//    const email = await AsyncStorage.getItem('email');
+//    if (!email) return;
+//  console.log(date,month,isToday,'updateIsToday')
+//    const docRef = doc(FIRESTORE_DB, `users/${email}/${month}/${date}`);
+//    const docSnap = await getDoc(docRef);
+//     if (!docSnap.exists()) {
+//       console.log('No such document!');
+//       return;
+//     }
+//    // 'isToday' 필드만 업데이트
+//    await updateDoc(docRef, {
+//      isToday: isToday,  // 다른 필드는 유지되고, 이 필드만 업데이트됨
+//    });
+//    console.log('isToday updated successfully');
+//  } catch (error) {
+//    console.log('Error updating isToday: ', error);
+//  }
+// };
 
 //photo Update
 
