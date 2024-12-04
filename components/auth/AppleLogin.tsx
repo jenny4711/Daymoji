@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { OAuthProvider } from 'firebase/auth';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import  {jwtDecode} from 'jwt-decode'
-import {FIREBASE_AUTH} from '../../config/firebase'
+import {FIREBASE_AUTH} from '../../config/FirebaseConfig';
 import { signInWithCredential } from 'firebase/auth';
 import { useNavigation } from 'expo-router';
 import { AppleIcon } from '~/utils/Icons';
 import { useTheme } from '~/Theme/ThemeProvider';
-const AppleLogin = () => {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { saveIsToday, updateIsToday } from '~/utils/fireStoreFn';
+import { handleTodayDate } from '~/utils/utilsFn';
+const AppleLogin = ({currentDate,month}:any) => {
   const [appleAuthAvailable, setAppleAuthAvailable] = useState(false);
   const [userToken, setUserToken] = useState(null);
   const {colors,dark}=useTheme()
@@ -39,7 +42,9 @@ const navigation=useNavigation()
           idToken: identityToken,
         });
         await signInWithCredential(FIREBASE_AUTH, firebaseCredential);
-        
+        await handleTodayDate()
+        await AsyncStorage.setItem('isLogin','true');
+   
       }
     } catch (error) {
       console.log(error, 'errorAppleLogin');
@@ -89,7 +94,7 @@ const navigation=useNavigation()
       // 커스텀 버튼을 사용하여 Apple 로그인 처리
       <TouchableOpacity style={[styles.btn,{backgroundColor:colors.text}]} onPress={login}>
         <AppleIcon size={24} color={colors.background}/>
-        <Text style={[styles.customButtonText,{fontFamily:"SFCompactRoundedBD",color:colors.background,fontSize:16,marginLeft:8}]}>Sign up with Apple</Text>
+        <Text style={[styles.customButtonText,{color:colors.background,fontSize:16,marginLeft:8}]}>Sign up with Apple</Text>
       </TouchableOpacity>
     ) : (
       <Text>Apple Login is not available</Text>

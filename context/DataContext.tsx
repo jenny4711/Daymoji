@@ -50,6 +50,16 @@ interface DateContextType {
   setSave:(save:any)=>void
   showDone:any
   setShowDone:(show:any)=>void
+  clickedDay:number | null
+  setClickedDay:(day:number | null)=>void
+  deletedItem:any
+  setDeletedItem:(deleted:any)=>void
+  todayMonth:any
+  setTodayMonth:(month:any)=>void
+  todayDay:any,
+setTodayDay:(day:any)=>void
+
+  
 }
 
 const DateContext = createContext<DateContextType>('' as any);
@@ -67,6 +77,8 @@ const [token,setToken]=useState('' as any)
 const [headerTitle,setHeaderTitle]=useState('' as any)
 const [visible,setVisible]=useState(false)
 const [todayDate,setTodayDate]=useState('' as any)
+const [todayMonth,setTodayMonth]=useState('' as any)
+const [todayDay,setTodayDay]=useState('' as any)
 const [preImages,setPreImages]=useState([] as any)
 const [isLoading,setIsLoading]=useState(false)  
 const [progress,setProgress]=useState(0)
@@ -78,6 +90,9 @@ const [readyForShow,setReadyForShow]=useState(false)
 const [pressedDone,setPressedDone]=useState(false)
 const [save,setSave]=useState<any>(false)
 const [showDone,setShowDone]=useState<any>(false)
+const [deletedItem,setDeletedItem]=useState<any>(false)
+const [clickedDay, setClickedDay] = useState<number | null>(null);
+
 useEffect(()=>{
   const loadTheme = async () => {
     const storedTheme = await AsyncStorage.getItem('themeMode');
@@ -87,7 +102,7 @@ useEffect(()=>{
 },[])
 
   return (
-    <DateContext.Provider value={{showDone,setShowDone,save,setSave,pressedDone,setPressedDone,readyForShow,setReadyForShow,loggedIn,setLoggedIn,themeMode,setThemeMode,initialDisplay,setInitialDisplay,allDeleted,setAllDeleted,isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
+    <DateContext.Provider value={{todayDay,setTodayDay,todayMonth,setTodayMonth,deletedItem,setDeletedItem,clickedDay,setClickedDay,showDone,setShowDone,save,setSave,pressedDone,setPressedDone,readyForShow,setReadyForShow,loggedIn,setLoggedIn,themeMode,setThemeMode,initialDisplay,setInitialDisplay,allDeleted,setAllDeleted,isLoading,setIsLoading,progress,setProgress,preImages,setPreImages,todayDate,setTodayDate,yearF,setYearF,visible,setVisible,headerTitle,setHeaderTitle,email,setEmail,token,setToken,prevDate,setPrevDate, monthF, setMonthF, dateF, setDateF,newAData,setNewAData,dateWithLang,setDateWithLang ,orgDate,setOrgDate}}>
       {children}
     </DateContext.Provider>
   );

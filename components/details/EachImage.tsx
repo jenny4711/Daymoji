@@ -36,7 +36,7 @@ const EachImage = ({idx,img,imgBtn,imgBtnBk,deletedIcon,imgSize,setImgSize,setIm
             /> 
 
             </TouchableOpacity>
-            <TouchableOpacity style={{position:'absolute',width:24,height:24,backgroundColor:'#FFFFFF',borderRadius:100,justifyContent:'center',alignItems:'center',marginLeft:moderateScale(1),top:deleteMargin.top,right:deleteMargin.right}} onPress={()=>deleteImage(img)}>
+            <TouchableOpacity style={{position:'absolute',width:24,height:24,backgroundColor:'#FFFFFF',borderRadius:100,justifyContent:'center',alignItems:'center',marginLeft:moderateScale(1),top:deleteMargin.top,right:deleteMargin.right}} onPress={!isLoading?()=>deleteImage(img,idx):()=>{console.log('null')}}>
             <Ionicons name="close" size={12} color={'black'} />
 
             </TouchableOpacity>

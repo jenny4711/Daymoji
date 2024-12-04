@@ -11,34 +11,34 @@ const DaynameHeader = () => {
   return (
     <View style={{flexDirection:'row',marginBottom:10,width:width-48,justifyContent:'space-around',marginTop:30}}>
     <View style={{width:(width-48)/7,alignItems:'center'}}>
-     <Text style={{color:colors.text,marginRight:11,fontFamily:'SFCompactRoundedBD',fontSize:12}}>M</Text>
+     <Text style={{color:colors.text,marginRight:11,fontSize:12}}>M</Text>
      </View>
      
      <View style={{width:(width-48)/7}}>
-     <Text style={{color:colors.text,marginLeft:15,fontFamily:'SFCompactRoundedBD',fontSize:12}} >T</Text>
+     <Text style={{color:colors.text,marginLeft:15,fontSize:12}} >T</Text>
      </View>
     
      <View style={{width:(width-48)/7}}>
-     <Text style={{color:colors.text,marginLeft:15 ,fontFamily:'SFCompactRoundedBD',fontSize:12}} >W</Text>
-     </View>
-    
-     
-     <View style={{width:(width-48)/7}}>
-     <Text style={{color:colors.text,marginLeft:19 ,fontFamily:'SFCompactRoundedBD' ,fontSize:12}} >T</Text>
-     </View>
-    
-     <View style={{width:(width-48)/7}}>
-     <Text style={{color:colors.text,marginLeft:21 ,fontFamily:'SFCompactRoundedBD' ,fontSize:12}} >F</Text>
-     </View>
-    
-    
-     <View style={{width:(width-48)/7}}>
-     <Text style={{color:colors.text,marginLeft:23 ,fontFamily:'SFCompactRoundedBD' ,fontSize:12}} >S</Text>
+     <Text style={{color:colors.text,marginLeft:15 ,fontSize:12}} >W</Text>
      </View>
     
      
      <View style={{width:(width-48)/7}}>
-     <Text style={{color:colors.text,marginLeft:24 ,fontFamily:'SFCompactRoundedBD' ,fontSize:12}} >S</Text>
+     <Text style={{color:colors.text,marginLeft:19 ,fontSize:12}} >T</Text>
+     </View>
+    
+     <View style={{width:(width-48)/7}}>
+     <Text style={{color:colors.text,marginLeft:21 ,fontSize:12}} >F</Text>
+     </View>
+    
+    
+     <View style={{width:(width-48)/7}}>
+     <Text style={{color:colors.text,marginLeft:23 ,fontSize:12}} >S</Text>
+     </View>
+    
+     
+     <View style={{width:(width-48)/7}}>
+     <Text style={{color:colors.text,marginLeft:24 ,fontSize:12}} >S</Text>
      </View>
      
     

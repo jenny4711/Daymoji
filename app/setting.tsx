@@ -12,19 +12,18 @@ import { useDateContext } from '~/context/DataContext';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Check, Gear } from '~/utils/Icons';
+import DeleteAcct from '~/components/setting/DeleteAcct';
 const {width,height}=Dimensions.get('window')
 
 const Setting = () => {
   const { dark, colors, setScheme } = useTheme();
   const [colorStyle,setColorStyle]=useState<any>(colors)
-  // const [themeMode,setThemeMode]=useState<string>( 'auto')
+
   const [text,setText]=useState<string>(colorStyle.text)
   const [inputBk,setInputBk]=useState<string>( colorStyle.inputBk)
-  // const [inputBk2,setInputBk2]=useState<string>( colorStyle.inputBk2)
-  // const [inputWithoutEm,setInputWithoutEm]=useState<string>( colorStyle.inputWithoutEm)
+
   const [background,setBackground]=useState<string>( colorStyle.background)
-  // const [indexOpacity,setIndexOpacity]=useState<string>( colorStyle.indexOpacity)
-  // const [loadingBK,setLoadingBK]=useState<string>( colorStyle.loadingBK)
+
   const colorScheme:any = useColorScheme(); 
   const {monthF,themeMode,setThemeMode,setNewAData,setVisible,newAData,save,setSave}=useDateContext()
   const month:any =monthF
@@ -142,7 +141,7 @@ const openService =async () => {
 
 const goToMainPage = () => {
  
-  (navigation as any).navigate('main');
+  (navigation as any).navigate('index');
   console.log(newAData,'newAData')
 }
 
@@ -151,14 +150,14 @@ const goToMainPage = () => {
     <SafeAreaView style={[{backgroundColor:colors.background,flex:1},{width:width, justifyContent:'flex-start',alignItems:'center',height:height}]}>
       {/* //--------------------------title---------------- */}
 <View style={[styles.titleView]}>
-  <Text style={[styles.TextStyle,{color:colors.text}]}> Settings</Text>
+  <Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:colors.text}]}> Settings</Text>
   <TouchableOpacity activeOpacity={1} onPress={goToMainPage} style={{position:'absolute',right:1}}>
-    <Text style={[styles.TextStyle,{color:colors.text}]}>Done</Text>
+    <Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:colors.text}]}>Done</Text>
   </TouchableOpacity>
 </View>
 {/* //-------------------------style------------------------- */}
 <View style={[styles.eachView]}>
-  <Text style={[styles.TextStyle,{color:colors.text,marginBottom:16}]}>Style</Text>
+  <Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:colors.text,marginBottom:16}]}>Style</Text>
   <View style={{backgroundColor:colors.inputBk2,width:width-48,alignItems:'center',paddingVertical:12 ,borderRadius:24}}>
 {
   ThemeArray.map((item:any,index:any)=>(
@@ -175,10 +174,11 @@ const goToMainPage = () => {
 </View>
 {/* //------------------------------account---------------------------------------------------- */}
 <View style={[styles.eachView,{marginVertical:24}]}>
-  <Text style={[styles.TextStyle,{color:colors.text,marginBottom:16}]}>Account</Text>
+  <Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:colors.text,marginBottom:16}]}>Account</Text>
   <TouchableOpacity activeOpacity={1} onPress={handleAlldeletedList} style={{justifyContent:'center',alignItems:'center',paddingVertical:24,width:width-48,backgroundColor:colors.inputBk2,borderRadius:24}}>
-    <Text style={[styles.TextStyle,{color:'red'}]}>Delete all entries</Text>
+    <Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:'red'}]}>Delete all entries</Text>
   </TouchableOpacity>
+  <DeleteAcct/>
 
   <LogOutSec/>
 </View>
@@ -186,12 +186,12 @@ const goToMainPage = () => {
 
 {/* -------------------------Legal------------------------------- */}
 <View style={[styles.eachView]}>
-<Text style={[styles.TextStyle,{color:colors.text,marginBottom:16}]}>Legal</Text>
+<Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:colors.text,marginBottom:16}]}>Legal</Text>
   <TouchableOpacity onPress={openPolicy} activeOpacity={1}  style={{justifyContent:'center',alignItems:'center',paddingVertical:24,width:width-48,backgroundColor:colors.inputBk2,borderRadius:24}}>
-    <Text style={[styles.TextStyle,{color:colors.text}]}>Privacy Policy</Text>
+    <Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:colors.text}]}>Privacy Policy</Text>
   </TouchableOpacity>
   <TouchableOpacity activeOpacity={1} onPress={openService} style={{justifyContent:'center',alignItems:'center',paddingVertical:24,width:width-48,backgroundColor:colors.inputBk2,borderRadius:24,marginTop:16}}>
-    <Text style={[styles.TextStyle,{color:colors.text}]}>Terms of Use</Text>
+    <Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:colors.text}]}>Terms of Use</Text>
   </TouchableOpacity>
 
 </View>
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   },
  TextStyle:{
   fontSize:16,
-  fontFamily:"SFCompactRoundedBD",
+
   lineHeight:19.09
  },
  eachView:{

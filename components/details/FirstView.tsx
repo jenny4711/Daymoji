@@ -10,12 +10,12 @@ const FirstView = ({date,showDone,fnBtn}:any) => {
     < >
      <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={{  flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <Text style={{ fontFamily: "SFCompactRoundedBD", color: colors.text, fontSize: 16, textAlign: 'center' }}>{date}</Text>
+        <Text style={{  color: colors.text, fontSize: 16, textAlign: 'center' ,fontFamily:'Nunito_700Bold'}}>{date}</Text>
         
       </View>
 
       <TouchableOpacity disabled={showDone?false:true} onPress={fnBtn} style={{position:'absolute',right:1}}>
-          <Text style={{ fontFamily: "SFCompactRoundedBD", color: colors.text, fontSize: 16,opacity:showDone?1:0.5 }}>{'Done'}</Text>
+          <Text style={{  color: colors.text, fontSize: 16,opacity:showDone?1:0.5 ,fontFamily:'Nunito_700Bold'}}>{'Done'}</Text>
         </TouchableOpacity>
 
     </View>

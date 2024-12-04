@@ -1,4 +1,4 @@
-import {updateIsToday,saveIsToday,isTodayEventNotToday,getData} from '../utils/fireStoreFn'
+import {updateIsToday,saveIsToday,isTodayEventNotToday,getData,findTodayData} from '../utils/fireStoreFn'
 
 export const checkData=(data:any)=>{
   const checkStory = data?.story === undefined || data?.story === '';
@@ -10,6 +10,20 @@ export const checkData=(data:any)=>{
   return true
 
 
+}
+
+export const handleCheckTodayData=async()=>{
+  try{
+    const {currentDate,month}:any =await getTodayDate()
+    const allData:any= await findTodayData(month,currentDate)
+    // const check = allData.filter(
+    //   (data: any) => String(data.date) === String(currentDate)
+    // );
+
+ return allData
+
+
+  }catch(error){console.log(error)}
 }
 
 
@@ -35,11 +49,9 @@ const yesterdayMonthS = yesterdayMonth < 10 ? `0${yesterdayMonth}` : yesterdayMo
 const yesterday = `${yesterdayYear}-${yesterdayMonthS}-${yesterdayDateS}`;
 await isTodayEventNotToday()
 await updateIsToday({date:currentDate,month,isToday:true})
-// await saveIsToday({date:currentDate,month,isToday:true})
+ await saveIsToday({date:currentDate,month,isToday:true})
 
-console.log('todayDate',currentDate)
-console.log('yesterdayDate',yesterday)
-console.log('handleTodayDate!!!!!!!!!!!!!!!!!!!!!!!')
+
 
 
 
@@ -58,7 +70,9 @@ export const getTodayDate=async()=>{
     const dateS = date < 10 ? `0${date}` : date;
     const monthS = month < 10 ? `0${month}` : month;
     const currentDate = `${year}-${monthS}-${dateS}`
-    return {currentDate,month:monthS}
+ 
+
+    return {currentDate,month:monthS,date:dateS}
   }catch(error){console.log(error)}
 }
 

@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from 'react';
 import {Dimensions, View, Text,Image,TouchableOpacity ,StyleSheet,Alert} from 'react-native'
-import { FIREBASE_AUTH } from '~/config/firebase';
+import { FIREBASE_AUTH } from '../../config/FirebaseConfig';
 import { signOut } from 'firebase/auth'
 import { useNavigation ,useRouter} from 'expo-router';
 import { Feather } from '@expo/vector-icons';
@@ -11,21 +11,21 @@ const LogOutSec = () => {
   const [userEmail,setUserEmail]=useState<string>('') 
 const {colors}=useTheme()
 const router=useRouter()
-useEffect(()=>{
-  const getUserEmail=async()=>{
-const getEmail=await AsyncStorage.getItem('email')
-const [localPart,domain]:any=getEmail?.split('@')
-if(localPart.length <=2){
-return setUserEmail(getEmail ||'')
-}
-return setUserEmail(`${localPart.slice(0,2)}...@${domain}`)
+// useEffect(()=>{
+//   const getUserEmail=async()=>{
+// const getEmail=await AsyncStorage.getItem('email')
+// const [localPart,domain]:any=getEmail?.split('@')
+// if(localPart.length <=2){
+// return setUserEmail(getEmail ||'')
+// }
+// return setUserEmail(`${localPart.slice(0,2)}...@${domain}`)
 
 
 
 
-}
-getUserEmail()
-},[])
+// }
+// getUserEmail()
+// },[])
 
 const navigation=useNavigation()
 const handleLogOut=async()=>{
@@ -41,9 +41,9 @@ const handleLogOut=async()=>{
         AsyncStorage.setItem('isLogin','false')
         AsyncStorage.setItem('token','')
         AsyncStorage.removeItem('email').then(()=>{
-          return (navigation as any).replace('index')
+          return (navigation as any).replace('authLogin')
         }).catch((error)=>{
-          console.log(error,'-logout')
+          console.log(error,'logout')
         })
         // return (navigation as any).navigate('index')
           }).catch((error)=>{
@@ -122,7 +122,7 @@ const styles=StyleSheet.create({
   },
   TextStyle: {
     fontSize:16,
-    fontFamily:"SFCompactRoundedBD",
+  
     lineHeight:19.09
   }
 

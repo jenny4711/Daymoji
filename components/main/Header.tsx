@@ -22,7 +22,7 @@ const Header = ({day,showListMode,setShowListMode}:any) => {
   return (
   <View style={{flexDirection:'column',marginTop:64}}>
  {!isLoading &&   <View style={[styles.header,{marginBottom:40}]}>
-    <Text style={[styles.headerText, { color: colors.text }]}>{headerTitle}</Text>
+    <Text style={[styles.headerText, { color: colors.text, fontFamily:'Nunito_700Bold'}]}>{headerTitle}</Text>
     <View style={[!showBtn?{opacity:0}:{flexDirection:'row',opacity:1}]}>
 
   
@@ -50,7 +50,7 @@ export default Header
 const styles=StyleSheet.create({
   headerText: {
     fontSize: 20,
-    fontFamily: "SFCompactRoundedBD",
+
     // marginBottom:50
   },
   header: {

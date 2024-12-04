@@ -166,7 +166,10 @@ const pickImage = async () => {
 
  
 
-  const deleteImage = async (imgUri: string) => {
+  const deleteImage = async (imgUri: string,idx:number) => {
+    if(isLoadingImages[idx]){
+      return;
+    }
 
     try {
     const findIndex = imges.findIndex((imgUriItem: string) => imgUriItem === imgUri);

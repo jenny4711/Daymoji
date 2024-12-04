@@ -53,41 +53,8 @@ useEffect(()=>{
 
 
 
-//itemDelete (잠시 보류)
-const handleDeleted = async () => {
-  
 
-  deletedMuation.mutate(
-    { date, month:monthF },
-    {
-      onSuccess: async() => {
-        queryClient.invalidateQueries({ queryKey: ['data', monthF] });
-        if(todayDate===date){
-          await saveIsToday({date:todayDate,month:monthF,isToday:true})
-         
-        }
-     
-     if(item.photo){
-      await deleteImageStorage(item.photo)
-      setVisible(false)
-      setNewAData(null)
-     
-      
-     return  (navigation as any).navigate('main');
-     
-     }
-     
-      
-        (navigation as any).navigate('main');
-        setVisible(false)
-        setNewAData(null)
-       
 
-      
-      },
-    }
-  );
-};
 
 const handleEditBtn = async () => {
 
@@ -112,12 +79,12 @@ const handleEditBtn = async () => {
        <EmotionSticker emotion={item?.emotion} size={24}/>
       </Animated.View>:
         <View style= {{marginTop:item?.emotion !==""?8:0,marginBottom:0,width:screenSize.width-96,alignItems:'center',justifyContent:'center',borderRadius:24}}>
-        <Text style={{fontFamily:'SFCompactRoundedBD',fontSize:16,color:colors.text}}>{newDate}</Text>
+        <Text style={{fontSize:16,color:colors.text}}>{newDate}</Text>
   
       </View>
       
       }
-      <View style={{position: 'absolute',right:49}}>
+      <View style={{position: 'absolute',right:49,bottom:39}}>
         <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}  onPress={handleEditBtn} style={{marginRight:0}}>
       <Octicons name="pencil" size={16} color={colors.text} />
       </TouchableOpacity>
@@ -126,12 +93,12 @@ const handleEditBtn = async () => {
     </View>
 
    {item?.emotion !== ""? <View style= {{marginTop:item?.emotion !==""?8:0,marginBottom:16,width:screenSize.width-96,alignItems:'center',justifyContent:'center',borderRadius:24}}>
-      <Text style={{fontFamily:'SFCompactRoundedBD',fontSize:16,color:colors.text}}>{newDate}</Text>
+      <Text style={{fontSize:16,color:colors.text}}>{newDate}</Text>
 
     </View>:null}
 
    {item?.story !=="" ? <View style={{width:screenSize.width-96,alignItems:'flex-start',backgroundColor:colors.inputBk2,justifyContent:'center',borderRadius:24}}>
-      <Text style={{fontFamily:'SFCompactRoundedBD',fontSize:16,color:colors.text,paddingVertical:24,paddingLeft:24}}>{item?.story}</Text>
+      <Text style={{fontSize:16,color:colors.text,paddingVertical:24,paddingLeft:24}}>{item?.story}</Text>
 
       </View>:null}
 

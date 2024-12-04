@@ -1,102 +1,63 @@
 {
   "expo": {
-    "name": "Daymoji",
-    "slug": "Daymoji",
-    "version": "1.0.0",
-    "scheme": "Daymoji",
+    "scheme": "acme",
+    "userInterfaceStyle": "automatic",
+    "version": "1.0.4",
     "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro"
     },
     "plugins": [
-      [
-        "expo-router",
-        
-        {
-          "origin": "https://daymojiios.netlify.app"
-        }
-      ],
+      "expo-router",
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow $(Daymoji) to access your photos",
-          "cameraPermission": "The app needs access to your camera to let you take photos." 
-        }
-      ],
-      [
-        "expo-dev-launcher",
-        {
-          "launchMode": "most-recent"
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
       "expo-font"
     ],
-    "experiments": {
-      "typedRoutes": true,
-      "tsconfigPaths": true
-    },
-    "orientation": "portrait",
+    "name": "Daymoji",
+    "slug": "Daymoji",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",  // 여기서 light를 automatic으로 변경
     "splash": {
-      "image": "./assets/splashLight.png",
-       "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
-      "dark": {
-        "image": "./assets/splash.png",
-         "resizeMode": "contain",
-      "backgroundColor": "#000000"
-      }
-     
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "splash": {
-      "image": "./assets/splashLight.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
-      "dark": {
-        "image": "./assets/splash.png",
-         "resizeMode": "contain",
-      "backgroundColor": "#000000"
-      }
-     
+      "backgroundColor": "#ffffff"
     },
-      "supportsTablet": true,
-      "bundleIdentifier": "com.jjenny4711.Daymoji",
+    "android": {
+      "package": "com.jjenny4711.Daymoji",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "ios": {
+      "bundleIdentifier":"com.jjenny4711.Daymoji",
+      "infoPlist": {
+        "UIAppFonts": [
+          "assets/fonts/SF-Compact-Rounded-Bold.ttf",
+          "assets/fonts/SF-Compact-Rounded-Regular.ttf",
+          "assets/fonts/SF-Compact-Rounded-Medium.ttf",
+          "assets/fonts/SF-Compact-Rounded-Semibold.ttf",
+          "node_modules/@expo-google-fonts/nunito/Nunito_700Bold.ttf",
+          "node_modules/@expo-google-fonts/nunito/Nunito_400Regular.ttf",
+            "node_modules/@expo-google-fonts/nunito/Nunito_500Medium.ttf",
+              "node_modules/@expo-google-fonts/nunito/Nunito_600SemiBold.ttf",
+              "node_modules/@expo-google-fonts/nunito/ Nunito_800ExtraBold.ttf"
+     
+        ]
+      },
+      "buildNumber": "4",
       "associatedDomains": [
         "applinks:daymojiios.netlify.app"
       ]
-    },
-    "android": {
-      "splash":{
-      "image": "./assets/splashLight.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
-      "dark": {
-        "image": "./assets/splash.png",
-         "resizeMode": "contain",
-      "backgroundColor": "#000000"
-      }
-      },
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      
-      "package": "com.jjenny4711.Daymoji"
     },
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "ec281996-d611-4b6e-bc61-11b0a3b694b6"
+      "projectId": "ec281996-d611-4b6e-bc61-11b0a3b694b6"
       }
     }
   }
 }
-

@@ -44,7 +44,7 @@ const Login:React.FC<LoginProps> = ({promptAsync}) => {
     <View>
       <TouchableOpacity style={[styles.googleBtn,{backgroundColor:colors.text}]} onPress={()=>handleGoogleLogin ()} >
         <GoogleIcon size={24}/>
-      <Text style={{ color: colors.background ,marginLeft:8,fontSize:16,fontFamily:"SFCompactRoundedBD",lineHeight:19}}>Sign up with Google</Text>
+      <Text style={{fontFamily:'Nunito_700Bold' ,color: colors.background ,marginLeft:8,fontSize:16,lineHeight:19}}>Sign up with Google</Text>
       </TouchableOpacity>
     </View>
     </>

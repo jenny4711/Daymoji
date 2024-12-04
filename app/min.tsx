@@ -1,7 +1,7 @@
 import { View, Text, Touchable, TouchableOpacity ,Image} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useCallback } from 'react';
-import Head from 'expo-router/head';
+  
 import Header from '~/components/main/Header';
 import { useNavigation } from 'expo-router';
 import Calendars from '~/components/main/Calendars';
@@ -12,11 +12,11 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import DetailMode from '~/components/main/DetailMode';
 import ListMode from '~/components/main/ListMode';
 import { handleTodayDate } from '~/utils/utilsFn';
-import { findTodayData } from '~/utils/fireStoreFn';
+// import { findTodayData } from '~/utils/fireStoreFn';
 import { checkData } from '~/utils/utilsFn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme } from 'react-native';
-
+import {handleCheckTodayData} from '~/utils/utilsFn'
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -28,15 +28,15 @@ import Animated, {
 } from 'react-native-reanimated';
 const { width, height } = Dimensions.get('window');
 import { useDateContext } from '~/context/DataContext';
-import { set } from 'lodash';
-const Main = () => {
+
+const Min = () => {
   const { dark, colors, setScheme } = useTheme();
   const [lines, setLines] = useState(0);
   const [hasTodayData, setHasTodayData] = useState<any>(false);
   const {
     dateF,
     newAData,
-    dateWithLang,
+   
     visible,
     setVisible,
     headerTitle,
@@ -47,16 +47,15 @@ const Main = () => {
     setInitialDisplay,
     themeMode,
  readyForShow,
-    setReadyForShow,
+ 
     save,
-    setSave,
+   
     setIsLoading,
-
+setClickedDay,
   } = useDateContext();
   const [showListMode, setShowListMode] = useState(false);
   const [showBtn,setShowBtn]=useState(false)
   const translateY = useSharedValue(0); // 애니메이션 상태
-  const [today,setToday]=useState<any>(new Date())
   const colorScheme=useColorScheme()
   const navigation = useNavigation<any>();
   const date = new Date();
@@ -65,10 +64,10 @@ const Main = () => {
   const day = date.getDate();
   let currentDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
   const updateToday=async()=>{
-    
+    await handleCheckTodayData();
     await handleTodayDate()
   }
-
+console.log('main')
   useEffect(()=>{
     async function checkStatus(){
       const status = await AsyncStorage.getItem('isLogin');
@@ -89,8 +88,7 @@ const Main = () => {
       return () => clearTimeout(timer); // 컴포넌트가 언마운트될 때 타이머 정리
     }
   }, [isLoading]);
-console.log(visible,'vislble')
-console.log(newAData,'newAData')
+
   useEffect(()=>{
     if(!isLoading && !initialDisplay){
       const timer = setTimeout(() => {
@@ -105,8 +103,8 @@ console.log(newAData,'newAData')
   useEffect(() => {
     setTodayDate(currentDate);
     const checkTodayData = async () => {
-      const result = await findTodayData(month, currentDate);
-
+      const result = await handleCheckTodayData();
+  
       if (checkData(result)) {
         setHasTodayData(true);
       } else {
@@ -160,9 +158,9 @@ console.log(newAData,'newAData')
      triggerAnimation(true);
      
     }else{
-     if(visible){
+     if(visible || newAData === null){
       setVisible(false)
-      return;
+     
       
      }
     
@@ -183,7 +181,7 @@ console.log(newAData,'newAData')
 
   // // RenderDay에서 애니메이션 트리거 시 실행될 함수
   const triggerAnimation = (shouldShow: boolean) => {
-  console.log(triggerAnimation,'triggerAnimation')
+
  
     setVisible(shouldShow); // RenderDay에서 클릭에 따라 상태 업데이트
   
@@ -199,7 +197,8 @@ console.log(newAData,'newAData')
     // 애니메이션 시작
     translateY.value = withTiming(
       shouldShow ? 0 : 410, // 목표 위치
-      { duration: 800, easing: Easing.out(Easing.exp) }, // 애니메이션 설정
+     
+       { duration: 500, easing: Easing.out(Easing.exp) }, // 애니메이션 설정
       (finished) => {
         if (finished) {
           
@@ -214,6 +213,7 @@ console.log(newAData,'newAData')
   // ----------------------------
   // 오늘 날짜 데이터 생성함수
   const currentDateForm = useCallback(async () => {
+setClickedDay(day)
 
  // 현재 날짜를 사용하여 라우팅
     return (navigation as any).navigate('details/[date]', { date: currentDate, month });
@@ -312,4 +312,12 @@ console.log(newAData,'newAData')
   );
 };
 
-export default Main;
+export default Min;
+
+
+
+
+
+
+
+

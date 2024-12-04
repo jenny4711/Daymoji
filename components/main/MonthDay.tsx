@@ -6,12 +6,14 @@ import {useNavigation} from 'expo-router'
 import * as Haptics from 'expo-haptics';
 import { checkData } from '~/utils/utilsFn';
 import { useTheme } from '~/Theme/ThemeProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width } = Dimensions.get('window');
-const circleSize = width * 0.1104;
+ const circleSize =width * 0.1104;
+//  const circleSize =width<376?width*0.1:width * 0.1104;
 const MonthDay = ({setClickedDay,clickedDay,month,data,day,index,triggerAnimation ,letBoxDown}:any) => {
 const navigation = useNavigation();
 const {colors}=useTheme()
-const {save,setSave,dateF, newAData,setNewAData,dateWithLang ,monthF,setDateF,yearF,visible,setReadyForShow,setPressedDone,pressedDone} = useDateContext();
+const {setDeletedItem,deletedItem,save,setSave,dateF, newAData,setNewAData,dateWithLang ,monthF,setDateF,yearF,visible,setReadyForShow,setPressedDone,pressedDone} = useDateContext();
 const [date,setDate]=useState<any>(`${yearF}-${monthF}-${day}`)
 const [item,setItem]=useState<any>(null)
 const [itemMonth,setItemMonth]=useState<any>(null)
@@ -50,16 +52,23 @@ useEffect(()=>{
   }
 },[data])
 
-const saveData = (day: any) => {
+
+const saveData =async (day: any) => {
   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
   const dateS = day < 10 ? `0${day}` : day;
   const monthS = monthF < 10 ? `0${monthF}` : monthF;
   const date = `${yearF}-${monthS}-${dateS}`;
-setSave(false)
+  const email=await AsyncStorage.getItem('email')
+
+ setSave(false)
+
   if(isDisabled){
     Alert.alert('Alert', 'You cannot write future diary');
     return;
   
+  }
+  if(!email){
+    return (navigation as any).navigate('authLogin')
   }
 setNewAData(null)
   setClickedDay((prevDay:any) => (prevDay === day ? null : day));
@@ -68,20 +77,19 @@ setNewAData(null)
 };
 
 
+
 const showDetailItem=(day:any)=>{
   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
   setShowIsBorder(!showIsBorder)
   const check = checkData(item)
-  // setClickedDay((prevDay:any) => (prevDay === day ? null : day));
+
   const dateS = day < 10 ? `0${day}` : day;
   const monthS = monthF < 10 ? `0${monthF}` : monthF;
   const itemDate =new Date(item?.date).getMonth()+1
   const date = `${yearF}-${monthS}-${dateS}`;
-  // const checkEmotion = item?.emotion === undefined || item?.emotion === '';
-  // const checkStory = item?.story === undefined || item?.story === '';
-  // const checkPhoto = item?.photo?.length === 0 || item?.photo === undefined;
+
   setClickedDay((prevDay:any) => (prevDay === day ? null : day));
-  if(check === false){
+  if(item.emotion ===undefined){
     return (navigation as any).navigate('details/[date]', { date, month: monthF });
   }
   setNewAData(item)
@@ -93,28 +101,35 @@ const showDetailItem=(day:any)=>{
 // && clickedDay !==null 넣어서 3번이상 클릭시 문제 해결10/30
 if(date ===dateF && clickedDay !==null){
  
- letBoxDown(!visible)
-
+//  letBoxDown(!visible)
+letBoxDown(false)
 
 // setClickedDay((prevDay:any) => (prevDay === day ? null : day));
 
 
 }else{
+  (navigation as any).navigate('index')
 
-
-if(!check){
-  return (navigation as any).navigate('details/[date]', { date, month: monthF });
-}
+// if(!check){
+//   return (navigation as any).navigate('details/[date]', { date, month: monthF });
+// }
 
   setDateF(date)
-  
+  console.log(deletedItem,'deletedItem@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
   // setClickedDay((prevDay:any) => (prevDay === day ? null : day));
-  triggerAnimation(true);
+  if(deletedItem){
+    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+    letBoxDown(!visible)
+  }else{
+    console.log('********************************')
+    triggerAnimation(true);
+  }
+
  
   
 }
 
-
+setDeletedItem(false)
 }
 // borderWidth:clickedDay === day && check && visible?2:0, visible 넣음 10/30(테스트 필요)
 
@@ -159,7 +174,7 @@ if(!check){
               )}
               
               <View style={{marginTop:.1,backgroundColor:item && item.isToday?colors.text:colors.background,borderRadius:100,width:27,height:18,justifyContent:'center',alignItems:'center'}}>
-               <Text style={[styles.dayText,{fontFamily:'SFCompactRoundedBD',color:item && item.isToday?colors.background:colors.text,textAlign: 'center'}]}>{day}</Text>
+               <Text style={[styles.dayText,{fontFamily:'Nunito_700Bold',color:item && item.isToday?colors.background:colors.text,textAlign: 'center'}]}>{day}</Text>
                </View>
 
 
@@ -174,9 +189,11 @@ if(!check){
 }
 
 export default memo(MonthDay);
+
+
 const styles= StyleSheet.create({
   dayBox: {
-    width: (width-48) / 7,
+    width:width>376? (width-48) / 7: (width-24) / 7,
     height: circleSize *1.46,
     // justifyContent: 'center',
     alignItems: 'center',
@@ -189,10 +206,10 @@ const styles= StyleSheet.create({
   },
   dayText: {
     fontSize: 12,
-    fontFamily: 'SFCompactRoundedBD',
+    // fontFamily: 'SFCompactRoundedBD',
     color: '#333',
 
-        lineHeight:10.8,
+        lineHeight:12.8,
   
     marginTop:4,
  
@@ -207,9 +224,6 @@ const styles= StyleSheet.create({
     marginBottom: circleSize * 0.05,
   },
 
+  
+
 })
-
-
-
-
-

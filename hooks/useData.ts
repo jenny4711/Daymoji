@@ -54,10 +54,11 @@ export const useDeletedData=({date,month}:any)=>{
     mutationFn: ({ date, month }: { date: any; month: any; }) => {
       return  deletedItem(date, month);
     },
-    onSuccess: () => {
+    onSuccess: async() => {
       queryClient.invalidateQueries({queryKey:['data',month]})
       queryClient.refetchQueries({ queryKey: ['data', month] });
-     return  (navigation as any).navigate('main')
+      await queryClient.invalidateQueries();
+     return  (navigation as any).navigate('index')
     },
   });
 }
@@ -84,7 +85,7 @@ export const useDeletedAllData=(month:any)=>{
 
       await queryClient.invalidateQueries();
       await Promise.all(monthArr.map(mon => queryClient.refetchQueries({ queryKey: ['data', mon] })));
-       (navigation as any).replace('main');
+       (navigation as any).replace('index');
 
      
     },

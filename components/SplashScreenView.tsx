@@ -1,6 +1,6 @@
 import { View, Text ,Image,Dimensions,Appearance} from 'react-native'
 import React,{useEffect} from 'react'
-import splash from '../assets/splash.png';
+// import splash from '../assets/splash.png';
 import { useTheme } from '~/Theme/ThemeProvider'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 const {width,height}=Dimensions.get('window')

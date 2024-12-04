@@ -12,10 +12,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import ShowDetail from '~/components/details/ShowDetail'
 import { saveIsToday ,updateIsToday} from '~/utils/fireStoreFn'
 import { useQueryClient } from '@tanstack/react-query';
-
+import {handleCheckTodayData} from '~/utils/utilsFn'
 
 import { Image } from 'expo-image'
 import { checkData } from '../../utils/utilsFn';
+import { set } from 'lodash'
 export async function generateStaticParams():Promise<Record<string,string>[]>{
 return [
   {date:'2022-01-01'},
@@ -26,7 +27,7 @@ return [
 }
 const Detail = () => {
   const { date, month }: any = useLocalSearchParams();
-  const {setShowDone,showDone,setSave,save,setPressedDone,isLoading, dateF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
+  const {setClickedDay,setDeletedItem,setShowDone,showDone,setSave,save,setPressedDone,isLoading, monthF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
   const queryClient = useQueryClient();
 const navigation=useNavigation()
 const [imges,setImges]=useState<any>([])
@@ -45,9 +46,9 @@ const deletedMuation=useDeletedData({date,month})
 const {data}=useData(month)
 const check=checkData(newAData)
 
-useEffect(()=>{
-  console.log(showDone,'showDoneDate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-},[showDone])
+// useEffect(()=>{
+//   console.log(showDone,'showDoneDate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+// },[showDone])
 
 // dateformat -> 2022-01-01
 //monthformat->1
@@ -107,6 +108,7 @@ setYear(year)
 
 
 useEffect(()=>{
+  console.log('newAData!$$$$',newAData)
   if(newAData?.date===date){
   
     setStory(newAData?.story)
@@ -116,30 +118,74 @@ useEffect(()=>{
 },[newAData])
 
 
+
+const handleDeleted = async () => {
+  console.log('handleDeleted################')
+  setDeletedItem(true)
+ 
+  deletedMuation.mutate(
+    { date, month: monthF },
+    {
+      onSuccess: () => {
+       console.log('queryClient.invalidateQueries({ queryKey: [data, monthF] })')
+        queryClient.invalidateQueries({ queryKey: ['data', monthF] });
+      
+
+        
+
+      
+      },
+      onSettled:()=>{
+        
+        
+        return  (navigation as any).navigate('index');
+
+      }
+     
+    }
+  );
+};
+
+
 async function doneHandler(){
   const email=await AsyncStorage.getItem('email')
   if(checkData({ emotion, story, photo })===false){
-    return (navigation as any ).navigate('main');
+   
+    setSave(false);
+    setVisible(false)
+    await handleDeleted()
+   
+  
   }
+ 
 
-  if(emotion ===""){
+  if(emotion ==="" && checkData({ emotion, story, photo })===true){
     Alert.alert('Please select emoji', 'An emoji is required to save this entry');
     return;
+  }else if(emotion ==="" && checkData({ emotion, story, photo })===false){
+    setEmotion("");
+  
+    setSave(false)
+     setVisible(false)
+ 
+
+  
   }
 
-
-
+ 
   let photos: string[] = [];
-  // 현재 선택된 `photo`가 배열인지 단일 값인지 확인
+
   if (Array.isArray(photo)) {
     photos = [...photos, ...photo]; // 여러 사진을 추가
   } else if (photo) {
     photos.push(photo); // 단일 사진을 추가
   }
 const photosLength = photos.length === imges.length
+
 const allImagesUploaded = await new Promise((resolve)=>{
   const checkImagesUploadedInterval = setInterval(()=>{
     if(photosLength){
+      setShowDone(true)
       clearInterval(checkImagesUploadedInterval)
       resolve(true)
 
@@ -148,28 +194,25 @@ const allImagesUploaded = await new Promise((resolve)=>{
 })
 
 if(allImagesUploaded){
-
- 
-  if (checkData({ emotion, story, photo }) === false) {
-   
-    setSave(false);
-    
-    return (navigation as any ).navigate('main');
-  }
-
-}
-addMutation.mutate({ date, emotion, story, photo: photos, email, month });
+  addMutation.mutate({ date, emotion, story, photo: photos, email, month });
     queryClient.invalidateQueries({ queryKey: ['data'] });
+   
     setNewAData({ date, emotion, story, photo: photos, email, month });
     setDateF(date);
     setSave(true);
+   
+
     setPhoto([]);
     setImges([]);
     setPressedDone(true);
+    
+    
+  
 
-  (navigation as any ).navigate('main');
-setShowDone(false)
+  (navigation as any ).navigate('index');
+ setShowDone(false)
 
+ 
 
 
 }
@@ -177,25 +220,74 @@ setShowDone(false)
 
 
 
+}
+
+// async function doneHandler(){
+//   const email=await AsyncStorage.getItem('email')
+//   if(checkData({ emotion, story, photo })===false){
+//     return (navigation as any ).navigate('main');
+//   }
+
+//   if(emotion ===""){
+//     Alert.alert('Please select emoji', 'An emoji is required to save this entry');
+//     return;
+//   }
 
 
 
-const handleDeleted = async () => {
-  deletedMuation.mutate(
-    { date, month },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['data', month] });
-      
+//   let photos: string[] = [];
+//   // 현재 선택된 `photo`가 배열인지 단일 값인지 확인
+//   if (Array.isArray(photo)) {
+//     photos = [...photos, ...photo]; // 여러 사진을 추가
+//   } else if (photo) {
+//     photos.push(photo); // 단일 사진을 추가
+//   }
+// const photosLength = photos.length === imges.length
+// const allImagesUploaded = await new Promise((resolve)=>{
+//   const checkImagesUploadedInterval = setInterval(()=>{
+//     if(photosLength){
+//       clearInterval(checkImagesUploadedInterval)
+//       resolve(true)
 
-        setShowData(false);
-        (navigation as any).navigate('main');
+//     }
+//   },100)
+// })
 
-      
-      },
-    }
-  );
-};
+// if(allImagesUploaded){
+
+ 
+//   if (checkData({ emotion, story, photo }) === false) {
+   
+//     setSave(false);
+    
+//     return (navigation as any ).navigate('index');
+//   }
+
+// }
+// addMutation.mutate({ date, emotion, story, photo: photos, email, month });
+//     queryClient.invalidateQueries({ queryKey: ['data'] });
+//     setNewAData({ date, emotion, story, photo: photos, email, month });
+//     setDateF(date);
+//     setSave(true);
+//     setPhoto([]);
+//     setImges([]);
+//     setPressedDone(true);
+
+//   (navigation as any ).navigate('index');
+// setShowDone(false)
+
+
+
+// }
+
+
+
+
+
+
+
+
+
 
 
 

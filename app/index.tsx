@@ -1,103 +1,143 @@
-
+import { View, Text, Touchable, TouchableOpacity ,Image} from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Linking ,ActivityIndicator,Image} from 'react-native';
-import Login from '~/components/auth/Login';
-import { Platform } from 'react-native';
-import { FIREBASE_AUTH } from '../config/firebase';
-import * as Google from 'expo-auth-session/providers/google';
-import { useTheme } from '~/Theme/ThemeProvider';
-import { useNavigation } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { GoogleAuthProvider, onAuthStateChanged, signInWithCredential } from 'firebase/auth';
-import AppleLogin from '../components/auth/AppleLogin';
-import * as WebBrowser from 'expo-web-browser';
-import { Dimensions } from 'react-native';
-import { useDateContext } from '~/context/DataContext';
-import { saveIsToday, updateIsToday } from '~/utils/fireStoreFn';
-import { MainLogo } from '~/utils/Icons';
-const { width, height } = Dimensions.get('window');
-import { useColorScheme } from 'react-native';
-if (Platform.OS !== 'web') {
-  WebBrowser.maybeCompleteAuthSession();
-}
-
-const Page = () => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [checkStatus, setCheckStatus] = useState<boolean>(false);
-  const [loadingAuthState, setLoadingAuthState] = useState(true); // 로그인 상태 로딩 여부를 위한 상태 추가
-  const [userInfo, setUserInfo] = useState<any>(null);
-const [hold,setHold]=useState(true)
-  const {themeMode,setThemeMode, email, setEmail, token, setToken, setIsLoading, isLoading ,initialDisplay ,setInitialDisplay} = useDateContext();
-  const { colors, setScheme ,dark} = useTheme();
-  const [loginLoading,setLoginLoading]=useState(false)
-  const today = new Date();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
-  const date = today.getDate();
-
-  const dateS = date < 10 ? `0${date}` : date;
-  const monthS = month < 10 ? `0${month}` : month;
-  const currentDate = `${year}-${monthS}-${dateS}`;
+import { useCallback } from 'react';
   
-  const yesterdayDateObj = new Date(today); // 어제 날짜 계산
-  yesterdayDateObj.setDate(today.getDate() - 1);
-  const yesterdayDate = yesterdayDateObj.getDate();
-  const yesterdayMonth = yesterdayDateObj.getMonth() + 1;
-  const yesterdayYear = yesterdayDateObj.getFullYear();
-  const yesterdayDateS = yesterdayDate < 10 ? `0${yesterdayDate}` : yesterdayDate;
-  const yesterdayMonthS = yesterdayMonth < 10 ? `0${yesterdayMonth}` : yesterdayMonth;
-  const yesterday = `${yesterdayYear}-${yesterdayMonthS}-${yesterdayDateS}`;
-  const colorScheme:any = useColorScheme(); 
+import Header from '~/components/main/Header';
+import { useNavigation } from 'expo-router';
+import Calendars from '~/components/main/Calendars';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Dimensions } from 'react-native';
+import { useTheme } from '~/Theme/ThemeProvider';
+import Fontisto from '@expo/vector-icons/Fontisto';
+import DetailMode from '~/components/main/DetailMode';
+import ListMode from '~/components/main/ListMode';
+import { handleTodayDate } from '~/utils/utilsFn';
+// import { findTodayData } from '~/utils/fireStoreFn';
+import { checkData } from '~/utils/utilsFn';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useColorScheme } from 'react-native';
+import {handleCheckTodayData} from '~/utils/utilsFn'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSequence,
+  Easing,
+  runOnJS,
+  FadeIn,
+} from 'react-native-reanimated';
+const { width, height } = Dimensions.get('window');
+import { useDateContext } from '~/context/DataContext';
+
+const Index= () => {
+  const { dark, colors, setScheme } = useTheme();
+  const [lines, setLines] = useState(0);
+  const [hasTodayData, setHasTodayData] = useState<any>(false);
+  const {
+    dateF,
+    newAData,
+   setMonthF,
+    visible,
+    setVisible,
+    headerTitle,
+    setTodayDate,
+    todayDate,
+    isLoading,
+    initialDisplay,
+    setInitialDisplay,
+    themeMode,
+ readyForShow,
+ setTodayDay,
+ setTodayMonth,
+    save,
+   
+    setIsLoading,
+setClickedDay,
+  } = useDateContext();
+  const [showListMode, setShowListMode] = useState(false);
+  const [showBtn,setShowBtn]=useState(false)
+  const translateY = useSharedValue(0); // 애니메이션 상태
+  const colorScheme=useColorScheme()
+  const navigation = useNavigation<any>();
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  let currentDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+  const updateToday=async()=>{
+    await handleCheckTodayData();
+    await handleTodayDate()
+  }
+
  
 
-
-  async function authStatus() {
-    const status = await AsyncStorage.getItem('isLogin');
-    const email=await AsyncStorage.getItem('email');
-    //  setIsLoading(true);
-
-    if (status && email !==null ) {
-      setCheckStatus(true);
-      setIsLoading(false);
-    
-      (navigation as any).navigate('main');
-    }else{
-      
-      setCheckStatus(false);
-
-      setIsLoading(false);
-      setHold(false)
-      setLoginLoading(false)
-    
+  useEffect(()=>{
+    async function checkStatus(){
+      const status = await AsyncStorage.getItem('isLogin');
+      if(status){
+        setIsLoading(false)
+      }
     }
-  }
+    checkStatus()
+  },[isLoading])
+
   useEffect(() => {
+    if (!isLoading ) {
+      // 로딩 완료 후 스플래시 화면을 10초 동안 유지
+      const timer = setTimeout(() => {
+        setInitialDisplay(false);
+      }, 500);
 
-    // setIsLoading(true);
-    authStatus();
-    
-     
-    }, []);
-  
+      return () => clearTimeout(timer); // 컴포넌트가 언마운트될 때 타이머 정리
+    }
+  }, [isLoading]);
 
-  const checkTimeForTheme = async() => {
+  useEffect(()=>{
+    if(!isLoading && !initialDisplay){
+      const timer = setTimeout(() => {
+        setShowBtn(true);
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  },[isLoading,initialDisplay])
+
+  //오늘 날씨에 데이터가 있는지 확인
+  useEffect(() => {
+    setTodayDate(currentDate);
+    setTodayMonth(month);
+    setTodayDay(day);
+    const checkTodayData = async () => {
+      const result = await handleCheckTodayData();
+ 
+      if (checkData(result)) {
+        setHasTodayData(true);
+      } else {
+        setHasTodayData(false);
+      }
+    };
+    checkTodayData();
+  }, [currentDate, month, newAData]);
+  // -----------------------------
+
+  //오전6시부터 오후 6시까지는 light mode, 그 외는 dark mode
+  const checkTimeForTheme = () => {
     const currentTime = new Date();
     const hours = currentTime.getHours();
-    if (hours >= 6 && hours < 18) {
-      setScheme('light');
-      await AsyncStorage.setItem('themeMode', 'light');
 
+    if (hours >= 6 && hours < 18) {
+      updateToday()
+      setScheme('light'); // 오전 6시부터 오후 6시까지는 light mode
     } else {
-      setScheme('dark');
-      await AsyncStorage.setItem('themeMode', 'dark');
+      updateToday()
+      setScheme('dark'); // 오후 6시부터 오전 6시까지는 dark mode
     }
   };
 
   useEffect(() => {
     async function saveThemeMode(){
       // themeMode가 'auto'일 경우 시스템 테마에 따라 자동으로 설정
-      const theme = await AsyncStorage.getItem('themeMode')
+      const theme =  await AsyncStorage.getItem('themeMode')
       if (theme === 'auto') {
        checkTimeForTheme();  // 시스템 테마에 맞추어 자동으로 설정
      } else if (theme === 'light') {
@@ -113,164 +153,168 @@ const [hold,setHold]=useState(true)
    saveThemeMode()
    }, [themeMode,colorScheme]); 
 
+  //-------------------------
+  // Done 버튼 누르고, 이모지 혹은 스토리 혹은 사진이 있을 때만 애니메이션 실행
+  useEffect(() => {
 
+    if (save && newAData !== null) {
+       
+     triggerAnimation(true);
+     
+    }else{
+     if(visible || newAData === null){
+      setVisible(false)
+     
+      
+     }
+    
+    }
+   
+  }, [save]);
 
-  const clientID = Platform.OS === 'ios' 
-    ? process.env.EXPO_PUBLIC_IOS_CLIENT_ID
-    : process.env.EXPO_PUBLIC_WEB_CLIENT_ID;
-
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: clientID,
-    redirectUri: Platform.OS === 'web' ? window.location.origin : undefined,
+  // -------------------------
+  // 디테일모드 에니메이션 (보여주기 에니메이션)
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: translateY.value }],
+    };
   });
 
-  const navigation = useNavigation<any>();
+  // // RenderDay에서 애니메이션 트리거 시 실행될 함수
+  const triggerAnimation = (shouldShow: boolean) => {
 
-  useEffect(() => {
-    setLoginLoading(true)
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      const credential = GoogleAuthProvider.credential(id_token);
-      signInWithCredential(FIREBASE_AUTH, credential)
-        .then(() => {
-          if (Platform.OS === 'web') {
-            WebBrowser.dismissBrowser(); // 웹에서 팝업 닫기
-          }
-        })
-        .catch((error) => {
-          console.log('login fail', error);
-        });
-    }
-  }, [response]);
+ 
+    setVisible(shouldShow); // RenderDay에서 클릭에 따라 상태 업데이트
+  
+    // 애니메이션 실행
+    translateY.value = withSequence(
+      withTiming(shouldShow ? 410 : 0, { duration: 500, easing: Easing.out(Easing.exp) }), // 박스 내려오기/올라가기
+      withTiming(0, { duration: 500, easing: Easing.bezier(0.42, 0, 0.58, 1) })
+    );
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (user: any) => {
-      setLoginLoading(true)
-      if (user) {
-       
-        // await saveIsToday({ date: currentDate, month, isToday: true });
-        await updateIsToday({ date: currentDate, month, isToday: true });
-        setUserInfo(user);
-        const token = user.stsTokenManager?.accessToken;
-        const email = user?.email;
+  };
 
-        if (Platform.OS === 'web') {
-          localStorage.setItem('token', token);
-          localStorage.setItem('email', email);
-          setEmail(email);
-          setToken(token);
-        } else {
-          await AsyncStorage.setItem('isLogin','true');
-          await AsyncStorage.setItem('token', token);
-          await AsyncStorage.setItem('email', email);
-          setEmail(email);
-          setToken(token);
-          setLoginLoading(false)
-          
-        
-        
-        }
-
+  const letBoxDown = (shouldShow: boolean) => {
+    // 애니메이션 시작
+    translateY.value = withTiming(
+      shouldShow ? 0 : 410, // 목표 위치
      
-          setLoadingAuthState(false); // 로그인 상태 확인 완료
-          setIsLoading(false);
-           (navigation as any).navigate('main');
-      
-
-        
-         
-      } else {
-        setUserInfo(null);
-      
-          setLoadingAuthState(false); // 로그인 상태 확인 완료
-          setIsLoading(false);
+       { duration: 500, easing: Easing.out(Easing.exp) }, // 애니메이션 설정
+      (finished) => {
+        if (finished) {
+          
+          // 애니메이션이 끝난 후 JS 스레드에서 상태 업데이트 (UI 스레드에서 실행하지 않음)
+          runOnJS(setVisible)(shouldShow);
+        } else {
+          // console.log('Animation interrupted');
+        }
       }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const openPolicy = async () => {
-    const url = 'https://daymoji.com/privacy';
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      await Linking.openURL(url);
-    } else {
-      console.log(`Don't know how to open this URL: ${url}`);
-    }
+    );
   };
+  // ----------------------------
+  // 오늘 날짜 데이터 생성함수
+  const currentDateForm = useCallback(async () => {
+  const email = await AsyncStorage.getItem('email');
+  if(!email){
+    return (navigation as any).navigate('authLogin')
+  }
+setClickedDay(day)
 
-  const openService = async () => {
-    const url = 'https://daymoji.com/terms';
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      await Linking.openURL(url);
-    } else {
-      console.log(`Don't know how to open this URL: ${url}`);
-    }
-  };
+ // 현재 날짜를 사용하여 라우팅
+    return (navigation as any).navigate('details/[date]', { date: currentDate, month });
+  }, [navigation]);
+  // -----------------------------------
 
+  // 모바일폰 사이즈 마다 버튼 사이즈 밑 margin 조정하기
+  const plusBtnSize = width * 0.1527;
+  const plusBtnMgTop = height * 0.162;
+  const topSize = lines > 5 ? height * 0.01 : height * -0.071;
+  // ------------------------------------
+
+  if (initialDisplay  ) {
+ 
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',position:'absolute',zIndex:1 }}>
+    
+ { dark?      
+ <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
+ : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> } 
+      </View>
+    );
+  }
 
 
 
   return (
     <>
-    {loginLoading && 
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',position:'absolute',zIndex:1 }}>
-    
-  { dark?      
-  <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
-  : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> } 
-       </View>
-      }
-  
-      {!checkStatus && !isLoading &&!hold &&!loginLoading? (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <View style={[styles.loginContainer, { backgroundColor: colors.background }]}>
-              <View style={{ alignItems: 'center', justifyContent: 'center', width: width }}>
-                <MainLogo color={colors.text} />
-                <Text style={[styles.title, { color: colors.text, fontFamily: 'SFCompactRoundedBD', marginTop: 8 }]}>
-                  Daymoji
-                </Text>
-              </View>
-              <View style={open ? { display: 'none' } : {}}>{<Login promptAsync={promptAsync} />}</View>
-              <View>{<AppleLogin />}</View>
-              <View style={{ width: 341, height: 42, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ fontSize: 14, color: colors.indexOpacity, fontFamily: 'SFCompactRoundedRG', lineHeight: 21 }}>
-                  By signing up, I agree to Daymoji's{' '}
-                  <Text style={{ color: colors.text, opacity: 1 }} onPress={openService}>Terms of Service</Text> and{' '}
-                </Text>
-                <Text style={{ fontSize: 14, color: colors.text, fontFamily: 'SFCompactRoundedRG', lineHeight: 21 }} onPress={openPolicy}>
-                  Privacy Policy
-                </Text>
-              </View>
-            </View>
+     {/* {!readyForShow&&<View style={{position:'absolute',width:width,height:height,zIndex:1}}>
+     { dark?      
+ <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
+ : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> } 
+      </View>
+      } */}
+  <Animated.View  style={{ backgroundColor: colors.background, alignItems: 'center' }}>
+
+     
+
+     { <Header
+        headerTitle={headerTitle}
+        day={dateF}
+        showListMode={showListMode}
+        setShowListMode={setShowListMode}
+      />}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ backgroundColor: colors.background }}>
+        <Animated.ScrollView  entering={FadeIn.duration(500).easing(Easing.inOut(Easing.ease))}style={{ marginTop: 0 }}>
+          {showListMode ? (
+            <ListMode />
+          ) : (
+           <Calendars
+              lines={lines}
+              setLines={setLines}
+              letBoxDown={letBoxDown}
+              triggerAnimation={triggerAnimation}
+            />
+          )}
+        </Animated.ScrollView>
+
+        {visible ? (
+          <Animated.View
+            style={[{ borderRadius: 21, alignItems: 'center', marginTop: topSize }, animatedStyle]}>
+            <DetailMode visible={visible} date={dateF} item={newAData} />
+          </Animated.View>
+        ) : (
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: plusBtnMgTop,
+              marginBottom: 200,
+            }}>
+          {!isLoading&&<TouchableOpacity
+              onPress={currentDateForm}
+              style={
+                !hasTodayData
+                  ? {
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: colors.text,
+                      width: plusBtnSize,
+                      height: plusBtnSize,
+                      borderRadius: 100,
+                    }
+                  : { display: 'none' }
+              }>
+              <Fontisto name="plus-a" size={16} color={colors.background} />
+            </TouchableOpacity>}
           </View>
-        </GestureHandlerRootView>
-      ) : <View style={{width:width,height:height,backgroundColor:colors.background}}/>}
+        )}
+      </ScrollView>
+    </Animated.View>
+   
     </>
   );
 };
 
-export default Page;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    height: height,
-  },
-  loginContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#e6e6e6',
-    flexDirection: 'column',
-  },
-  title: {
-    fontSize: 20,
-    marginTop: 8,
-  },
-});
+export default Index;

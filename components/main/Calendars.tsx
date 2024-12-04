@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ScrollView ,Platform} from 'react-native';
 import { useTheme } from '~/Theme/ThemeProvider';
 import { useDateContext } from '~/context/DataContext';
 import MonthDay from './MonthDay';
@@ -16,6 +16,7 @@ import Animated, {
   FadeIn,
 } from 'react-native-reanimated';
 import { get } from 'lodash';
+
 
 const { width ,height} = Dimensions.get('window');
 const circleSize = width * 0.1104;
@@ -47,8 +48,8 @@ const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown}:any) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isScrolling, setIsScrolling] = useState(false);  // 스크롤 중 상태 추가
   const [loadedMonth, setLoadedMonth] = useState(new Date().getMonth());  // 로드된 월 상태
-  const [clickedDay, setClickedDay] = useState<number | null>(null);
-  const { headerTitle, setHeaderTitle, setMonthF, setYearF, monthF,setVisible } = useDateContext();
+  // const [clickedDay, setClickedDay] = useState<number | null>(null);
+  const {clickedDay,setClickedDay, headerTitle, setHeaderTitle, setMonthF, setYearF, monthF,setVisible } = useDateContext();
   const { colors } = useTheme();
 const {month}:any=getTodayDate()
   const [beforeData,setBeforeData]=useState<any>(null)
@@ -63,6 +64,7 @@ const {month}:any=getTodayDate()
 
   function getWeeksInMonth(year:any, month:any) {
     // 해당 달의 첫째 날의 요일 (getDay: 0 = 일요일, 1 = 월요일)
+    
     const firstDayOfMonth = new Date(year, month, 0).getDay();
   
     // 해당 달의 마지막 날짜
@@ -124,7 +126,11 @@ useEffect(()=>{
       setMonthF(currMonth);  // monthF 업데이트
       setYearF(currYear);  // yearF 업데이트
      const weeks = getWeeksInMonth(currYear, currMonth );
-    
+
+    if(currMonth ===11){
+      console.log('11',weeks-1)
+      setLines(weeks-1)
+    }
      setLines(weeks)
     
 
@@ -231,14 +237,14 @@ const handleScrollBeginDrag = () => {
 
 
   return (
-    <Animated.View entering={FadeIn.duration(500).easing(Easing.ease)} style={{backgroundColor:colors.background,height:height *.58}}>
+    <Animated.View entering={FadeIn.duration(500).easing(Easing.ease)} style={{backgroundColor:colors.background,height:height *.58,alignItems:'center'}}>
       <View style={[styles.header,{backgroundColor:colors.background}]}>
         {/* <Header /> */}
       </View>
 
       <View style={styles.weekRow}>
         {daysOfWeek.map((day, index) => (
-          <Text key={index} style={[styles.weekDay,{color:colors.text,fontFamily:'SFCompactRoundedBD'}]}>
+          <Text key={index} style={[styles.weekDay,{color:colors.text,fontFamily:'Nunito_700Bold'}]}>
             {day}
           </Text>
         ))}
@@ -288,6 +294,7 @@ const handleScrollBeginDrag = () => {
 
 export default Calendars;
 
+
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
@@ -296,13 +303,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   weekRow: {
+
     flexDirection: 'row',
     justifyContent: 'space-around',
-    
-    paddingHorizontal: 24,
+   
+    paddingHorizontal:width<376? 7:24,
+    marginLeft:width<376?15:0,
   },
   weekDay: {
-    width: width / 7,
+     width: width / 7,
+  
     textAlign: 'center',
     fontSize:12,
   },
@@ -310,20 +320,17 @@ const styles = StyleSheet.create({
     width: width,
     flexDirection: 'row',
     flexWrap: 'wrap',
-
+// justifyContent: 'center'
    
     
   },
   dayBox: {
-    width: (width-48) / 7,
+    width:width>376? (width-48) / 7: (width-24) / 7,
     height: circleSize *1.46,
     marginBottom:16,
 
   },
 });
-
-
-
 
 
 

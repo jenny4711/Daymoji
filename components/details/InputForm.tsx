@@ -42,7 +42,7 @@ const handleContentSizeChange = (contentSize: { height: number }) => {
          <Animated.View  style={[styles.storyInputView, { justifyContent:'center'}]}>
 
     <TextInput
-      style={[styles.storyInput, {color: colors.text ,height:inputHeight ,fontFamily:"SFCompactRoundedMD",backgroundColor:colors.inputBk,borderRadius:24}]}
+      style={[styles.storyInput, {color: colors.text ,height:inputHeight ,backgroundColor:colors.inputBk,borderRadius:24}]}
       placeholder="How was your day?"
       onChangeText={(text)=>setStory(text)}
      
