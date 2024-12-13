@@ -43,12 +43,10 @@ const getDaysInMonth = (year: number, month: number) => {
   return daysArray;
 };
 
-const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown}:any) => {
+const Calendars = ({lines,setLines,triggerAnimation ,letBoxDown,currentDate,setCurrentDate}:any) => {
   const scrollRef = useRef<ScrollView>(null);
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [isScrolling, setIsScrolling] = useState(false);  // 스크롤 중 상태 추가
   const [loadedMonth, setLoadedMonth] = useState(new Date().getMonth());  // 로드된 월 상태
-  // const [clickedDay, setClickedDay] = useState<number | null>(null);
   const {clickedDay,setClickedDay, headerTitle, setHeaderTitle, setMonthF, setYearF, monthF,setVisible } = useDateContext();
   const { colors } = useTheme();
 const {month}:any=getTodayDate()
@@ -60,6 +58,9 @@ const {month}:any=getTodayDate()
   const currentYear = today.getFullYear();
   const isFutureMonth = currentDate.getFullYear() > currentYear || 
                       (currentDate.getFullYear() === currentYear && currentDate.getMonth() >= currentMonth);
+
+
+
 
 
   function getWeeksInMonth(year:any, month:any) {
@@ -83,7 +84,7 @@ const {month}:any=getTodayDate()
   }
 
   
-  
+ 
 
 
   // 데이터 로딩 상태와 관련된 커스텀 훅
@@ -231,7 +232,7 @@ const handleScrollBeginDrag = () => {
   // 스크롤이 시작될 때 클릭된 날짜 상태를 초기화 (border 제거)
 
  
-    setClickedDay(null);
+     setClickedDay(null);
   
 }
 
@@ -239,7 +240,7 @@ const handleScrollBeginDrag = () => {
   return (
     <Animated.View entering={FadeIn.duration(500).easing(Easing.ease)} style={{backgroundColor:colors.background,height:height *.58,alignItems:'center'}}>
       <View style={[styles.header,{backgroundColor:colors.background}]}>
-        {/* <Header /> */}
+        
       </View>
 
       <View style={styles.weekRow}>

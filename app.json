@@ -1,8 +1,8 @@
 {
   "expo": {
-    "scheme": "acme",
+    "scheme": "Daymoji",
     "userInterfaceStyle": "automatic",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "web": {
       "bundler": "metro"
     },
@@ -26,6 +26,7 @@
     },
     "android": {
       "package": "com.jjenny4711.Daymoji",
+      "userInterfaceStyle": "automatic" ,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]
@@ -46,7 +47,7 @@
      
         ]
       },
-      "buildNumber": "4",
+      "buildNumber": "5",
       "associatedDomains": [
         "applinks:daymojiios.netlify.app"
       ]

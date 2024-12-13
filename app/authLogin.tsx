@@ -14,10 +14,15 @@ import AppleLogin from '../components/auth/AppleLogin';
 import * as WebBrowser from 'expo-web-browser';
 import { Dimensions } from 'react-native';
 import { useDateContext } from '~/context/DataContext';
-import { saveIsToday, updateIsToday } from '~/utils/fireStoreFn';
+import { saveIsToday, updateIsToday,findTodayData } from '~/utils/fireStoreFn';
 import { MainLogo } from '~/utils/Icons';
 const { width, height } = Dimensions.get('window');
 import { useColorScheme } from 'react-native';
+import { PermissionsAndroid} from 'react-native';
+import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { handleCheckTodayData } from '../utils/utilsFn';
+
+
 if (Platform.OS !== 'web') {
   WebBrowser.maybeCompleteAuthSession();
 }
@@ -28,7 +33,7 @@ const Page = () => {
   const [loadingAuthState, setLoadingAuthState] = useState(true); // 로그인 상태 로딩 여부를 위한 상태 추가
   const [userInfo, setUserInfo] = useState<any>(null);
 const [hold,setHold]=useState(true)
-  const {themeMode,setThemeMode, email, setEmail, token, setToken, setIsLoading, isLoading ,initialDisplay ,setInitialDisplay} = useDateContext();
+  const {setHasTodayData,themeMode,setThemeMode, email, setEmail, token, setToken, setIsLoading, isLoading ,initialDisplay ,setInitialDisplay} = useDateContext();
   const { colors, setScheme ,dark} = useTheme();
   const [loginLoading,setLoginLoading]=useState(false)
   const today = new Date();
@@ -50,18 +55,22 @@ const [hold,setHold]=useState(true)
   const yesterday = `${yesterdayYear}-${yesterdayMonthS}-${yesterdayDateS}`;
   const colorScheme:any = useColorScheme(); 
  
+ 
 
 
   async function authStatus() {
     const status = await AsyncStorage.getItem('isLogin');
     const email=await AsyncStorage.getItem('email');
+  
     //  setIsLoading(true);
-console.log(status,'status')
+
+
     if (status && email !==null ) {
       setCheckStatus(true);
       setIsLoading(false);
     
-      (navigation as any).navigate('index');
+ 
+     (navigation as any).navigate('index');
     }else{
       
       setCheckStatus(false);
@@ -120,8 +129,10 @@ console.log(status,'status')
     : process.env.EXPO_PUBLIC_WEB_CLIENT_ID;
 
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: clientID,
-    redirectUri: Platform.OS === 'web' ? window.location.origin : undefined,
+    iosClientId:process.env.EXPO_PUBLIC_IOS_CLIENT_ID,
+    androidClientId:"69653237729-vvqgs5nojgti7sn6v73g994qidm5gcmk.apps.googleusercontent.com",
+    clientId: '69653237729-5kj2j5drphsnmism977r6sk5cgj5k3uq.apps.googleusercontent.com',
+      redirectUri: Platform.OS === 'web' ? window.location.origin :undefined,
   });
 
   const navigation = useNavigation<any>();
@@ -147,7 +158,8 @@ console.log(status,'status')
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (user: any) => {
       setLoginLoading(true)
       if (user) {
-       
+    
+    
         await saveIsToday({ date: currentDate, month, isToday: true });
         await updateIsToday({ date: currentDate, month, isToday: true });
         setUserInfo(user);
@@ -160,6 +172,7 @@ console.log(status,'status')
           setEmail(email);
           setToken(token);
         } else {
+   
           await AsyncStorage.setItem('isLogin','true');
           await AsyncStorage.setItem('token', token);
           await AsyncStorage.setItem('email', email);

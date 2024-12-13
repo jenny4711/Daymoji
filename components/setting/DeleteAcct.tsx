@@ -10,25 +10,27 @@ import { signOut } from 'firebase/auth'
 import firebase from 'firebase-admin';
 import { useDateContext } from '~/context/DataContext';
 import { useDeletedAllData } from '~/hooks/useData';
+import RNRestart from 'react-native-restart';
 const DeleteAcct = () => {
 
   const navigation = useNavigation()
-const {monthF,yearF}=useDateContext()
+const {monthF,yearF,setLoadingForSetting,hasEmail}=useDateContext()
 const {colors}=useTheme()
 const deletedAllMutation=useDeletedAllData(monthF)
   const handleDeleteUserAction = async () => {
     const auth = getAuth();
     const user:any = auth.currentUser;
-    console.log(monthF,'user!!!!!!!DeleteAcct')
+  
     if(user){
       try{
         deletedAllMutation.mutate(monthF)
        await deleteAccount(user.email)  
        await signOut(auth).then(async()=>{
+        // setLoadingForSetting(true)
        await AsyncStorage.setItem('isLogin','false')
        await AsyncStorage.setItem('token','')
        await AsyncStorage.removeItem('email').then(()=>{
-          return (navigation as any).replace('authLogin')
+          return RNRestart.Restart();
         }).catch((error)=>{
           console.log(error,'-logout')
         })
@@ -55,7 +57,7 @@ const deletedAllMutation=useDeletedAllData(monthF)
   };
   return (
     <View> 
-        <TouchableOpacity style={{justifyContent:'center',alignItems:'center',paddingVertical:24,width:width-48,backgroundColor:colors.inputBk2,borderRadius:24,marginTop:16}} onPress={() => handleDeleteUserAction()} >
+        <TouchableOpacity disabled={!hasEmail?true:false} style={{opacity:!hasEmail?0.5:1,justifyContent:'center',alignItems:'center',paddingVertical:24,width:width-48,backgroundColor:colors.inputBk2,borderRadius:24,marginTop:16}} onPress={() => handleDeleteUserAction()} >
       <Text style={{color:colors.text,fontFamily:'Nunito_700Bold'}}>Delete Account</Text>
       </TouchableOpacity>
     </View>

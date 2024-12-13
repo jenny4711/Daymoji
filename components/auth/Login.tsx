@@ -27,7 +27,7 @@ const Login:React.FC<LoginProps> = ({promptAsync}) => {
   try {
     const result = await promptAsync();
     const status = await AsyncStorage.getItem('isLogin');
-    console.log(status,'result')
+    console.log( result,'result')
    
   } catch (error) {
     console.error('Error during login:', error);

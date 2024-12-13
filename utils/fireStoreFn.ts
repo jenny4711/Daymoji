@@ -229,7 +229,7 @@ try{
 
 
 
-// await handleTodayDate()
+ await isTodayEventNotToday()
 console.log("All documents successfully deleted");
 
 }catch(error){
@@ -315,7 +315,7 @@ export const saveIsToday = async ({date, month, isToday}: any) => {
  try {
    const email = await AsyncStorage.getItem('email');
    if (!email) return;
-
+console.log('saveIsToday')
    const docRef = doc(FIRESTORE_DB, `users/${email}/${month}/${date}`);
    
    // 새로운 문서 생성 or 기존 문서에 필드 추가 (merge: true로 다른 필드 유지)
@@ -334,7 +334,7 @@ export const updateIsToday = async ({ date, month, isToday }:any) => {
     const email = await AsyncStorage.getItem('email');
     if (!email) return;
 
-  
+  console.log('updateIsToday');
 
     // Firestore 컬렉션 참조 가져오기
     const userCollectionRef = collection(FIRESTORE_DB, `users/${email}/${month}`);

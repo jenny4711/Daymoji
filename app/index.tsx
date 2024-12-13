@@ -26,17 +26,20 @@ import Animated, {
   runOnJS,
   FadeIn,
 } from 'react-native-reanimated';
+import { check } from 'react-native-permissions';
 const { width, height } = Dimensions.get('window');
 import { useDateContext } from '~/context/DataContext';
+import { set } from 'lodash';
 
 const Index= () => {
   const { dark, colors, setScheme } = useTheme();
   const [lines, setLines] = useState(0);
-  const [hasTodayData, setHasTodayData] = useState<any>(false);
+  // const [hasTodayData, setHasTodayData] = useState<any>(false);
   const {
     dateF,
     newAData,
    setMonthF,
+   monthF,
     visible,
     setVisible,
     headerTitle,
@@ -50,11 +53,15 @@ const Index= () => {
  setTodayDay,
  setTodayMonth,
     save,
-   
+    hasTodayData,
+    setHasTodayData,
     setIsLoading,
 setClickedDay,
+setLoadingForSetting
+
   } = useDateContext();
   const [showListMode, setShowListMode] = useState(false);
+   const [currentDate, setCurrentDate] = useState(new Date());
   const [showBtn,setShowBtn]=useState(false)
   const translateY = useSharedValue(0); // 애니메이션 상태
   const colorScheme=useColorScheme()
@@ -63,18 +70,30 @@ setClickedDay,
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  let currentDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+  let currentDate1 = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
   const updateToday=async()=>{
+   
     await handleCheckTodayData();
     await handleTodayDate()
+  
   }
+useEffect(()=>{
+ async function check(){
+    if(!isLoading){
+      setLoadingForSetting(false)
 
+     await updateToday()
+    }
+  }
+  check()
+},[])
  
 
   useEffect(()=>{
     async function checkStatus(){
       const status = await AsyncStorage.getItem('isLogin');
       if(status){
+        await handleCheckTodayData();
         setIsLoading(false)
       }
     }
@@ -104,32 +123,33 @@ setClickedDay,
 
   //오늘 날씨에 데이터가 있는지 확인
   useEffect(() => {
-    setTodayDate(currentDate);
+    setTodayDate(currentDate1);
     setTodayMonth(month);
     setTodayDay(day);
     const checkTodayData = async () => {
       const result = await handleCheckTodayData();
- 
-      if (checkData(result)) {
-        setHasTodayData(true);
-      } else {
-        setHasTodayData(false);
-      }
+      setHasTodayData(result)
+//  console.log(result,'result!@#$$%$%^')
+//       if (checkData(result)) {
+//         setHasTodayData(true);
+//       } else {
+//         setHasTodayData(false);
+//       }
     };
     checkTodayData();
-  }, [currentDate, month, newAData]);
+  }, [currentDate1, month, newAData]);
   // -----------------------------
 
   //오전6시부터 오후 6시까지는 light mode, 그 외는 dark mode
-  const checkTimeForTheme = () => {
+  const checkTimeForTheme =async () => {
     const currentTime = new Date();
     const hours = currentTime.getHours();
 
     if (hours >= 6 && hours < 18) {
-      updateToday()
+     await updateToday()
       setScheme('light'); // 오전 6시부터 오후 6시까지는 light mode
     } else {
-      updateToday()
+     await updateToday()
       setScheme('dark'); // 오후 6시부터 오전 6시까지는 dark mode
     }
   };
@@ -215,16 +235,23 @@ setClickedDay,
   // 오늘 날짜 데이터 생성함수
   const currentDateForm = useCallback(async () => {
   const email = await AsyncStorage.getItem('email');
+
   if(!email){
     return (navigation as any).navigate('authLogin')
   }
-setClickedDay(day)
+
+   setClickedDay(day)
+ await handleCheckTodayData();
 
  // 현재 날짜를 사용하여 라우팅
-    return (navigation as any).navigate('details/[date]', { date: currentDate, month });
+    return (navigation as any).navigate('details/[date]', { date: currentDate1, month });
   }, [navigation]);
   // -----------------------------------
-
+useEffect(()=>{
+if(monthF ===11){
+  setLines(5)
+}
+},[lines,monthF])
   // 모바일폰 사이즈 마다 버튼 사이즈 밑 margin 조정하기
   const plusBtnSize = width * 0.1527;
   const plusBtnMgTop = height * 0.162;
@@ -247,12 +274,7 @@ setClickedDay(day)
 
   return (
     <>
-     {/* {!readyForShow&&<View style={{position:'absolute',width:width,height:height,zIndex:1}}>
-     { dark?      
- <Image style={{width:width,height:height}} source={require('../assets/splash.png')} />
- : <Image style={{width:width,height:height}} source={require('../assets/splashLight.png')} /> } 
-      </View>
-      } */}
+   
   <Animated.View  style={{ backgroundColor: colors.background, alignItems: 'center' }}>
 
      
@@ -268,18 +290,20 @@ setClickedDay(day)
         style={{ backgroundColor: colors.background }}>
         <Animated.ScrollView  entering={FadeIn.duration(500).easing(Easing.inOut(Easing.ease))}style={{ marginTop: 0 }}>
           {showListMode ? (
-            <ListMode />
+            <ListMode  />
           ) : (
            <Calendars
               lines={lines}
               setLines={setLines}
               letBoxDown={letBoxDown}
               triggerAnimation={triggerAnimation}
+              currentDate={currentDate}
+              setCurrentDate={setCurrentDate}
             />
           )}
         </Animated.ScrollView>
 
-        {visible ? (
+        {visible && !showListMode ? (
           <Animated.View
             style={[{ borderRadius: 21, alignItems: 'center', marginTop: topSize }, animatedStyle]}>
             <DetailMode visible={visible} date={dateF} item={newAData} />
@@ -287,22 +311,25 @@ setClickedDay(day)
         ) : (
           <View
             style={{
-              justifyContent: 'center',
+              // justifyContent: 'center',
               alignItems: 'center',
               marginTop: plusBtnMgTop,
               marginBottom: 200,
+              
+             
             }}>
-          {!isLoading&&<TouchableOpacity
+          {!isLoading  &&<TouchableOpacity
               onPress={currentDateForm}
               style={
-                !hasTodayData
+                !hasTodayData 
                   ? {
                       justifyContent: 'center',
                       alignItems: 'center',
                       backgroundColor: colors.text,
                       width: plusBtnSize,
                       height: plusBtnSize,
-                      borderRadius: 100,
+                      borderRadius: 100
+                      
                     }
                   : { display: 'none' }
               }>

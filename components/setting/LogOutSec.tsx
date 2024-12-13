@@ -5,27 +5,35 @@ import { signOut } from 'firebase/auth'
 import { useNavigation ,useRouter} from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDateContext } from '~/context/DataContext';
 import { useTheme } from '~/Theme/ThemeProvider';
+import RNRestart from 'react-native-restart';
 const {width,height}=Dimensions.get('window')
 const LogOutSec = () => {
   const [userEmail,setUserEmail]=useState<string>('') 
+  const {setEmail,email,setLoadingForSetting,hasEmail,setHasEmail}=useDateContext()
+  // const [hasEmail,setHasEmail]=useState<boolean>(false)
 const {colors}=useTheme()
 const router=useRouter()
-// useEffect(()=>{
-//   const getUserEmail=async()=>{
-// const getEmail=await AsyncStorage.getItem('email')
+useEffect(()=>{
+  const getUserEmail=async()=>{
+const getEmail=await AsyncStorage.getItem('email')
 // const [localPart,domain]:any=getEmail?.split('@')
 // if(localPart.length <=2){
 // return setUserEmail(getEmail ||'')
 // }
 // return setUserEmail(`${localPart.slice(0,2)}...@${domain}`)
+console.log(getEmail,'getEmail')
+setEmail(getEmail)
+if(getEmail === null){
+setHasEmail(false)
+}else{
+  setHasEmail(true)
+}
 
-
-
-
-// }
-// getUserEmail()
-// },[])
+}
+getUserEmail()
+},[])
 
 const navigation=useNavigation()
 const handleLogOut=async()=>{
@@ -37,11 +45,17 @@ const handleLogOut=async()=>{
     
     {text: 'Log Out',style:'destructive',onPress: async() =>{
       
-      await signOut(FIREBASE_AUTH).then(()=>{
-        AsyncStorage.setItem('isLogin','false')
-        AsyncStorage.setItem('token','')
+      await signOut(FIREBASE_AUTH).then(async()=>{
+       
+       await AsyncStorage.setItem('isLogin','false')
+       await AsyncStorage.setItem('token','')
+        await AsyncStorage.setItem('email','')
+        await AsyncStorage.setItem('themeMode', 'auto');
+        setEmail('')
+      
         AsyncStorage.removeItem('email').then(()=>{
-          return (navigation as any).replace('authLogin')
+          RNRestart.Restart();
+          // return (navigation as any).replace('authLogin')
         }).catch((error)=>{
           console.log(error,'logout')
         })
@@ -54,22 +68,12 @@ const handleLogOut=async()=>{
   ])
 
 
-
-
-
-
-
-
-
-
-
-
 }
 
-
-
+console.log(hasEmail,'hasEmail')
+console.log(email,'email')
   return (
-<TouchableOpacity activeOpacity={1} onPress={handleLogOut} style={{justifyContent:'center',alignItems:'center',paddingVertical:24,width:width-48,backgroundColor:colors.inputBk2,borderRadius:24,marginTop:16}}>
+<TouchableOpacity disabled={!hasEmail?true:false} activeOpacity={1} onPress={handleLogOut} style={{opacity:!hasEmail?0.5:1,justifyContent:'center',alignItems:'center',paddingVertical:24,width:width-48,backgroundColor:colors.inputBk2,borderRadius:24,marginTop:16}}>
     <Text style={[styles.TextStyle,{color:colors.text}]}>Log out </Text>
   </TouchableOpacity>
 

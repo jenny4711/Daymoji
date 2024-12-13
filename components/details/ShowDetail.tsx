@@ -108,14 +108,14 @@ const ShowDetail = ({
         
       </Animated.View>
 
-      <Animated.View style={{marginTop:16,width:width-24,paddingBottom:40,justifyContent:'center',alignItems:'center'}}>
+      {/* <Animated.View style={{marginTop:16,width:width-24,paddingBottom:40,justifyContent:'center',alignItems:'center'}}>
        
         
         
         <AddPhoto hideKeyboard={hideKeyboard}  photo={photo}  setPhoto={setPhoto}   imges={imges}  setImges={setImges} />
       
      
-      </Animated.View>
+      </Animated.View> */}
       </KeyboardAvoidingView>
   
     </ScrollView>

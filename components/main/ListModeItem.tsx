@@ -66,7 +66,7 @@ useEffect(()=>{
         
   
         
-          (navigation as any).navigate('main');
+          (navigation as any).navigate('index');
           setVisible(false)
           setNewAData(null)
         
@@ -135,7 +135,7 @@ style={{height:imgSize.height,width:imgSize.width,borderRadius: 25,margin: 4,}}
       
       
           :
-          null
+     null
           }
      
      </View>

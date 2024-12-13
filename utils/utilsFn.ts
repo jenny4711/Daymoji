@@ -16,11 +16,11 @@ export const handleCheckTodayData=async()=>{
   try{
     const {currentDate,month}:any =await getTodayDate()
     const allData:any= await findTodayData(month,currentDate)
-    // const check = allData.filter(
-    //   (data: any) => String(data.date) === String(currentDate)
-    // );
-
- return allData
+   if(allData.emotion !=="" || allData.emotion !==null){
+    return true
+   }
+console.log(allData?.emotion,'allData########')
+ return false
 
 
   }catch(error){console.log(error)}

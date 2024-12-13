@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "401356467466",
+    "project_id": "daymojiios",
+    "storage_bucket": "daymojiios.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401356467466:android:22233b41276cc567c61ef3",
+        "android_client_info": {
+          "package_name": "com.jjenny4711.Daymoji"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "401356467466-co2qe32bbenng6tnond9ekb47g2spu32.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNNaAMNrUKHT7vJMYLkHBCG03NR45B-wg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "401356467466-co2qe32bbenng6tnond9ekb47g2spu32.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

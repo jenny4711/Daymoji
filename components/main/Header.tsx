@@ -23,21 +23,21 @@ const Header = ({day,showListMode,setShowListMode}:any) => {
   <View style={{flexDirection:'column',marginTop:64}}>
  {!isLoading &&   <View style={[styles.header,{marginBottom:40}]}>
     <Text style={[styles.headerText, { color: colors.text, fontFamily:'Nunito_700Bold'}]}>{headerTitle}</Text>
-    <View style={[!showBtn?{opacity:0}:{flexDirection:'row',opacity:1}]}>
+    <View style={[!showBtn?{opacity:0}:{flexDirection:'row',opacity:1,alignItems:'center'}]}>
 
   
-    {/* <TouchableOpacity onPress={() => setShowListMode(!showListMode)}>
+    {/* <TouchableOpacity style={{paddingTop:showListMode?0:9,marginRight:showListMode?5:0,paddingRight:8,height:24,justifyContent:'center'}} onPress={() => setShowListMode(!showListMode)}>
       {showListMode?
-      <Octicons name="calendar" size={16} color={colors.text} />
+      <Octicons name="calendar" size={24} color={colors.text} />
       :
-      <HeaderL color={colors.text}/>
+      <HeaderL size={24} color={colors.text}/>
     }
    
 
     </TouchableOpacity> */}
-    <TouchableOpacity activeOpacity={1}   delayPressIn={0}  hitSlop={{top:15,bottom:15,left:15,right:15}} style={{marginLeft:16}} onPress={() => (navigation as any).navigate('setting')}>
+    <TouchableOpacity style={{marginTop:showListMode?0:0,marginRight:showListMode?0:0,paddingRight:8}} activeOpacity={1}   delayPressIn={0}  hitSlop={{top:15,bottom:15,left:15,right:15}}  onPress={() => (navigation as any).navigate('setting')}>
     {/* <Octicons name="gear" size={24} color={colors.text} /> */}
-    <Gear color={colors.text}/>
+    <Gear size={24} color={colors.text}/>
     </TouchableOpacity>
     </View>
 </View>}

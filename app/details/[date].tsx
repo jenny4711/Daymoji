@@ -16,7 +16,7 @@ import {handleCheckTodayData} from '~/utils/utilsFn'
 
 import { Image } from 'expo-image'
 import { checkData } from '../../utils/utilsFn';
-import { set } from 'lodash'
+
 export async function generateStaticParams():Promise<Record<string,string>[]>{
 return [
   {date:'2022-01-01'},
@@ -27,7 +27,7 @@ return [
 }
 const Detail = () => {
   const { date, month }: any = useLocalSearchParams();
-  const {setClickedDay,setDeletedItem,setShowDone,showDone,setSave,save,setPressedDone,isLoading, monthF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
+  const {clickedDay,setClickedDay,setDeletedItem,setShowDone,showDone,setSave,save,setPressedDone,isLoading, monthF, newAData, dateWithLang ,visible,setVisible,headerTitle,setNewAData,setDateF,todayDate,preImages} = useDateContext();
   const queryClient = useQueryClient();
 const navigation=useNavigation()
 const [imges,setImges]=useState<any>([])
@@ -40,27 +40,27 @@ const [photo, setPhoto] = useState<any>([]); // photo를 배열로 관리
 const [story,setStory]=useState<any>( '')
 const [emotion,setEmotion]=useState<any>( '')
 const [year,setYear]=useState<any>('')
+const [addDay,setAddDay]=useState<any>('')
 const addMutation=useSaveData({date,month})
 const deletedMuation=useDeletedData({date,month})
-
+const check =checkData(newAData)
 const {data}=useData(month)
-const check=checkData(newAData)
 
-// useEffect(()=>{
-//   console.log(showDone,'showDoneDate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-// },[showDone])
+
+
 
 // dateformat -> 2022-01-01
 //monthformat->1
 
 useEffect(()=>{
+ 
 if(preImages.length>0){
-  console.log('11111111111111111')
+
   if(preImages.length === photo.length){
-    console.log('222222222222222222222')
+
     setTimeout(()=>{setShowDone(true)},300)
   }else{
-    console.log('33333333333333333333333333')
+  
     setShowDone(false)
   }
 
@@ -77,12 +77,14 @@ if(preImages.length>0){
 
 
 useEffect(()=>{
+
   if(newAData?.date!==date || check===false){
     setStory('')
     setPhoto([])
     setEmotion('')
     setNewAData(null)
     setImges([])
+   
   }
 },[newAData,date])
 
@@ -103,12 +105,15 @@ useEffect(() => {
   });
   setShowDate(header);
 setYear(year)
+setAddDay(day)
+
+
 }, [date]);
 
 
 
 useEffect(()=>{
-  console.log('newAData!$$$$',newAData)
+
   if(newAData?.date===date){
   
     setStory(newAData?.story)
@@ -120,7 +125,7 @@ useEffect(()=>{
 
 
 const handleDeleted = async () => {
-  console.log('handleDeleted################')
+
   setDeletedItem(true)
  
   deletedMuation.mutate(
@@ -135,8 +140,8 @@ const handleDeleted = async () => {
 
       
       },
-      onSettled:()=>{
-        
+      onSettled:async()=>{
+        await handleCheckTodayData();
         
         return  (navigation as any).navigate('index');
 
@@ -149,6 +154,8 @@ const handleDeleted = async () => {
 
 async function doneHandler(){
   const email=await AsyncStorage.getItem('email')
+
+ 
   if(checkData({ emotion, story, photo })===false){
    
     setSave(false);
@@ -172,7 +179,7 @@ async function doneHandler(){
   
   }
 
- 
+
   let photos: string[] = [];
 
   if (Array.isArray(photo)) {
@@ -193,23 +200,21 @@ const allImagesUploaded = await new Promise((resolve)=>{
   },100)
 })
 
-if(allImagesUploaded){
+if(allImagesUploaded || emotion !==""){
   addMutation.mutate({ date, emotion, story, photo: photos, email, month });
     queryClient.invalidateQueries({ queryKey: ['data'] });
    
     setNewAData({ date, emotion, story, photo: photos, email, month });
     setDateF(date);
-    setSave(true);
-   
-
+     setSave(true);
     setPhoto([]);
     setImges([]);
     setPressedDone(true);
-    
-    
+   
   
 
-  (navigation as any ).navigate('index');
+  
+ (navigation as any ).navigate('index');
  setShowDone(false)
 
  
@@ -218,8 +223,7 @@ if(allImagesUploaded){
 }
 
 
-
-
+await handleCheckTodayData();
 }
 
 // async function doneHandler(){

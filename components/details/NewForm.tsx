@@ -81,7 +81,7 @@ const NewForm = ({
         keyboardVerticalOffset={Platform.select({ ios: -500, android: 80 })}>
         <IconSticker setEmotion={setEmotion} hideKeyboard={hideKeyboard} />
         <InputForm story={story} setStory={setStory} marginLeft={24} />
-        <View style={{ marginTop: 16 }}>
+        {/* <View style={{ marginTop: 16 }}>
           <AddPhoto
             setPhoto={setPhoto}
          
@@ -90,7 +90,7 @@ const NewForm = ({
             imges={imges}
             setImges={setImges}
           />
-        </View>
+        </View> */}
       </KeyboardAvoidingView>
     </ScrollView>
   );

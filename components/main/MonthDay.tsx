@@ -24,6 +24,7 @@ const isDisabled=selectedDate>today
 const check = checkData(item)
 
 useEffect(()=>{
+
 if(itemMonth !==monthF){
   letBoxDown(false)
   setClickedDay(null)
@@ -60,7 +61,7 @@ const saveData =async (day: any) => {
   const date = `${yearF}-${monthS}-${dateS}`;
   const email=await AsyncStorage.getItem('email')
 
- setSave(false)
+ 
 
   if(isDisabled){
     Alert.alert('Alert', 'You cannot write future diary');
@@ -70,8 +71,13 @@ const saveData =async (day: any) => {
   if(!email){
     return (navigation as any).navigate('authLogin')
   }
+  setSave(false)
+  setClickedDay(day)
+  // setClickedDay((prevDay:any) => (prevDay === day ? null : day));
+
+
 setNewAData(null)
-  setClickedDay((prevDay:any) => (prevDay === day ? null : day));
+  //  setClickedDay((prevDay:any) => (prevDay === day ? null : day));
   setDateF(date);
   return (navigation as any).navigate('details/[date]', { date, month: monthF });
 };
@@ -101,37 +107,36 @@ const showDetailItem=(day:any)=>{
 // && clickedDay !==null 넣어서 3번이상 클릭시 문제 해결10/30
 if(date ===dateF && clickedDay !==null){
  
-//  letBoxDown(!visible)
+
 letBoxDown(false)
 
-// setClickedDay((prevDay:any) => (prevDay === day ? null : day));
+
 
 
 }else{
   (navigation as any).navigate('index')
 
-// if(!check){
-//   return (navigation as any).navigate('details/[date]', { date, month: monthF });
-// }
-
   setDateF(date)
-  console.log(deletedItem,'deletedItem@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-  // setClickedDay((prevDay:any) => (prevDay === day ? null : day));
+ 
   if(deletedItem){
-    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+   
     letBoxDown(!visible)
   }else{
-    console.log('********************************')
+
     triggerAnimation(true);
   }
 
- 
   
 }
 
 setDeletedItem(false)
 }
-// borderWidth:clickedDay === day && check && visible?2:0, visible 넣음 10/30(테스트 필요)
+useEffect(()=>{
+
+  if(newAData !==null && clickedDay === day){
+    triggerAnimation(true);
+  }
+},[clickedDay,newAData])
 
   return (
 
@@ -161,12 +166,12 @@ setDeletedItem(false)
                 hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }} 
                 style={[styles.circle, {
                   backgroundColor: colors.inputBk,
-                  borderWidth:clickedDay  === day && check && visible ?2:0,
-                  zIndex:clickedDay === day && check ?100:0,
+               
+                   borderWidth:clickedDay  === day && check && visible ?2:0,
+                
+                   zIndex:clickedDay === day && check ?100:0,
                   borderColor:colors.text
                 }]}
-
-
                 
                 >
                   <View style={{ width: circleSize, height: circleSize, borderRadius: circleSize / 2}} />
@@ -175,12 +180,7 @@ setDeletedItem(false)
               
               <View style={{marginTop:.1,backgroundColor:item && item.isToday?colors.text:colors.background,borderRadius:100,width:27,height:18,justifyContent:'center',alignItems:'center'}}>
                <Text style={[styles.dayText,{fontFamily:'Nunito_700Bold',color:item && item.isToday?colors.background:colors.text,textAlign: 'center'}]}>{day}</Text>
-               </View>
-
-
-
-
-             
+               </View>             
              
             </View>
       
@@ -195,7 +195,7 @@ const styles= StyleSheet.create({
   dayBox: {
     width:width>376? (width-48) / 7: (width-24) / 7,
     height: circleSize *1.46,
-    // justifyContent: 'center',
+    
     alignItems: 'center',
    
 
@@ -206,7 +206,7 @@ const styles= StyleSheet.create({
   },
   dayText: {
     fontSize: 12,
-    // fontFamily: 'SFCompactRoundedBD',
+   
     color: '#333',
 
         lineHeight:12.8,

@@ -1,4 +1,4 @@
-import { View, Text ,SafeAreaView ,Dimensions,TouchableOpacity,StyleSheet,Linking,Alert} from 'react-native'
+import { View, Text ,SafeAreaView ,Dimensions,TouchableOpacity,StyleSheet,Linking,Alert,ActivityIndicator} from 'react-native'
 import React ,{useEffect,useState}from 'react'
 import { handleTodayDate } from '~/utils/utilsFn';
 import { ThemeArray } from '~/utils/selectionArray';
@@ -13,6 +13,7 @@ import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Check, Gear } from '~/utils/Icons';
 import DeleteAcct from '~/components/setting/DeleteAcct';
+
 const {width,height}=Dimensions.get('window')
 
 const Setting = () => {
@@ -25,7 +26,7 @@ const Setting = () => {
   const [background,setBackground]=useState<string>( colorStyle.background)
 
   const colorScheme:any = useColorScheme(); 
-  const {monthF,themeMode,setThemeMode,setNewAData,setVisible,newAData,save,setSave}=useDateContext()
+  const {hasEmail,setLoadingForSetting,loadingForSetting,monthF,themeMode,setThemeMode,setNewAData,setVisible,newAData,save,setSave,isLoading}=useDateContext()
   const month:any =monthF
 const deletedAllMutation=useDeletedAllData(month)
 const queryClient = useQueryClient();
@@ -39,6 +40,7 @@ useEffect(()=>{
     // AsyncStorage에서 테마 불러오기
     const loadTheme = async () => {
       const storedTheme = await AsyncStorage.getItem('themeMode');
+
       setThemeMode(storedTheme || 'auto');
     };
     loadTheme();
@@ -61,10 +63,10 @@ const checkTimeForTheme = async() => {
   if (hours >= 6 && hours < 18) {
 
     setScheme('light'); // 오전 6시부터 오후 6시까지는 light mode
-    await AsyncStorage.setItem('themeMode', 'light');
+    // await AsyncStorage.setItem('themeMode', 'light');
   } else {
     setScheme('dark'); // 오후 6시부터 오전 6시까지는 dark mode
-    await AsyncStorage.setItem('themeMode', 'dark');
+    // await AsyncStorage.setItem('themeMode', 'dark');
   }
 };
 
@@ -75,6 +77,7 @@ useEffect(() => {
  async function saveThemeMode(){
    // themeMode가 'auto'일 경우 시스템 테마에 따라 자동으로 설정
    if (themeMode === 'auto') {
+   await AsyncStorage.setItem('themeMode', 'auto');
     checkTimeForTheme();  // 시스템 테마에 맞추어 자동으로 설정
   } else if (themeMode === 'light') {
     setScheme('light');
@@ -97,22 +100,23 @@ const handleAlldeletedList =() => {
     },
     
     {text: 'Delete',style:'destructive',onPress: async () =>{
+      setLoadingForSetting(true)
       setNewAData(null)
       setVisible(false)
       setSave(false)
      deletedAllMutation.mutate(month)
     
     
-  queryClient.invalidateQueries({ queryKey: ['data',monthF] });  
- 
- 
+  queryClient.invalidateQueries({ queryKey: ['data',monthF] })
+
+
     
     }
     },
   ])
 
   
- 
+
 }
 
 const openPolicy =async () => {
@@ -146,8 +150,14 @@ const goToMainPage = () => {
 }
 
 
+
   return (
-    <SafeAreaView style={[{backgroundColor:colors.background,flex:1},{width:width, justifyContent:'flex-start',alignItems:'center',height:height}]}>
+    <SafeAreaView style={[loadingForSetting?{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'transparent',position: 'absolute',opacity: 0.5, zIndex:1}:{backgroundColor:colors.background,flex:1},{width:width, justifyContent:'flex-start',alignItems:'center',height:height}]}>
+      {loadingForSetting &&
+      <View style={{marginTop:height/3,backgroundColor:'transparent',position: 'absolute',opacity: 0.5, zIndex:1}}>
+       <ActivityIndicator size="large" color={colors.text} />
+       </View>
+       }
       {/* //--------------------------title---------------- */}
 <View style={[styles.titleView]}>
   <Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:colors.text}]}> Settings</Text>
@@ -163,7 +173,9 @@ const goToMainPage = () => {
   ThemeArray.map((item:any,index:any)=>(
     <TouchableOpacity key={index} activeOpacity={1} onPress={()=>handleThemeChange(item.value)} style={{width:width-96,flexDirection:'row',justifyContent:'space-between',paddingVertical:12,alignItems:'center'}}>
       <Text style={[styles.TextStyle,{color:colors.text}]}>{item.title}</Text>
+      <View >
       {themeMode === item.value?<Check color={colors.text}/>:null}
+      </View>
       {/* <Text style={{color:colors.text}}>{themeMode === item.value?'x':''}</Text> */}
 
     </TouchableOpacity>
@@ -175,7 +187,7 @@ const goToMainPage = () => {
 {/* //------------------------------account---------------------------------------------------- */}
 <View style={[styles.eachView,{marginVertical:24}]}>
   <Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:colors.text,marginBottom:16}]}>Account</Text>
-  <TouchableOpacity activeOpacity={1} onPress={handleAlldeletedList} style={{justifyContent:'center',alignItems:'center',paddingVertical:24,width:width-48,backgroundColor:colors.inputBk2,borderRadius:24}}>
+  <TouchableOpacity disabled={hasEmail?false:true} activeOpacity={1} onPress={handleAlldeletedList} style={{opacity:hasEmail?1:0.5,justifyContent:'center',alignItems:'center',paddingVertical:24,width:width-48,backgroundColor:colors.inputBk2,borderRadius:24}}>
     <Text style={[styles.TextStyle,{fontFamily:'Nunito_700Bold' ,color:'red'}]}>Delete all entries</Text>
   </TouchableOpacity>
   <DeleteAcct/>
